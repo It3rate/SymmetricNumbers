@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymmetricNumbers", "SymmetricNumbers\SymmetricNumbers.csproj", "{8E9485AB-D107-4E7A-8740-93419F41F4FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymNum", "SymNum\SymNum.csproj", "{426F4609-FC70-4849-9323-D79ABE142FCA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8E9485AB-D107-4E7A-8740-93419F41F4FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E9485AB-D107-4E7A-8740-93419F41F4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E9485AB-D107-4E7A-8740-93419F41F4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E9485AB-D107-4E7A-8740-93419F41F4FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{426F4609-FC70-4849-9323-D79ABE142FCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426F4609-FC70-4849-9323-D79ABE142FCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426F4609-FC70-4849-9323-D79ABE142FCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426F4609-FC70-4849-9323-D79ABE142FCA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0912D349-0D9A-4888-9167-EE7653F9EAAE}
+	EndGlobalSection
+EndGlobal
