@@ -1,4 +1,4 @@
-﻿namespace SymNum.Primitives;
+﻿namespace SymNum.Mind;
 public enum BoolState
 {
     //FalseNegative,

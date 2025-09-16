@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SymNum.Mind;
 
-namespace SymNum.Primitives
+namespace SymNum.Concepts
 {
-	/// <summary>
-	/// Represents a span that is uncalibrated so has no meaning. Mathematically, this is a numerator without a denominator.
-	/// </summary>
-	public class Extent // was Extent in previous versions
+    /// <summary>
+    /// Represents a span that is uncalibrated so has no meaning. Mathematically, this is a numerator without a denominator.
+    /// </summary>
+    public class Extent // was Extent in previous versions
 	{
 		/// <summary>
 		/// There can be more than two positions, and eventually datapoints can be converted to 

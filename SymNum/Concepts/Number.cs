@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Primitives;
+namespace SymNum.Concepts;
 
-public class NumberBase
+public class Number
 {
 	public Extent Numerator { get; set; } 
-	public Extent Denominator { get; set; }
+	public DenominatorAspect Denominator { get; set; }
 
 }
