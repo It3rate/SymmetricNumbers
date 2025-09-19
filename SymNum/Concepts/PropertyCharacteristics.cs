@@ -1,4 +1,5 @@
 ﻿
+using SymNum.Patterns;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace SymNum.Concepts;
 public class PropertyCharacteristics
 {
 	public PropertyUnit Unit { get; set; }
-	public RelationEquation Relation { get; set; }
+	public Equation Relation { get; set; }
 	public Extent MinMax { get; set; }
 
 }
