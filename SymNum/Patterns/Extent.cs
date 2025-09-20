@@ -1,30 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
+using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Microsoft.VisualBasic;
+using SymNum.Concepts;
 using SymNum.Mind;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SymNum.Patterns
 {
     // Question:
-    // Looking at all the information you can get from 1,2,3,4, or 5 bits of information, it is something like (==), (!=, >, <), (ratio), (number by unit), (symmetric number with floating 0 point)
+    // Looking at all the information you can get from 1,2,3,4, or 5 bits of information, it is something like(==), (!=, >, <), (ratio), (number by unit), (symmetric number with floating 0 point)
     // This suggest values exist that are just 2 bits, just a direction 'greater than something' or 'from the past'
-    // our language does this a lot, after, between, during all talk of a unspecified place constrained by some range.
-    // So these Extents are not the primitive, but probably made of constraints, expressed as bits.
-    // We can express 40>50 with these, but need to also be able to express 'greater than 40' 
-    // Even 'between' has a specified start and end, a path of unspecified length between them, and an unspecified position on that path.
-    // These values then are more like instances of the contstraints we are trying out in the 'general workspace'
-    
-    // Aside, we can decompose a segment into <start, path, end>, and convert/imagine it only being <start, path> (direction but no end specified). 
-    // The mechanics of this operation are divide by zero.
+    // Our language does this "a lot", "after", "between", "during" all talk of a unspecified place constrained in some partial range.
+    // So these Extents are not the primitive, but probably made of constraints, and can probably be expressed with bits.
+    // We can express 40->50 with these Extent ranges, but need to also be able to express 'greater than 40' 
+    // Even 'between' has a specified start and end, but a path of unspecified length between them, and an unspecified position on that path.
+    // This needs to be expressible as a value in this system.Old versions used bool segments which works, but it is simpler that those (where each requires 8+ bits of info)
+    // These segment values then are more like instances, samples using the constraints, that we are trying out in some 'general workspace'
+       
+    // Aside, we can decompose a segment into<start, path, end>, and convert/imagine it only being <start, path> (direction but no end specified). 
+    // The mechanics of this operation is divide by zero.
     // 40/0 (when you treat zero as below your resolution, but not null) is going to be <greater than 40> (assuming the 0 is actually between 0.0000001, and 0.9999999)
-
-    // So either this needs to be constraint driven to a greater extent, or the number comes from the bits more directly.
-    // Maybe 2 positions only allows direction.
+    // I suppose it also makes sense to have a -0 (a value we don't measure, but know its direction is negative). Like "worse", "less" etc.
+       
+    // Either this class needs to be constraint driven to a greater extent, or the range comes from the bits more directly.
+    // Maybe 2 positions only allows direction to be expressed?
     // Really this class should be an analog signal, where a reading is just an uncalibrated value, not an integer with a number system.
-    // Maybe all numbers live on the properties array, and they need to share units more manually?
-
+    // Maybe all numbers live on the properties array, and they need to share units more intentionally?
 
 
 
@@ -45,77 +54,96 @@ namespace SymNum.Patterns
         // So Extents can also be purely calculated or stored as an equation.
         // The space of operations that turn a list of samples into equations is anything that separates random from non-random.
         // A list of samples may well be random, but an equation for them assumes they aren't.
-        protected long[] _positions;
-        public long StartPosition
+        public bool IsPositiveRight { get; protected set; } = true;
+        public bool IsPositiveLeft => !IsPositiveRight;
+        /// <summary>
+        /// A segment, or partial segment can have a left or right direction. It also can focus on the inside or outside of a segment.
+        /// This allows a positive right Extent with only an end point, ExteriorFacing, to represent 'everything after the end point'.
+        /// </summary>
+        public bool IsInteriorFacing { get; protected set; } = true;
+        public bool IsExteriorFacing => !IsInteriorFacing;
+
+        protected long? _startValue;
+        protected long? _endValue;
+        public long StartValue
         {
-            get => _positions[0];
-            set => _positions[0] = value;
+            get => _startValue ?? (IsPositiveRight ? long.MinValue : long.MaxValue);
+            set => _startValue = value;
         }
-        public long EndPosition
+        public long EndValue
         {
-            get => _positions[_positions.Length - 1];
-            set => _positions[_positions.Length - 1] = value;
+            get => _endValue ?? (IsPositiveRight ? long.MaxValue : long.MinValue);
+            set => _endValue = value;
         }
-        public Extent(long start, long end)
+        public bool HasStartValue => _startValue.HasValue;
+        public bool HasEndValue => _endValue.HasValue;
+        public bool HasTwoValues => HasStartValue && HasEndValue;
+        public int ValueCount => (HasStartValue ? 1 : 0) + (HasEndValue ? 1 : 0);
+
+        public int AbsDirection => HasTwoValues ? (EndValue > StartValue ? 1 : (EndValue < StartValue ? -1 : 0)) : 0;
+        public bool IsPositiveDirection => IsPositiveRight ? AbsDirection > 0 : AbsDirection < 0;
+        public bool IsNegativeDirection => !IsPositiveDirection;
+        public bool IsAmbiguousDirection => AbsDirection == 0;
+        public long Min => StartValue <= EndValue ? StartValue : EndValue; 
+        public long Max => StartValue >= EndValue ? StartValue : EndValue;
+        public long DirectionalMin => IsPositiveDirection ? Min : Max;
+        public long DirectionalMax => IsPositiveDirection ? Max : Min;
+        public bool CanHaveDirection => HasTwoValues;
+
+        public long LengthInTicks => EndValue - StartValue;
+        public long AbsLengthInTicks => Math.Abs(LengthInTicks);
+        public long NonZeroLength => LengthInTicks == 0 ? 1 : LengthInTicks;
+
+        public Extent(long? start, long? end)
         {
-            StartPosition = start;
-            EndPosition = end;
-        }
-        public virtual void Reset(long start, long end)
-        {
-            StartPosition = start;
-            EndPosition = end;
+            _startValue = start;
+            _endValue = end;
         }
         public virtual void Reset(Extent extent)
         {
-            Reset(extent.StartPosition, extent.EndPosition);
+            _startValue = extent._startValue;
+            _endValue = extent._endValue;
         }
-        public int Direction => StartPosition < EndPosition ? 1 : StartPosition > EndPosition ? -1 : 0;
-        public bool IsPositiveDirection => Direction > 0;
-        public long LengthInTicks => EndPosition - StartPosition;
-        public long AbsLengthInTicks => Math.Abs(LengthInTicks);
-        public long NonZeroLength => LengthInTicks == 0 ? 1 : LengthInTicks;
-        public long Min => StartPosition <= EndPosition ? StartPosition : EndPosition;
-        public long Max => StartPosition >= EndPosition ? StartPosition : EndPosition;
-        public virtual long InvertedEndPosition => StartPosition - LengthInTicks;
-        public Extent Negated => new Extent(-StartPosition, -EndPosition);
+        public virtual void Reset(long? start, long? end)
+        {
+            _startValue = start;
+            _endValue = end;
+        }
+
+        public virtual long InvertedEndPosition => StartValue - LengthInTicks;
+        public Extent Negated => new Extent(-StartValue, -EndValue);
         public void MirrorAroundStart()
         {
-            EndPosition = StartPosition - LengthInTicks;
+            EndValue = StartValue - LengthInTicks;
         }
         public void Reverse()
         {
-            var temp = StartPosition;
-            StartPosition = EndPosition;
-            EndPosition = temp;
+            var temp = StartValue;
+            StartValue = EndValue;
+            EndValue = temp;
         }
         public void MakeForward()
         {
-            if (EndPosition < StartPosition)
+            if (EndValue < StartValue)
             {
                 Reverse();
             }
         }
 
 
-
-
-
-
         public bool Touches(Extent q) => Touches(this, q);
 
-
-        public static long MinPosition(Extent p, Extent q) => Math.Min(p.Min, q.Min);
-        public static long MaxPosition(Extent p, Extent q) => Math.Max(p.Max, q.Max);
-        public static long MinStart(Extent p, Extent q) => Math.Min(p.StartPosition, q.StartPosition);
-        public static long MaxStart(Extent p, Extent q) => Math.Max(p.StartPosition, q.StartPosition);
-        public static long MinEnd(Extent p, Extent q) => Math.Min(p.EndPosition, q.EndPosition);
-        public static long MaxEnd(Extent p, Extent q) => Math.Max(p.EndPosition, q.EndPosition);
+        public static long MinValue(Extent p, Extent q) => Math.Min(p.Min, q.Min);
+        public static long MaxValue(Extent p, Extent q) => Math.Max(p.Max, q.Max);
+        public static long MinStart(Extent p, Extent q) => Math.Min(p.StartValue, q.StartValue);
+        public static long MaxStart(Extent p, Extent q) => Math.Max(p.StartValue, q.StartValue);
+        public static long MinEnd(Extent p, Extent q) => Math.Min(p.EndValue, q.EndValue);
+        public static long MaxEnd(Extent p, Extent q) => Math.Max(p.EndValue, q.EndValue);
 
         /// <summary>
         /// Shares an endpoint, but no overlap (meaning can only share one endpoint).
         /// </summary>
-        public static bool Touches(Extent p, Extent q) => p.EndPosition == q.StartPosition || p.StartPosition == q.EndPosition;
+        public static bool Touches(Extent p, Extent q) => p.EndValue == q.StartValue || p.StartValue == q.EndValue;
         public static Extent? Intersection(Extent p, Extent q)
         {
             Extent result = null;
@@ -148,24 +176,24 @@ namespace SymNum.Patterns
         public static Extent[] UnaryNot(Extent p)
         {
             // If p starts at the beginning of the time frame and ends at the end, A is always true and the "not A" relationship is empty
-            if (p.StartPosition == 0 && p.EndPosition == long.MaxValue)
+            if (p.StartValue == 0 && p.EndValue == long.MaxValue)
             {
                 return new Extent[] { };
             }
             // If p starts at the beginning of the time frame and ends before the end, the "not A" relationship consists of a single interval from p.EndTickPosition + 1 to the end of the time frame
-            else if (p.StartPosition == 0)
+            else if (p.StartValue == 0)
             {
-                return new Extent[] { new Extent(p.EndPosition + 1, long.MaxValue) };
+                return new Extent[] { new Extent(p.EndValue + 1, long.MaxValue) };
             }
             // If p starts after the beginning of the time frame and ends at the end, the "not A" relationship consists of a single interval from the beginning of the time frame to p.StartTickPosition - 1
-            else if (p.EndPosition == long.MaxValue)
+            else if (p.EndValue == long.MaxValue)
             {
-                return new Extent[] { new Extent(0, p.StartPosition - 1) };
+                return new Extent[] { new Extent(0, p.StartValue - 1) };
             }
             // If p starts and ends within the time frame, the "not A" relationship consists of two intervals: from the beginning of the time frame to p.StartTickPosition - 1, and from p.EndTickPosition + 1 to the end of the time frame
             else
             {
-                return new Extent[] { new Extent(0, p.StartPosition - 1), new Extent(p.EndPosition + 1, long.MaxValue) };
+                return new Extent[] { new Extent(0, p.StartValue - 1), new Extent(p.EndValue + 1, long.MaxValue) };
             }
         }
         public static Extent[] Transfer(Extent p)
@@ -188,13 +216,13 @@ namespace SymNum.Patterns
         }
         public static Extent[] B_Inhibits_A(Extent p, Extent q)
         {
-            if (p.EndPosition < q.StartPosition - 1 || q.EndPosition < p.StartPosition - 1)
+            if (p.EndValue < q.StartValue - 1 || q.EndValue < p.StartValue - 1)
             {
                 return new Extent[] { p };
             }
             else
             {
-                return new Extent[] { new Extent(p.StartPosition, q.StartPosition - 1) };
+                return new Extent[] { new Extent(p.StartValue, q.StartValue - 1) };
             }
         }
         public static Extent[] Transfer_A(Extent p, Extent q)
@@ -203,13 +231,13 @@ namespace SymNum.Patterns
         }
         public static Extent[] A_Inhibits_B(Extent p, Extent q)
         {
-            if (p.EndPosition < q.StartPosition - 1 || q.EndPosition < p.StartPosition - 1)
+            if (p.EndValue < q.StartValue - 1 || q.EndValue < p.StartValue - 1)
             {
                 return new Extent[] { q };
             }
             else
             {
-                return new Extent[] { new Extent(q.StartPosition, p.StartPosition - 1) };
+                return new Extent[] { new Extent(q.StartValue, p.StartValue - 1) };
             }
         }
         public static Extent[] Transfer_B(Extent p, Extent q)
@@ -289,7 +317,7 @@ namespace SymNum.Patterns
         }
         public static Extent[] B_Implies_A(Extent p, Extent q)
         {
-            if (p.EndPosition < q.StartPosition - 1 || q.EndPosition < p.StartPosition - 1)
+            if (p.EndValue < q.StartValue - 1 || q.EndValue < p.StartValue - 1)
             {
                 return new Extent[] { };
             }
@@ -304,7 +332,7 @@ namespace SymNum.Patterns
         }
         public static Extent[] A_Implies_B(Extent p, Extent q)
         {
-            if (p.EndPosition < q.StartPosition - 1 || q.EndPosition < p.StartPosition - 1)
+            if (p.EndValue < q.StartValue - 1 || q.EndValue < p.StartValue - 1)
             {
                 return new Extent[] { };
             }
@@ -345,8 +373,8 @@ namespace SymNum.Patterns
             {
                 result = new Extent[]
                 {
-                new Extent(long.MinValue, overlap.StartPosition),
-                new Extent(overlap.EndPosition, long.MaxValue)
+                new Extent(long.MinValue, overlap.StartValue),
+                new Extent(overlap.EndValue, long.MaxValue)
                 };
             }
             return result;
@@ -407,12 +435,12 @@ namespace SymNum.Patterns
         /// </summary>
         public BoolState StartState { get; protected set; } = BoolState.True;
 
-        public virtual long[] GetPositions() => (long[])_positions.Clone();
+        public virtual long[] GetPositions() => (long[])_samples.Clone();
         public virtual void SetPosition(int index, long value)
         {
-            if (index >= 0 && index < _positions.Length)
+            if (index >= 0 && index < _samples.Length)
             {
-                _positions[index] = value;
+                _samples[index] = value;
             }
         }
         public virtual void ClearInternalPositions() { }
@@ -479,7 +507,7 @@ namespace SymNum.Patterns
         #region Equality
         public virtual Extent Clone()
         {
-            return new Extent(StartPosition, EndPosition);
+            return new Extent(StartValue, EndValue);
         }
         public override bool Equals(object? obj)
         {
@@ -487,7 +515,7 @@ namespace SymNum.Patterns
         }
         public bool Equals(Extent? value)
         {
-            return ReferenceEquals(this, value) || StartPosition.Equals(value.StartPosition) && EndPosition.Equals(value.EndPosition);
+            return ReferenceEquals(this, value) || StartValue.Equals(value.StartValue) && EndValue.Equals(value.EndValue);
         }
 
         public static bool operator ==(Extent? a, Extent? b)
@@ -511,12 +539,12 @@ namespace SymNum.Patterns
         {
             unchecked
             {
-                var hashCode = StartPosition.GetHashCode();
-                hashCode = hashCode * 397 ^ EndPosition.GetHashCode();
+                var hashCode = StartValue.GetHashCode();
+                hashCode = hashCode * 397 ^ EndValue.GetHashCode();
                 return hashCode;
             }
         }
         #endregion
-        public override string ToString() => $"[{StartPosition} : {EndPosition}]";
+        public override string ToString() => $"[{StartValue} : {EndValue}]";
     }
 }
