@@ -16,18 +16,21 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SymNum.Patterns
 {
     // Question:
-    // Looking at all the information you can get from 1,2,3,4, or 5 bits of information, it is something like(==), (!=, >, <), (ratio), (number by unit), (symmetric number with floating 0 point)
+    // Looking at all the information you can get from 1,2,3,4, or 5 bits of information,
+    //   it is something like(==), (!=, >, <), (ratio), (number by unit), (symmetric number with floating 0 point)
     // This suggest values exist that are just 2 bits, just a direction 'greater than something' or 'from the past'
     // Our language does this "a lot", "after", "between", "during" all talk of a unspecified place constrained in some partial range.
     // So these Extents are not the primitive, but probably made of constraints, and can probably be expressed with bits.
     // We can express 40->50 with these Extent ranges, but need to also be able to express 'greater than 40' 
     // Even 'between' has a specified start and end, but a path of unspecified length between them, and an unspecified position on that path.
-    // This needs to be expressible as a value in this system.Old versions used bool segments which works, but it is simpler that those (where each requires 8+ bits of info)
+    // This needs to be expressible as a value in this system.Old versions used bool segments which works,
+    //   but it is simpler that those (where each requires 8+ bits of info)
     // These segment values then are more like instances, samples using the constraints, that we are trying out in some 'general workspace'
        
     // Aside, we can decompose a segment into<start, path, end>, and convert/imagine it only being <start, path> (direction but no end specified). 
     // The mechanics of this operation is divide by zero.
-    // 40/0 (when you treat zero as below your resolution, but not null) is going to be <greater than 40> (assuming the 0 is actually between 0.0000001, and 0.9999999)
+    // 40/0 (when you treat zero as below your resolution, but not null) is going to be <greater than 40>
+    //    (assuming the 0 is actually between 0.0000001, and 0.9999999)
     // I suppose it also makes sense to have a -0 (a value we don't measure, but know its direction is negative). Like "worse", "less" etc.
        
     // Either this class needs to be constraint driven to a greater extent, or the range comes from the bits more directly.
