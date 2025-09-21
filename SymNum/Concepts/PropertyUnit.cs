@@ -25,6 +25,8 @@ public class PropertyUnit
 	/// <summary>
 	/// the unit value used to calibrate whatever numerator (instance measured value) is used.
 	/// These can be more than just single numbers (meters per second sqared, color temperature, jealously, etc).
+	/// This is specifically a number, not an extent, and a type needs to include its opposite, in that everything is defined against something.
+	/// This allows happy/sad, happy/angry and happy/meh to all cooexist.
 	/// </summary>
 	public NumberBase Denominator;
 	/// <summary>

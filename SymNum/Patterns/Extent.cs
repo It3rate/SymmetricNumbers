@@ -8,10 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.VisualBasic;
-using SymNum.Concepts;
 using SymNum.Mind;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SymNum.Patterns
 {
@@ -97,12 +94,26 @@ namespace SymNum.Patterns
         public long AbsLengthInTicks => Math.Abs(LengthInTicks);
         public long NonZeroLength => LengthInTicks == 0 ? 1 : LengthInTicks;
 
-        public Extent(long? start, long? end)
-        {
-            _startValue = start;
-            _endValue = end;
-        }
-        public virtual void Reset(Extent extent)
+		public Extent(long start, long end, bool isPositiveRight)
+		{
+			_startValue = start;
+			_endValue = end;
+
+			IsPositiveRight = isPositiveRight;
+		}
+		public Extent(bool isPositiveRight, long end)
+		{
+			IsPositiveRight = isPositiveRight;
+			_startValue = null;
+			_endValue = end;
+		}
+		public Extent(long start, bool isPositiveRight)
+		{
+			IsPositiveRight = isPositiveRight;
+			_startValue = start;
+			_endValue = null;
+		}
+		public virtual void Reset(Extent extent)
         {
             _startValue = extent._startValue;
             _endValue = extent._endValue;
@@ -114,7 +125,7 @@ namespace SymNum.Patterns
         }
 
         public virtual long InvertedEndPosition => StartValue - LengthInTicks;
-        public Extent Negated => new Extent(-StartValue, -EndValue);
+        public Extent Negated => new Extent(-StartValue, -EndValue, IsPositiveRight);
         public void MirrorAroundStart()
         {
             EndValue = StartValue - LengthInTicks;
@@ -162,13 +173,13 @@ namespace SymNum.Patterns
         {
             var start = Math.Max(p.Min, q.Min);
             var end = Math.Min(p.Max, q.Max);
-            return start >= end ? new Extent(0, 0) : new Extent(start, end);
+            return start >= end ? new Extent(0, 0, q.IsPositiveRight) : new Extent(start, end, q.IsPositiveRight);
         }
         public static Extent Join(Extent p, Extent q)
         {
             var start = Math.Min(p.Min, q.Min);
             var end = Math.Max(p.Max, q.Max);
-            return new Extent(start, end);
+            return new Extent(start, end, q.IsPositiveRight);
         }
 
         // Q. Should direction be preserved in a bool operation?
@@ -186,17 +197,19 @@ namespace SymNum.Patterns
             // If p starts at the beginning of the time frame and ends before the end, the "not A" relationship consists of a single interval from p.EndTickPosition + 1 to the end of the time frame
             else if (p.StartValue == 0)
             {
-                return new Extent[] { new Extent(p.EndValue + 1, long.MaxValue) };
+                return new Extent[] { new Extent(p.EndValue + 1, long.MaxValue, p.IsPositiveRight) };
             }
             // If p starts after the beginning of the time frame and ends at the end, the "not A" relationship consists of a single interval from the beginning of the time frame to p.StartTickPosition - 1
             else if (p.EndValue == long.MaxValue)
             {
-                return new Extent[] { new Extent(0, p.StartValue - 1) };
+                return new Extent[] { new Extent(0, p.StartValue - 1, p.IsPositiveRight) };
             }
             // If p starts and ends within the time frame, the "not A" relationship consists of two intervals: from the beginning of the time frame to p.StartTickPosition - 1, and from p.EndTickPosition + 1 to the end of the time frame
             else
             {
-                return new Extent[] { new Extent(0, p.StartValue - 1), new Extent(p.EndValue + 1, long.MaxValue) };
+                return new Extent[] {
+                    new Extent(0, p.StartValue - 1, p.IsPositiveRight), 
+                    new Extent(p.EndValue + 1, long.MaxValue, p.IsPositiveRight) };
             }
         }
         public static Extent[] Transfer(Extent p)
@@ -225,7 +238,7 @@ namespace SymNum.Patterns
             }
             else
             {
-                return new Extent[] { new Extent(p.StartValue, q.StartValue - 1) };
+                return new Extent[] { new Extent(p.StartValue, q.StartValue - 1, q.IsPositiveRight) };
             }
         }
         public static Extent[] Transfer_A(Extent p, Extent q)
@@ -240,7 +253,7 @@ namespace SymNum.Patterns
             }
             else
             {
-                return new Extent[] { new Extent(q.StartValue, p.StartValue - 1) };
+                return new Extent[] { new Extent(q.StartValue, p.StartValue - 1, q.IsPositiveRight) };
             }
         }
         public static Extent[] Transfer_B(Extent p, Extent q)
@@ -326,7 +339,7 @@ namespace SymNum.Patterns
             }
             else
             {
-                return new Extent[] { new Extent(MaxStart(p, q), MinEnd(p, q)) };
+                return new Extent[] { new Extent(MaxStart(p, q), MinEnd(p, q), q.IsPositiveRight) };
             }
         }
         public static Extent[] Not_A(Extent p, Extent q)
@@ -341,7 +354,7 @@ namespace SymNum.Patterns
             }
             else
             {
-                return new Extent[] { new Extent(MaxStart(p, q), MinEnd(p, q)) };
+                return new Extent[] { new Extent(MaxStart(p, q), MinEnd(p, q), q.IsPositiveRight) };
             }
         }
         public static Extent[] Nandx(Extent p, Extent q)
@@ -352,7 +365,7 @@ namespace SymNum.Patterns
             if (andResult.Length == 0)
             {
                 // If the Extents do not intersect, return the union of the Extents as a single Extent
-                result.Add(new Extent(MinStart(p, q), MaxEnd(p, q)));
+                result.Add(new Extent(MinStart(p, q), MaxEnd(p, q), q.IsPositiveRight));
             }
             else
             {
@@ -376,8 +389,8 @@ namespace SymNum.Patterns
             {
                 result = new Extent[]
                 {
-                new Extent(long.MinValue, overlap.StartValue),
-                new Extent(overlap.EndValue, long.MaxValue)
+                new Extent(long.MinValue, overlap.StartValue, q.IsPositiveRight),
+                new Extent(overlap.EndValue, long.MaxValue, q.IsPositiveRight)
                 };
             }
             return result;
@@ -427,25 +440,29 @@ namespace SymNum.Patterns
         public long Always(long a, long b) { return -1; }
 
 
-        public static Extent CreateZeroExtent(long ticks) { return new Extent(0, ticks); }
-        public static Extent CreateBalancedExtent(long halfTicks) { return new Extent(-halfTicks, halfTicks); }
-        public static Extent MinMaxExtent => new Extent(long.MinValue, long.MaxValue);
-        public static Extent OneExtent => new Extent(0, 1);
-        public static Extent UpMaxExtent => new Extent(0, long.MaxValue);
+        public static Extent CreateZeroExtent(long ticks) { return new Extent(0, ticks, true); }
+        public static Extent CreateBalancedExtent(long halfTicks) { return new Extent(-halfTicks, halfTicks, true); }
+        public static Extent MinMaxExtent => new Extent(long.MinValue, long.MaxValue, true);
+        public static Extent OneExtent => new Extent(0, 1, true);
+        public static Extent UpMaxExtent => new Extent(0, long.MaxValue, true);
 
         /// <summary>
         /// Will be true other than MaskedFocals, where a bool operation can start with false (like with an empty result).
         /// </summary>
         public BoolState StartState { get; protected set; } = BoolState.True;
 
-        public virtual long[] GetPositions() => (long[])_samples.Clone();
+        public virtual long[] GetPositions() => [StartValue, EndValue];
         public virtual void SetPosition(int index, long value)
-        {
-            if (index >= 0 && index < _samples.Length)
-            {
-                _samples[index] = value;
-            }
-        }
+		{
+			if (index == 0)
+			{
+				StartValue = value;
+			}
+			else if (index == 1)
+			{
+				EndValue = value;
+			}
+		}
         public virtual void ClearInternalPositions() { }
         /// <summary>
         /// Creates table with all stops, giving left and right position states for each stop.
@@ -510,7 +527,7 @@ namespace SymNum.Patterns
         #region Equality
         public virtual Extent Clone()
         {
-            return new Extent(StartValue, EndValue);
+            return new Extent(StartValue, EndValue, IsPositiveRight);
         }
         public override bool Equals(object? obj)
         {
@@ -518,7 +535,7 @@ namespace SymNum.Patterns
         }
         public bool Equals(Extent? value)
         {
-            return ReferenceEquals(this, value) || StartValue.Equals(value.StartValue) && EndValue.Equals(value.EndValue);
+            return ReferenceEquals(this, value) || StartValue.Equals(value?.StartValue ?? 0) && EndValue.Equals(value?.EndValue ?? 0);
         }
 
         public static bool operator ==(Extent? a, Extent? b)

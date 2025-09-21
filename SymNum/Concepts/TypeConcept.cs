@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SymNum.Patterns;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace SymNum.Concepts
 {
 	public class TypeConcept
 	{
-		public Dictionary<DenominatorAspect, RelationEquation> AspectRelations { get; set; } = new Dictionary<DenominatorAspect, RelationEquation>();
+		public Dictionary<PropertyUnit, Equation> AspectRelations { get; set; } = new ();
 	}
 }
