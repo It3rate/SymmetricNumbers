@@ -11,6 +11,12 @@ namespace SymNum.Patterns
 	/// and the numerator is a segment not fixed at zero.
 	/// </summary>
 	public class ComplexNumber : NumberBase
-	{
-	}
+    {
+        public ComplexNumber(long resolution, long startValue, long endValue)
+        {
+            Numerator = new Extent(-resolution, endValue);
+            Denominator = new Extent(startValue, resolution);
+        }
+        public ComplexNumber(long resolution, float startValue, float endValue) : this(resolution, (long)(startValue / resolution), (long)(endValue / resolution)) { }  
+    }
 }
