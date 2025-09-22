@@ -75,6 +75,8 @@ namespace SymNum.Patterns
             get => _endValue ?? (IsPositiveRight ? long.MaxValue : long.MinValue);
             set => _endValue = value;
         }
+        public long EndElseStartValue => _endValue ?? StartValue;
+        public long StartElseEndValue => _startValue ?? EndValue;
         public bool HasStartValue => _startValue.HasValue;
         public bool HasEndValue => _endValue.HasValue;
         public bool HasTwoValues => HasStartValue && HasEndValue;

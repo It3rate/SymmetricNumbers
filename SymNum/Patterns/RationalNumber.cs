@@ -15,7 +15,7 @@ public class RationalNumber : NumberBase
     public long TickCount => Numerator.EndValue;
     public long Resolution{
         get => Denominator.EndValue;
-        set
+        protected set
         {
             Numerator.EndValue = (long)(FloatValue * value);
             Denominator.EndValue = value;
@@ -24,7 +24,7 @@ public class RationalNumber : NumberBase
     public float FloatValue
     {
         get =>  (float)Numerator.EndValue / Denominator.EndValue;
-        set => Numerator.EndValue = (long)(value * Resolution);
+        protected set => Numerator.EndValue = (long)(value * Resolution);
     }
     public RationalNumber(long resolution, long value)
     {
@@ -33,4 +33,16 @@ public class RationalNumber : NumberBase
     }
     public RationalNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
 
+}
+public class RationalValue : NumberValue
+{
+    public RationalNumber Reference { get; }
+    public float Value => Reference.FloatValue;
+    public override long UpResolution => Reference.Denominator.EndValue;
+    public override long DownResolution => 0;
+
+    public RationalValue(RationalNumber rationalNumber) : base(rationalNumber)
+    {
+        Reference = rationalNumber;
+    }
 }

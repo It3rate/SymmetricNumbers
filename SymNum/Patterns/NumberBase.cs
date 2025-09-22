@@ -43,4 +43,43 @@ public class NumberBase
     public Extent Numerator { get; protected set; }
     public Extent Denominator { get; protected set; }
 
+    // this might be best to use floats as external facing values - it can stil use internal resolution and polarities,
+    // but the outside world is floats (and ratios still need to be represented somehow).
+    // That said, all training and inference should be on these types of numbers.
+
+    /// <summary>
+    /// UpValue is the positive polarity value, up vs down, right vs left, large vs small etc.
+    /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
+    /// </summary>
+    public float UpValue => Numerator.EndValue / (float)Denominator.EndValue;
+    /// <summary>
+    /// DownValue is the negative polarity value, down vs up, left vs right, small vs large etc.
+    /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
+    /// </summary>
+    public float DownValue => Numerator.StartValue / (float)Denominator.StartValue;
+
+}
+
+public abstract class NumberValue
+{
+    public NumberBase NumberReference { get; }
+    public abstract long UpResolution { get; }
+    public abstract long DownResolution { get; }
+    public NumberValue(NumberBase number)
+    {
+        NumberReference = number;
+    }
+}
+
+public class AnnotatedFloat
+{
+    public float Value { get; set; }
+    public float Resolution { get; set; }
+    public bool IsPositiveRight { get; set; }
+    public AnnotatedFloat(float value, float resolution, bool isPositiveRight)
+    {
+        Value = value;
+        Resolution = resolution;
+        IsPositiveRight = isPositiveRight;
+    }
 }

@@ -22,3 +22,17 @@ public class RatioNumber : NumberBase
 		Denominator = new Extent(startPoint, endPoint, isPositiveRight);
 	}
 }
+public class RatioValue : NumberValue
+{
+    public NumberBase Reference { get; }
+    public float Value => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
+    public override long UpResolution => Math.Abs(Reference.Denominator.EndValue - Reference.Denominator.StartValue);
+    public override long DownResolution => UpResolution;
+    private long StartPosition => Reference.Denominator.StartValue;
+    private long MidPosition => Reference.Numerator.EndElseStartValue;
+    private long EndPosition => Reference.Denominator.EndValue;
+    public RatioValue(NumberBase baseNumber) : base(baseNumber)
+    {
+        Reference = baseNumber;
+    }
+}
