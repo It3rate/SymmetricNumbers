@@ -65,6 +65,7 @@ public abstract class NumberValue
     public NumberBase NumberReference { get; }
     public abstract long UpResolution { get; }
     public abstract long DownResolution { get; }
+
     public NumberValue(NumberBase number)
     {
         NumberReference = number;
