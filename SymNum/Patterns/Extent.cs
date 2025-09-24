@@ -54,6 +54,11 @@ namespace SymNum.Patterns
         // So Extents can also be purely calculated or stored as an equation.
         // The space of operations that turn a list of samples into equations is anything that separates random from non-random.
         // A list of samples may well be random, but an equation for them assumes they aren't.
+
+        // more likely this isn't needed, and the polarity is set by its position in a number. 
+        // probably there is a base array that is a number and it can have 1,2,3,4,5 or more values. These classes then take that 
+        // array, sized as need be, and interpret it. Positive is always top right, i unit is top left, zeropoint is fifth etc.
+
         public bool IsPositiveRight { get; protected set; } = true;
         public bool IsPositiveLeft => !IsPositiveRight;
         /// <summary>

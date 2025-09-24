@@ -24,6 +24,16 @@ namespace SymNum.Patterns;
 //   If you calculate the implications of these transformations,
 //   you will get all symmetries, and contraditions the break into higher dimensions.
 
+// A number's resolution can be a threshold or an average. This matters a lot when considering the meaning of 0 in a fraction.
+// If 2 means an unknown between 1.5 and 2.5, then 2*2 is between 2.25 and 6.25
+// If 2 means 2.0 or more, but less than 3.0, then 2*2 is between 4.0 and 9.0
+// With averages, 3 / 0 (where zero has a value but it's below your resolution), 0 is between -0.5 and 0.5, so 3 / 0 is greater than 6, or less than -6.
+// This is how you can get inverted ranges, a not operation (the whole numberline except some section)
+// Inverting the average interpretation (0/3) gets the inverse, a range between -6 and 6.
+// With thresholds you can get one sided ranges. If 0 is greater than zero and less than 1, then 3/0 is just greater than 3.
+// The issue with thresholds is it requires a +0 and -0. There are two edges between -1 and 1, but only one node.
+// This implies than resolution for numbers has to specify how it obtains it's resolution if you want to scale those values, which makes sense.
+
 /// <summary>
 /// There are many types of numbers, they just mean measures calibrated in some way. 
 /// This is the base class which can grow into numbers, complex numbers, symmetric numbers, dynamic zero point numbers,
@@ -57,6 +67,21 @@ public class NumberBase
     /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
     /// </summary>
     public float DownValue => Numerator.StartValue / (float)Denominator.StartValue;
+
+
+
+
+
+
+	//public int AbsDirection => HasTwoValues ? (EndValue > StartValue ? 1 : (EndValue < StartValue ? -1 : 0)) : 0;
+	//public bool IsPositiveDirection => IsPositiveRight ? AbsDirection > 0 : AbsDirection < 0;
+	//public bool IsNegativeDirection => !IsPositiveDirection;
+	//public bool IsAmbiguousDirection => AbsDirection == 0;
+	//public long Min => StartValue <= EndValue ? StartValue : EndValue;
+	//public long Max => StartValue >= EndValue ? StartValue : EndValue;
+	//public long DirectionalMin => IsPositiveDirection ? Min : Max;
+	//public long DirectionalMax => IsPositiveDirection ? Max : Min;
+	//public bool CanHaveDirection => HasTwoValues;
 
 }
 
