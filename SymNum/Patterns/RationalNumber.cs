@@ -28,8 +28,8 @@ public class RationalNumber : NumberBase
     }
     public RationalNumber(long resolution, long value)
     {
-        Numerator = new Extent(0, value, true);
-        Denominator = new Extent(0, resolution, true);
+        Numerator = new Extent(0, value);
+        Denominator = new Extent(0, resolution);
     }
     public RationalNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
 

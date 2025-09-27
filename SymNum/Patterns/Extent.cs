@@ -42,8 +42,8 @@ namespace SymNum.Patterns
 	/// The ultimate primitive here is a long, but it comes with a lot of baggage that doesn't apply. 
 	/// You can have a single measure instead of a span, but then the startpoint is also the endpoint (both are true statements).
     /// </summary>
-    public class Extent // was Focal in previous versions
-    {
+    public class Extent : IExtent // was Focal in previous versions
+	{
         // The reason _positions is an array is there is gradient between an uncalibrated value and an equation.
         // A low res value is like a point, looking closer a range, closer yet might be a curve, later a repeating wave, 
         // and ultimately a specific shape. To separate values from equations is to suggest there isn't a morphism
@@ -68,26 +68,20 @@ namespace SymNum.Patterns
         public bool IsInteriorFacing { get; protected set; } = true;
         public bool IsExteriorFacing => !IsInteriorFacing;
 
-        protected long? _startValue;
-        protected long? _endValue;
+        protected long _startValue;
         public long StartValue
         {
-            get => _startValue ?? (IsPositiveRight ? long.MinValue : long.MaxValue);
+            get => _startValue;
             set => _startValue = value;
         }
+        protected long _endValue;
         public long EndValue
         {
-            get => _endValue ?? (IsPositiveRight ? long.MaxValue : long.MinValue);
+            get => _endValue;
             set => _endValue = value;
         }
-        public long EndElseStartValue => _endValue ?? StartValue;
-        public long StartElseEndValue => _startValue ?? EndValue;
-        public bool HasStartValue => _startValue.HasValue;
-        public bool HasEndValue => _endValue.HasValue;
-        public bool HasTwoValues => HasStartValue && HasEndValue;
-        public int ValueCount => (HasStartValue ? 1 : 0) + (HasEndValue ? 1 : 0);
 
-        public int AbsDirection => HasTwoValues ? (EndValue > StartValue ? 1 : (EndValue < StartValue ? -1 : 0)) : 0;
+        public int AbsDirection => EndValue > StartValue ? 1 : (EndValue < StartValue ? -1 : 0);
         public bool IsPositiveDirection => IsPositiveRight ? AbsDirection > 0 : AbsDirection < 0;
         public bool IsNegativeDirection => !IsPositiveDirection;
         public bool IsAmbiguousDirection => AbsDirection == 0;
@@ -95,44 +89,29 @@ namespace SymNum.Patterns
         public long Max => StartValue >= EndValue ? StartValue : EndValue;
         public long DirectionalMin => IsPositiveDirection ? Min : Max;
         public long DirectionalMax => IsPositiveDirection ? Max : Min;
-        public bool CanHaveDirection => HasTwoValues;
 
         public long LengthInTicks => EndValue - StartValue;
         public long AbsLengthInTicks => Math.Abs(LengthInTicks);
         public long NonZeroLength => LengthInTicks == 0 ? 1 : LengthInTicks;
 
-		public Extent(long start, long end, bool isPositiveRight)
+		public Extent(long start, long end)
 		{
 			_startValue = start;
 			_endValue = end;
-
-			IsPositiveRight = isPositiveRight;
-		}
-		public Extent(bool isPositiveRight, long end)
-		{
-			IsPositiveRight = isPositiveRight;
-			_startValue = null;
-			_endValue = end;
-		}
-		public Extent(long start, bool isPositiveRight)
-		{
-			IsPositiveRight = isPositiveRight;
-			_startValue = start;
-			_endValue = null;
 		}
 		public virtual void Reset(Extent extent)
         {
             _startValue = extent._startValue;
             _endValue = extent._endValue;
         }
-        public virtual void Reset(long? start, long? end)
+        public virtual void Reset(long start, long end)
         {
             _startValue = start;
             _endValue = end;
         }
 
         public virtual long InvertedEndPosition => StartValue - LengthInTicks;
-        public Extent Negated => new Extent(-StartValue, -EndValue, IsPositiveRight);
+        public Extent Negated => new Extent(-StartValue, -EndValue);
         public void MirrorAroundStart()
         {
             EndValue = StartValue - LengthInTicks;
@@ -180,13 +159,13 @@ namespace SymNum.Patterns
         {
             var start = Math.Max(p.Min, q.Min);
             var end = Math.Min(p.Max, q.Max);
-            return start >= end ? new Extent(0, 0, q.IsPositiveRight) : new Extent(start, end, q.IsPositiveRight);
+            return start >= end ? new Extent(0, 0) : new Extent(start, end);
         }
         public static Extent Join(Extent p, Extent q)
         {
             var start = Math.Min(p.Min, q.Min);
             var end = Math.Max(p.Max, q.Max);
-            return new Extent(start, end, q.IsPositiveRight);
+            return new Extent(start, end);
         }
 
         // Q. Should direction be preserved in a bool operation?
@@ -204,19 +183,19 @@ namespace SymNum.Patterns
             // If p starts at the beginning of the time frame and ends before the end, the "not A" relationship consists of a single interval from p.EndTickPosition + 1 to the end of the time frame
             else if (p.StartValue == 0)
             {
-                return new Extent[] { new Extent(p.EndValue + 1, long.MaxValue, p.IsPositiveRight) };
+                return new Extent[] { new Extent(p.EndValue + 1, long.MaxValue) };
             }
             // If p starts after the beginning of the time frame and ends at the end, the "not A" relationship consists of a single interval from the beginning of the time frame to p.StartTickPosition - 1
             else if (p.EndValue == long.MaxValue)
             {
-                return new Extent[] { new Extent(0, p.StartValue - 1, p.IsPositiveRight) };
+                return new Extent[] { new Extent(0, p.StartValue - 1) };
             }
             // If p starts and ends within the time frame, the "not A" relationship consists of two intervals: from the beginning of the time frame to p.StartTickPosition - 1, and from p.EndTickPosition + 1 to the end of the time frame
             else
             {
                 return new Extent[] {
-                    new Extent(0, p.StartValue - 1, p.IsPositiveRight), 
-                    new Extent(p.EndValue + 1, long.MaxValue, p.IsPositiveRight) };
+                    new Extent(0, p.StartValue - 1), 
+                    new Extent(p.EndValue + 1, long.MaxValue) };
             }
         }
         public static Extent[] Transfer(Extent p)
@@ -245,7 +224,7 @@ namespace SymNum.Patterns
             }
             else
             {
-                return new Extent[] { new Extent(p.StartValue, q.StartValue - 1, q.IsPositiveRight) };
+                return new Extent[] { new Extent(p.StartValue, q.StartValue - 1) };
             }
         }
         public static Extent[] Transfer_A(Extent p, Extent q)
@@ -260,7 +239,7 @@ namespace SymNum.Patterns
             }
             else
             {
-                return new Extent[] { new Extent(q.StartValue, p.StartValue - 1, q.IsPositiveRight) };
+                return new Extent[] { new Extent(q.StartValue, p.StartValue - 1) };
             }
         }
         public static Extent[] Transfer_B(Extent p, Extent q)
@@ -346,7 +325,7 @@ namespace SymNum.Patterns
             }
             else
             {
-                return new Extent[] { new Extent(MaxStart(p, q), MinEnd(p, q), q.IsPositiveRight) };
+                return new Extent[] { new Extent(MaxStart(p, q), MinEnd(p, q)) };
             }
         }
         public static Extent[] Not_A(Extent p, Extent q)
@@ -361,7 +340,7 @@ namespace SymNum.Patterns
             }
             else
             {
-                return new Extent[] { new Extent(MaxStart(p, q), MinEnd(p, q), q.IsPositiveRight) };
+                return new Extent[] { new Extent(MaxStart(p, q), MinEnd(p, q)) };
             }
         }
         public static Extent[] Nandx(Extent p, Extent q)
@@ -372,7 +351,7 @@ namespace SymNum.Patterns
             if (andResult.Length == 0)
             {
                 // If the Extents do not intersect, return the union of the Extents as a single Extent
-                result.Add(new Extent(MinStart(p, q), MaxEnd(p, q), q.IsPositiveRight));
+                result.Add(new Extent(MinStart(p, q), MaxEnd(p, q)));
             }
             else
             {
@@ -396,8 +375,8 @@ namespace SymNum.Patterns
             {
                 result = new Extent[]
                 {
-                new Extent(long.MinValue, overlap.StartValue, q.IsPositiveRight),
-                new Extent(overlap.EndValue, long.MaxValue, q.IsPositiveRight)
+                new Extent(long.MinValue, overlap.StartValue),
+                new Extent(overlap.EndValue, long.MaxValue)
                 };
             }
             return result;
@@ -447,11 +426,11 @@ namespace SymNum.Patterns
         public long Always(long a, long b) { return -1; }
 
 
-        public static Extent CreateZeroExtent(long ticks) { return new Extent(0, ticks, true); }
-        public static Extent CreateBalancedExtent(long halfTicks) { return new Extent(-halfTicks, halfTicks, true); }
-        public static Extent MinMaxExtent => new Extent(long.MinValue, long.MaxValue, true);
-        public static Extent OneExtent => new Extent(0, 1, true);
-        public static Extent UpMaxExtent => new Extent(0, long.MaxValue, true);
+        public static Extent CreateZeroExtent(long ticks) { return new Extent(0, ticks); }
+        public static Extent CreateBalancedExtent(long halfTicks) { return new Extent(-halfTicks, halfTicks); }
+        public static Extent MinMaxExtent => new Extent(long.MinValue, long.MaxValue);
+        public static Extent OneExtent => new Extent(0, 1);
+        public static Extent UpMaxExtent => new Extent(0, long.MaxValue);
 
         /// <summary>
         /// Will be true other than MaskedFocals, where a bool operation can start with false (like with an empty result).
@@ -534,7 +513,7 @@ namespace SymNum.Patterns
         #region Equality
         public virtual Extent Clone()
         {
-            return new Extent(StartValue, EndValue, IsPositiveRight);
+            return new Extent(StartValue, EndValue);
         }
         public override bool Equals(object? obj)
         {

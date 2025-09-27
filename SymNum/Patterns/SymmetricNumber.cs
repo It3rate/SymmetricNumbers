@@ -57,8 +57,8 @@ public class SymmetricNumber : NumberBase
 
     public SymmetricNumber(long tr, long tl, long br, long bl)
     {
-        Numerator = new Extent(tl, tr, false); // there isn't really a positive right or left as all values are relative to each other.
-        Denominator = new Extent(bl, br, true);
+        Numerator = new Extent(tl, tr); // there isn't really a positive right or left as all values are relative to each other.
+        Denominator = new Extent(bl, br);
     }
     public SymmetricValue SymmetricValue => new SymmetricValue(this);
 }
@@ -69,7 +69,7 @@ public class SymmetricValue : NumberValue
     public override long UpResolution => Reference.Denominator.EndValue;
     public override long DownResolution => Reference.Numerator.StartValue;
     private long StartPosition => Reference.Denominator.StartValue;
-    private long MidPosition => Reference.Numerator.EndElseStartValue;
+    private long MidPosition => Reference.Numerator.EndValue;
     private long EndPosition => Reference.Denominator.EndValue;
     public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
     {

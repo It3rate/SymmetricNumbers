@@ -12,26 +12,27 @@ using System.Threading.Tasks;
 /// </summary>
 public class RatioNumber : NumberBase
 {
+    public PartialExtent PartialNumerator { get; private set; }
 	public long StartPosition => Denominator.StartValue;
 	public long MidPosition => Numerator.EndValue;
 	public long EndPosition => Denominator.EndValue;
 	public float FloatValue => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
 	public RatioNumber(long startPoint, long midPoint, long endPoint, bool isPositiveRight)
 	{
-		Numerator = new Extent(isPositiveRight, midPoint);
-		Denominator = new Extent(startPoint, endPoint, isPositiveRight);
+		PartialNumerator = new PartialExtent(midPoint, false);
+		Denominator = new Extent(startPoint, endPoint);
 	}
 }
 public class RatioValue : NumberValue
 {
-    public NumberBase Reference { get; }
+    public RatioNumber Reference { get; }
     public float Value => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
     public override long UpResolution => Math.Abs(Reference.Denominator.EndValue - Reference.Denominator.StartValue);
     public override long DownResolution => UpResolution;
     private long StartPosition => Reference.Denominator.StartValue;
-    private long MidPosition => Reference.Numerator.EndElseStartValue;
+    private long MidPosition => Reference.PartialNumerator.EndElseStartValue;
     private long EndPosition => Reference.Denominator.EndValue;
-    public RatioValue(NumberBase baseNumber) : base(baseNumber)
+    public RatioValue(RatioNumber baseNumber) : base(baseNumber)
     {
         Reference = baseNumber;
     }
