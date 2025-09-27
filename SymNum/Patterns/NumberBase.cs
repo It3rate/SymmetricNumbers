@@ -50,23 +50,52 @@ public class NumberBase
     /// An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
     /// but they are all 'numbers' for lack of a better word.
     /// </summary>
-    public Extent Numerator { get; protected set; }
-    public Extent Denominator { get; protected set; }
+    public Extent RightExtent { get; protected set; }
+    public Extent LeftExtent { get; protected set; }
 
-    // this might be best to use floats as external facing values - it can stil use internal resolution and polarities,
-    // but the outside world is floats (and ratios still need to be represented somehow).
-    // That said, all training and inference should be on these types of numbers.
+	public long RightMeasure 
+	{ 
+		get => RightExtent.StartPosition;
+		set => RightExtent.StartPosition = value; 
+	}
+	public long RightUnit
+	{
+		get => RightExtent.EndPosition;
+		set => RightExtent.EndPosition = value;
+	}
+	public long LeftMeasure
+	{
+		get => LeftExtent.EndPosition;
+		set => LeftExtent.EndPosition = value;
+	}
+	public long LeftUnit
+	{
+		get => LeftExtent.StartPosition;
+		set => LeftExtent.StartPosition = value;
+	}
 
-    /// <summary>
-    /// UpValue is the positive polarity value, up vs down, right vs left, large vs small etc.
-    /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
-    /// </summary>
-    public float UpValue => Numerator.EndValue / (float)Denominator.EndValue;
-    /// <summary>
-    /// DownValue is the negative polarity value, down vs up, left vs right, small vs large etc.
-    /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
-    /// </summary>
-    public float DownValue => Numerator.StartValue / (float)Denominator.StartValue;
+	// this might be best to use floats as external facing values - it can stil use internal resolution and polarities,
+	// but the outside world is floats (and ratios still need to be represented somehow).
+	// That said, all training and inference should be on these types of numbers.
+
+	/// <summary>
+	/// RightValue is the positive polarity value, up vs down, right vs left, large vs small etc.
+	/// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
+	/// </summary>
+	public float RightValue
+	{
+		get => RightMeasure / (float)RightUnit;
+		set => RightMeasure = (long)(value * RightUnit);
+	}
+	/// <summary>
+	/// LeftValue is the negative polarity value, down vs up, left vs right, small vs large etc.
+	/// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
+	/// </summary>
+	public float LeftValue
+	{
+		get => LeftMeasure / (float)LeftUnit;
+		set => LeftMeasure = (long)(value * LeftUnit);
+	}
 
 
 
@@ -88,8 +117,8 @@ public class NumberBase
 public abstract class NumberValue
 {
     public NumberBase NumberReference { get; }
-    public abstract long UpResolution { get; }
-    public abstract long DownResolution { get; }
+    public abstract long RightResolution { get; }
+    public abstract long LeftResolution { get; }
 
     public NumberValue(NumberBase number)
     {

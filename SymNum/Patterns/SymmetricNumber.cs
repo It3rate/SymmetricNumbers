@@ -16,15 +16,11 @@ namespace SymNum.Patterns;
 /// </summary>
 public class SymmetricNumber : NumberBase
 {
-    public long UpPosition => Numerator.EndValue;
-    public long DownPosition => Denominator.StartValue;
-    public long UpUnit => Denominator.EndValue;
-    public long DownUnit => Numerator.StartValue;
 
-    public bool HasTR => UpPosition != 0;
-    public bool HasTL => DownUnit != 0;
-    public bool HasBR => UpUnit != 0;
-    public bool HasBL => DownPosition != 0;
+    public bool HasTR => RightMeasure != 0;
+    public bool HasTL => LeftUnit != 0;
+    public bool HasBR => RightUnit != 0;
+    public bool HasBL => LeftMeasure != 0;
     private int _totalNonZero => (HasTR ? 1 : 0) + (HasTL ? 1 : 0) + (HasBR ? 1 : 0) + (HasBL ? 1 : 0);
 
     public bool IsHalt => _totalNonZero == 0; // empty
@@ -57,8 +53,8 @@ public class SymmetricNumber : NumberBase
 
     public SymmetricNumber(long tr, long tl, long br, long bl)
     {
-        Numerator = new Extent(tl, tr); // there isn't really a positive right or left as all values are relative to each other.
-        Denominator = new Extent(bl, br);
+        RightExtent = new Extent(tl, tr); // there isn't really a positive right or left as all values are relative to each other.
+        LeftExtent = new Extent(bl, br);
     }
     public SymmetricValue SymmetricValue => new SymmetricValue(this);
 }
@@ -66,11 +62,11 @@ public class SymmetricValue : NumberValue
 {
     public SymmetricNumber Reference { get; }
     public float Value => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
-    public override long UpResolution => Reference.Denominator.EndValue;
-    public override long DownResolution => Reference.Numerator.StartValue;
-    private long StartPosition => Reference.Denominator.StartValue;
-    private long MidPosition => Reference.Numerator.EndValue;
-    private long EndPosition => Reference.Denominator.EndValue;
+    public override long RightResolution => Reference.LeftExtent.EndPosition;
+    public override long LeftResolution => Reference.RightExtent.StartPosition;
+    private long StartPosition => Reference.LeftExtent.StartPosition;
+    private long MidPosition => Reference.RightExtent.EndPosition;
+    private long EndPosition => Reference.LeftExtent.EndPosition;
     public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
     {
         Reference = baseNumber;

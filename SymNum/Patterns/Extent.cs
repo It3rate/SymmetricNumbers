@@ -68,63 +68,63 @@ namespace SymNum.Patterns
         public bool IsInteriorFacing { get; protected set; } = true;
         public bool IsExteriorFacing => !IsInteriorFacing;
 
-        protected long _startValue;
-        public long StartValue
+        protected long _startPosition;
+        public long StartPosition
         {
-            get => _startValue;
-            set => _startValue = value;
+            get => _startPosition;
+            set => _startPosition = value;
         }
-        protected long _endValue;
-        public long EndValue
+        protected long _endPosition;
+        public long EndPosition
         {
-            get => _endValue;
-            set => _endValue = value;
+            get => _endPosition;
+            set => _endPosition = value;
         }
 
-        public int AbsDirection => EndValue > StartValue ? 1 : (EndValue < StartValue ? -1 : 0);
+        public int AbsDirection => EndPosition > StartPosition ? 1 : (EndPosition < StartPosition ? -1 : 0);
         public bool IsPositiveDirection => IsPositiveRight ? AbsDirection > 0 : AbsDirection < 0;
         public bool IsNegativeDirection => !IsPositiveDirection;
         public bool IsAmbiguousDirection => AbsDirection == 0;
-        public long Min => StartValue <= EndValue ? StartValue : EndValue; 
-        public long Max => StartValue >= EndValue ? StartValue : EndValue;
+        public long Min => StartPosition <= EndPosition ? StartPosition : EndPosition; 
+        public long Max => StartPosition >= EndPosition ? StartPosition : EndPosition;
         public long DirectionalMin => IsPositiveDirection ? Min : Max;
         public long DirectionalMax => IsPositiveDirection ? Max : Min;
 
-        public long LengthInTicks => EndValue - StartValue;
+        public long LengthInTicks => EndPosition - StartPosition;
         public long AbsLengthInTicks => Math.Abs(LengthInTicks);
         public long NonZeroLength => LengthInTicks == 0 ? 1 : LengthInTicks;
 
 		public Extent(long start, long end)
 		{
-			_startValue = start;
-			_endValue = end;
+			_startPosition = start;
+			_endPosition = end;
 		}
 		public virtual void Reset(Extent extent)
         {
-            _startValue = extent._startValue;
-            _endValue = extent._endValue;
+            _startPosition = extent._startPosition;
+            _endPosition = extent._endPosition;
         }
         public virtual void Reset(long start, long end)
         {
-            _startValue = start;
-            _endValue = end;
+            _startPosition = start;
+            _endPosition = end;
         }
 
-        public virtual long InvertedEndPosition => StartValue - LengthInTicks;
-        public Extent Negated => new Extent(-StartValue, -EndValue);
+        public virtual long InvertedEndPosition => StartPosition - LengthInTicks;
+        public Extent Negated => new Extent(-StartPosition, -EndPosition);
         public void MirrorAroundStart()
         {
-            EndValue = StartValue - LengthInTicks;
+            EndPosition = StartPosition - LengthInTicks;
         }
         public void Reverse()
         {
-            var temp = StartValue;
-            StartValue = EndValue;
-            EndValue = temp;
+            var temp = StartPosition;
+            StartPosition = EndPosition;
+            EndPosition = temp;
         }
         public void MakeForward()
         {
-            if (EndValue < StartValue)
+            if (EndPosition < StartPosition)
             {
                 Reverse();
             }
@@ -133,17 +133,17 @@ namespace SymNum.Patterns
 
         public bool Touches(Extent q) => Touches(this, q);
 
-        public static long MinValue(Extent p, Extent q) => Math.Min(p.Min, q.Min);
-        public static long MaxValue(Extent p, Extent q) => Math.Max(p.Max, q.Max);
-        public static long MinStart(Extent p, Extent q) => Math.Min(p.StartValue, q.StartValue);
-        public static long MaxStart(Extent p, Extent q) => Math.Max(p.StartValue, q.StartValue);
-        public static long MinEnd(Extent p, Extent q) => Math.Min(p.EndValue, q.EndValue);
-        public static long MaxEnd(Extent p, Extent q) => Math.Max(p.EndValue, q.EndValue);
+        public static long MinPosition(Extent p, Extent q) => Math.Min(p.Min, q.Min);
+        public static long MaxPosition(Extent p, Extent q) => Math.Max(p.Max, q.Max);
+        public static long MinStart(Extent p, Extent q) => Math.Min(p.StartPosition, q.StartPosition);
+        public static long MaxStart(Extent p, Extent q) => Math.Max(p.StartPosition, q.StartPosition);
+        public static long MinEnd(Extent p, Extent q) => Math.Min(p.EndPosition, q.EndPosition);
+        public static long MaxEnd(Extent p, Extent q) => Math.Max(p.EndPosition, q.EndPosition);
 
         /// <summary>
         /// Shares an endpoint, but no overlap (meaning can only share one endpoint).
         /// </summary>
-        public static bool Touches(Extent p, Extent q) => p.EndValue == q.StartValue || p.StartValue == q.EndValue;
+        public static bool Touches(Extent p, Extent q) => p.EndPosition == q.StartPosition || p.StartPosition == q.EndPosition;
         public static Extent? Intersection(Extent p, Extent q)
         {
             Extent result = null;
@@ -176,26 +176,26 @@ namespace SymNum.Patterns
         public static Extent[] UnaryNot(Extent p)
         {
             // If p starts at the beginning of the time frame and ends at the end, A is always true and the "not A" relationship is empty
-            if (p.StartValue == 0 && p.EndValue == long.MaxValue)
+            if (p.StartPosition == 0 && p.EndPosition == long.MaxValue)
             {
                 return new Extent[] { };
             }
             // If p starts at the beginning of the time frame and ends before the end, the "not A" relationship consists of a single interval from p.EndTickPosition + 1 to the end of the time frame
-            else if (p.StartValue == 0)
+            else if (p.StartPosition == 0)
             {
-                return new Extent[] { new Extent(p.EndValue + 1, long.MaxValue) };
+                return new Extent[] { new Extent(p.EndPosition + 1, long.MaxValue) };
             }
             // If p starts after the beginning of the time frame and ends at the end, the "not A" relationship consists of a single interval from the beginning of the time frame to p.StartTickPosition - 1
-            else if (p.EndValue == long.MaxValue)
+            else if (p.EndPosition == long.MaxValue)
             {
-                return new Extent[] { new Extent(0, p.StartValue - 1) };
+                return new Extent[] { new Extent(0, p.StartPosition - 1) };
             }
             // If p starts and ends within the time frame, the "not A" relationship consists of two intervals: from the beginning of the time frame to p.StartTickPosition - 1, and from p.EndTickPosition + 1 to the end of the time frame
             else
             {
                 return new Extent[] {
-                    new Extent(0, p.StartValue - 1), 
-                    new Extent(p.EndValue + 1, long.MaxValue) };
+                    new Extent(0, p.StartPosition - 1), 
+                    new Extent(p.EndPosition + 1, long.MaxValue) };
             }
         }
         public static Extent[] Transfer(Extent p)
@@ -218,13 +218,13 @@ namespace SymNum.Patterns
         }
         public static Extent[] B_Inhibits_A(Extent p, Extent q)
         {
-            if (p.EndValue < q.StartValue - 1 || q.EndValue < p.StartValue - 1)
+            if (p.EndPosition < q.StartPosition - 1 || q.EndPosition < p.StartPosition - 1)
             {
                 return new Extent[] { p };
             }
             else
             {
-                return new Extent[] { new Extent(p.StartValue, q.StartValue - 1) };
+                return new Extent[] { new Extent(p.StartPosition, q.StartPosition - 1) };
             }
         }
         public static Extent[] Transfer_A(Extent p, Extent q)
@@ -233,13 +233,13 @@ namespace SymNum.Patterns
         }
         public static Extent[] A_Inhibits_B(Extent p, Extent q)
         {
-            if (p.EndValue < q.StartValue - 1 || q.EndValue < p.StartValue - 1)
+            if (p.EndPosition < q.StartPosition - 1 || q.EndPosition < p.StartPosition - 1)
             {
                 return new Extent[] { q };
             }
             else
             {
-                return new Extent[] { new Extent(q.StartValue, p.StartValue - 1) };
+                return new Extent[] { new Extent(q.StartPosition, p.StartPosition - 1) };
             }
         }
         public static Extent[] Transfer_B(Extent p, Extent q)
@@ -319,7 +319,7 @@ namespace SymNum.Patterns
         }
         public static Extent[] B_Implies_A(Extent p, Extent q)
         {
-            if (p.EndValue < q.StartValue - 1 || q.EndValue < p.StartValue - 1)
+            if (p.EndPosition < q.StartPosition - 1 || q.EndPosition < p.StartPosition - 1)
             {
                 return new Extent[] { };
             }
@@ -334,7 +334,7 @@ namespace SymNum.Patterns
         }
         public static Extent[] A_Implies_B(Extent p, Extent q)
         {
-            if (p.EndValue < q.StartValue - 1 || q.EndValue < p.StartValue - 1)
+            if (p.EndPosition < q.StartPosition - 1 || q.EndPosition < p.StartPosition - 1)
             {
                 return new Extent[] { };
             }
@@ -375,8 +375,8 @@ namespace SymNum.Patterns
             {
                 result = new Extent[]
                 {
-                new Extent(long.MinValue, overlap.StartValue),
-                new Extent(overlap.EndValue, long.MaxValue)
+                new Extent(long.MinValue, overlap.StartPosition),
+                new Extent(overlap.EndPosition, long.MaxValue)
                 };
             }
             return result;
@@ -437,16 +437,16 @@ namespace SymNum.Patterns
         /// </summary>
         public BoolState StartState { get; protected set; } = BoolState.True;
 
-        public virtual long[] GetPositions() => [StartValue, EndValue];
+        public virtual long[] GetPositions() => [StartPosition, EndPosition];
         public virtual void SetPosition(int index, long value)
 		{
 			if (index == 0)
 			{
-				StartValue = value;
+				StartPosition = value;
 			}
 			else if (index == 1)
 			{
-				EndValue = value;
+				EndPosition = value;
 			}
 		}
         public virtual void ClearInternalPositions() { }
@@ -513,7 +513,7 @@ namespace SymNum.Patterns
         #region Equality
         public virtual Extent Clone()
         {
-            return new Extent(StartValue, EndValue);
+            return new Extent(StartPosition, EndPosition);
         }
         public override bool Equals(object? obj)
         {
@@ -521,7 +521,7 @@ namespace SymNum.Patterns
         }
         public bool Equals(Extent? value)
         {
-            return ReferenceEquals(this, value) || StartValue.Equals(value?.StartValue ?? 0) && EndValue.Equals(value?.EndValue ?? 0);
+            return ReferenceEquals(this, value) || StartPosition.Equals(value?.StartPosition ?? 0) && EndPosition.Equals(value?.EndPosition ?? 0);
         }
 
         public static bool operator ==(Extent? a, Extent? b)
@@ -545,12 +545,12 @@ namespace SymNum.Patterns
         {
             unchecked
             {
-                var hashCode = StartValue.GetHashCode();
-                hashCode = hashCode * 397 ^ EndValue.GetHashCode();
+                var hashCode = StartPosition.GetHashCode();
+                hashCode = hashCode * 397 ^ EndPosition.GetHashCode();
                 return hashCode;
             }
         }
         #endregion
-        public override string ToString() => $"[{StartValue} : {EndValue}]";
+        public override string ToString() => $"[{StartPosition} : {EndPosition}]";
     }
 }
