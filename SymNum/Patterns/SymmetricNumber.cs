@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 namespace SymNum.Patterns;
 
 /// <summary>
-/// A symmetric number is made of two extents, where neither is fixed at zero, and neither has a set direction.
+/// A symmetric number is made of four measures, where nothing is fixed at zero or 'unit'.
+/// The operations of this allow stretching or negating both the unit and the value, allowing transforms to different 'number systems'.
 /// This makes two variable units, which can describe transforms that negate and mirror, but also restrict those.
 /// The potential contradictions can be resolved by mapping to an extended dimension (spatial, time, other).
 /// This allows a line to have concepts like left or right of the line in a given direction - 
