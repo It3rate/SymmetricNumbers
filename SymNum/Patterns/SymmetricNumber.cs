@@ -17,10 +17,10 @@ namespace SymNum.Patterns;
 public class SymmetricNumber : NumberBase
 {
 
-    public bool HasTR => RightMeasure != 0;
-    public bool HasTL => LeftUnit != 0;
-    public bool HasBR => RightUnit != 0;
-    public bool HasBL => LeftMeasure != 0;
+    public bool HasTR => RightMeasure.IsFullDefined;
+    public bool HasTL => LeftUnit.IsFullDefined;
+    public bool HasBR => RightUnit.IsFullDefined;
+    public bool HasBL => LeftMeasure.IsFullDefined;
     private int _totalNonZero => (HasTR ? 1 : 0) + (HasTL ? 1 : 0) + (HasBR ? 1 : 0) + (HasBL ? 1 : 0);
 
     public bool IsHalt => _totalNonZero == 0; // empty
@@ -53,20 +53,24 @@ public class SymmetricNumber : NumberBase
 
     public SymmetricNumber(long tr, long tl, long br, long bl)
     {
-        RightExtent = new Extent(tl, tr); // there isn't really a positive right or left as all values are relative to each other.
-        LeftExtent = new Extent(bl, br);
+        RightMeasure = new Measure(tr, Direction.FacesLeft, true);
+        LeftUnit = new Measure(tl, Direction.FacesRight, true);
+        RightUnit = new Measure(br, Direction.FacesRight, true);
+        LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
     }
     public SymmetricValue SymmetricValue => new SymmetricValue(this);
 }
 public class SymmetricValue : NumberValue
 {
     public SymmetricNumber Reference { get; }
-    public float Value => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
-    public override long RightResolution => Reference.LeftExtent.EndPosition;
-    public override long LeftResolution => Reference.RightExtent.StartPosition;
-    private long StartPosition => Reference.LeftExtent.StartPosition;
-    private long MidPosition => Reference.RightExtent.EndPosition;
-    private long EndPosition => Reference.LeftExtent.EndPosition;
+    public float RightValue => NumberBase.GetValue(Reference.RightMeasure, Reference.RightUnit);
+    public float LeftValue => NumberBase.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
+    public float GetValue(Measure measure) => measure.IsFullDefined ? (float)measure.Position : 0;
+    public float GetValue(Measure numerator, Measure denominator) => NumberBase.GetValue(numerator, denominator);
+    // todo: public float GetValue(Measure a, Measure b, Measure c) => ;
+    // todo: public float GetValue(Measure a, Measure b, Measure c, Measure d) => ;
+    public override long RightResolution => Reference.RightUnit.Position;
+    public override long LeftResolution => Reference.LeftUnit.Position;
     public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
     {
         Reference = baseNumber;

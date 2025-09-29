@@ -14,8 +14,10 @@ namespace SymNum.Patterns
     {
         public ComplexNumber(long resolution, long startPosition, long endPosition)
         {
-            RightExtent = new Extent(endPosition, resolution);
-            LeftExtent = new Extent(-resolution, startPosition);
+            RightUnit = new Measure(resolution, Direction.FacesLeft, true);
+            RightMeasure = new Measure(endPosition, Direction.Unknown, true);
+            LeftUnit = new Measure(-resolution, Direction.FacesRight, true);
+            LeftMeasure = new Measure(startPosition);
         }
         public ComplexNumber(long resolution, float startPosition, float endPosition) :
             this(resolution, (long)(startPosition / resolution), (long)(endPosition / resolution)) { }  
@@ -26,7 +28,7 @@ namespace SymNum.Patterns
         public ComplexNumber Reference { get; }
         public float Real => Reference.RightValue;
         public float Imaginary => Reference.LeftValue;
-        public override long RightResolution => Reference.LeftExtent.EndPosition;
+        public override long RightResolution => Reference.LeftUnit.Position;
         public override long LeftResolution => RightResolution; // real and imaginary resolution are always the same in complex numbers.
         public ComplexValue(ComplexNumber complexNumber) : base(complexNumber)
         {

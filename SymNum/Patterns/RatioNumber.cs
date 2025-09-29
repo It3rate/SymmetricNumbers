@@ -12,26 +12,26 @@ using System.Threading.Tasks;
 /// </summary>
 public class RatioNumber : NumberBase
 {
-    public PartialExtent PartialNumerator { get; private set; }
-	public long StartPosition => LeftExtent.StartPosition;
-	public long MidPosition => RightExtent.EndPosition;
-	public long EndPosition => LeftExtent.EndPosition;
+	public long StartPosition => LeftMeasure.Position;
+	public long MidPosition => RightMeasure.Position;
+	public long EndPosition => LeftUnit.Position;
 	public float FloatValue => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
 	public RatioNumber(long startPoint, long midPoint, long endPoint, bool isPositiveRight)
 	{
-		PartialNumerator = new PartialExtent(midPoint, false);
-		LeftExtent = new Extent(startPoint, endPoint);
-	}
+		RightMeasure = new Measure(midPoint, Direction.Unknown, true);
+        LeftMeasure = new Measure(endPoint, Direction.Unknown, true);
+        LeftUnit = new Measure(startPoint, Direction.Unknown, true);
+    }
 }
 public class RatioValue : NumberValue
 {
     public RatioNumber Reference { get; }
     public float Value => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
-    public override long RightResolution => Math.Abs(Reference.LeftExtent.EndPosition - Reference.LeftExtent.StartPosition);
-    public override long LeftResolution => RightResolution;
-    private long StartPosition => Reference.LeftExtent.StartPosition;
-    private long MidPosition => Reference.PartialNumerator.EndElseStartValue;
-    private long EndPosition => Reference.LeftExtent.EndPosition;
+    public override long LeftResolution => Math.Abs(EndPosition - StartPosition);
+    public override long RightResolution => LeftResolution;
+    private long StartPosition => Reference.StartPosition;
+    private long MidPosition => Reference.MidPosition;
+    private long EndPosition => Reference.EndPosition;
     public RatioValue(RatioNumber baseNumber) : base(baseNumber)
     {
         Reference = baseNumber;

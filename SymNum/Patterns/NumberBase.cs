@@ -7,6 +7,8 @@ using SymNum.Concepts;
 
 namespace SymNum.Patterns;
 
+
+
 // A number is made of at least 4 points, two for a unit (start and end), and two for a value (start and end).
 // There is often an implied 5th point, 'here', or 'now', or 'this'. This is the floating zero point, or reference point.
 // In regular numbers, 'here' is always 0, and both segments also start from 0.
@@ -44,73 +46,98 @@ namespace SymNum.Patterns;
 /// </summary>
 public class NumberBase
 {
-    /// <summary>
-    /// A number can be composed of multiple extents with different restrictions. 
-    /// A simple number has a numerator and denominator, where a position in 3D space has 6 extents (3 numbers).
+    //   public Extent RightExtent { get; protected set; }
+    //   public Extent LeftExtent { get; protected set; }
+    //   public long RightMeasure 
+    //{ 
+    //	get => RightExtent.StartPosition;
+    //	set => RightExtent.StartPosition = value; 
+    //}
+    //public long RightUnit
+    //{
+    //	get => RightExtent.EndPosition;
+    //	set => RightExtent.EndPosition = value;
+    //}
+    //public long LeftMeasure
+    //{
+    //	get => LeftExtent.EndPosition;
+    //	set => LeftExtent.EndPosition = value;
+    //}
+    //public long LeftUnit
+    //{
+    //	get => LeftExtent.StartPosition;
+    //	set => LeftExtent.StartPosition = value;
+    //
+
+    /// A number can be composed of multiple measures with different restrictions. 
+    /// A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
     /// An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
-    /// but they are all 'numbers' for lack of a better word.
+    /// but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
+
+    private Measure[] _measures;
+    public Measure RightMeasure { get => _measures[0]; protected set => _measures[0] = value; }
+    public Measure RightUnit { get => _measures[1]; protected set => _measures[1] = value; }
+    public Measure LeftMeasure { get => _measures[2]; protected set => _measures[2] = value; }
+    public Measure LeftUnit { get => _measures[3]; protected set => _measures[3] = value; }
+
+
+    public virtual bool IsFullyDefined => _measures.All(m => m.IsFullDefined);
+
+    // this might be best to use floats as external facing values - it can stil use internal resolution and polarities,
+    // but the outside world is floats (and ratios still need to be represented somehow).
+    // That said, all training and inference should be on these types of numbers.
+
+    public static float GetValue(Measure numerator, Measure denominator)
+    {
+        var result = float.NaN;
+        if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
+        {
+            result = numerator.Position / (float)denominator.Position;
+        }
+        return result;
+    }
+    public static bool SetValue(Measure numerator, Measure denominator, float value)
+    {
+        var result = false;
+        if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
+        {
+            denominator.SetPosition((long)(value * denominator.Position));
+            result = true;
+        }
+        return result;
+    }
+    /// <summary>
+    /// RightValue is the positive polarity value, up vs down, right vs left, large vs small etc.
+    /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
     /// </summary>
-    public Extent RightExtent { get; protected set; }
-    public Extent LeftExtent { get; protected set; }
-
-	public long RightMeasure 
-	{ 
-		get => RightExtent.StartPosition;
-		set => RightExtent.StartPosition = value; 
-	}
-	public long RightUnit
-	{
-		get => RightExtent.EndPosition;
-		set => RightExtent.EndPosition = value;
-	}
-	public long LeftMeasure
-	{
-		get => LeftExtent.EndPosition;
-		set => LeftExtent.EndPosition = value;
-	}
-	public long LeftUnit
-	{
-		get => LeftExtent.StartPosition;
-		set => LeftExtent.StartPosition = value;
-	}
-
-	// this might be best to use floats as external facing values - it can stil use internal resolution and polarities,
-	// but the outside world is floats (and ratios still need to be represented somehow).
-	// That said, all training and inference should be on these types of numbers.
-
-	/// <summary>
-	/// RightValue is the positive polarity value, up vs down, right vs left, large vs small etc.
-	/// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
-	/// </summary>
-	public float RightValue
-	{
-		get => RightMeasure / (float)RightUnit;
-		set => RightMeasure = (long)(value * RightUnit);
-	}
+    public float RightValue
+    {
+        get => GetValue(RightMeasure, RightUnit);
+        set => SetValue(RightMeasure, RightUnit, value);
+    }
 	/// <summary>
 	/// LeftValue is the negative polarity value, down vs up, left vs right, small vs large etc.
 	/// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
 	/// </summary>
-	public float LeftValue
-	{
-		get => LeftMeasure / (float)LeftUnit;
-		set => LeftMeasure = (long)(value * LeftUnit);
-	}
+    public float LeftValue
+    {
+        get => GetValue(LeftMeasure, LeftUnit);
+        set => SetValue(LeftMeasure, LeftUnit, value);
+    }
 
 
 
 
 
-
-	//public int AbsDirection => HasTwoValues ? (EndValue > StartValue ? 1 : (EndValue < StartValue ? -1 : 0)) : 0;
-	//public bool IsPositiveDirection => IsPositiveRight ? AbsDirection > 0 : AbsDirection < 0;
-	//public bool IsNegativeDirection => !IsPositiveDirection;
-	//public bool IsAmbiguousDirection => AbsDirection == 0;
-	//public long Min => StartValue <= EndValue ? StartValue : EndValue;
-	//public long Max => StartValue >= EndValue ? StartValue : EndValue;
-	//public long DirectionalMin => IsPositiveDirection ? Min : Max;
-	//public long DirectionalMax => IsPositiveDirection ? Max : Min;
-	//public bool CanHaveDirection => HasTwoValues;
+    //public int AbsDirection => HasTwoValues ? (EndValue > StartValue ? 1 : (EndValue < StartValue ? -1 : 0)) : 0;
+    //public bool IsPositiveDirection => IsPositiveRight ? AbsDirection > 0 : AbsDirection < 0;
+    //public bool IsNegativeDirection => !IsPositiveDirection;
+    //public bool IsAmbiguousDirection => AbsDirection == 0;
+    //public long Min => StartValue <= EndValue ? StartValue : EndValue;
+    //public long Max => StartValue >= EndValue ? StartValue : EndValue;
+    //public long DirectionalMin => IsPositiveDirection ? Min : Max;
+    //public long DirectionalMax => IsPositiveDirection ? Max : Min;
+    //public bool CanHaveDirection => HasTwoValues;
 
 }
 

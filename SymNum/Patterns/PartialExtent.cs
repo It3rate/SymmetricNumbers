@@ -37,3 +37,13 @@ public class PartialExtent : IExtent
 	//public int AbsDirection => HasTwoValues ? (EndValue > StartValue ? 1 : (EndValue < StartValue ? -1 : 0)) : 0;
 	//public bool CanHaveDirection => HasTwoValues;
 }
+
+public enum Comparator
+{
+    Unknown,
+    Known,
+    LessThan,
+    LessThanOrEqual,
+    GreaterThanOrEqual,
+    GreaterThan
+}

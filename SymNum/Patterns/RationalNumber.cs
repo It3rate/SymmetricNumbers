@@ -12,13 +12,23 @@ namespace SymNum.Patterns;
 /// </summary>
 public class RationalNumber : NumberBase
 {
-    public long TickCount => RightExtent.EndPosition;
+    public long MeasurePosition
+    {
+        get => RightMeasure.Position;
+        set => RightMeasure.SetPosition(value);
+    }
+    public long UnitPosition
+    {
+        get => RightUnit.Position;
+        set => RightUnit.SetPosition(value);
+    }
+    public long TickCount => MeasurePosition;
     public long Resolution{
-        get => RightUnit;
+        get => UnitPosition;
         protected set
         {
-            RightMeasure = (long)(FloatValue * value);
-            RightUnit = value;
+            MeasurePosition = (long)(FloatValue * value);
+            UnitPosition = value;
         }
     } 
     public float FloatValue
@@ -28,8 +38,10 @@ public class RationalNumber : NumberBase
     }
     public RationalNumber(long resolution, long value)
     {
-        RightExtent = new Extent(value, resolution);
-        LeftExtent = new Extent(0, 0);
+        LeftMeasure = Measure.ZeroUnknown();
+        LeftUnit = Measure.ZeroUnknown();
+        RightMeasure = new Measure(value, Direction.Unknown, true);
+        RightUnit = new Measure(resolution, Direction.FacesRight, true);
     }
     public RationalNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
 
