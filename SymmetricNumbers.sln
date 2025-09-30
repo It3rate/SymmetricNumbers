@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymmetricNumbers", "Symmetr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymNum", "SymNum\SymNum.csproj", "{426F4609-FC70-4849-9323-D79ABE142FCA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Forces", "Forces\Forces.csproj", "{CD05E9C8-2337-4C8B-A063-B8F7753263F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{426F4609-FC70-4849-9323-D79ABE142FCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{426F4609-FC70-4849-9323-D79ABE142FCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{426F4609-FC70-4849-9323-D79ABE142FCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD05E9C8-2337-4C8B-A063-B8F7753263F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD05E9C8-2337-4C8B-A063-B8F7753263F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD05E9C8-2337-4C8B-A063-B8F7753263F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD05E9C8-2337-4C8B-A063-B8F7753263F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,12 @@
+﻿namespace Forces.Primitives.Suspension.Components
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    internal class Mass // not a component, more the thing that causes component behaviour
+    {
+    }
+}
