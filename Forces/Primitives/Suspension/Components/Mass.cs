@@ -6,7 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    internal class Mass // not a component, more the thing that causes component behaviour
+    public class Mass // not a component, more the thing that causes component behaviour
     {
     }
 }
