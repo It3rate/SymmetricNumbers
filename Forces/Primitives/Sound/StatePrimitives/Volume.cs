@@ -1,4 +1,4 @@
-﻿namespace Forces.Primitives.Suspension.Components
+﻿namespace Forces.Primitives.Sound.StatePrimitives
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class Mass // not a component, more the thing that causes component behaviour
+    public class Volume
     {
     }
 }

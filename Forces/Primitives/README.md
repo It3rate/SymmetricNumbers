@@ -24,6 +24,7 @@ This is voltage, pressure, the goal in a story etc. Like how fast water is flowi
 ### Cycles
 Requires at least three samples of information, a smaple, a change and a repeat (repeat is a single sample in numbers, think exponentiation).
 This is often frequency, but doesn't need to be simple. A AC signal, a fading spring, a texture, a slow beat, a complex rhythm, even the tempo of a three pattern setup joke.
+This suggests time is involved, and is often used to calibrate time. But can also be used to describe spatial repetition like a texture, or harmonics like a chord.
 ### Noise
 Unstated, but important, is noise. Noise is any signal that is not captured, understood, or used by primitives, but still affects the system.
 Most signals are a combination of primitives and noise, and the goal of conceptualizing a space is to maximize the predictive encoding and minimize the noise.
@@ -43,6 +44,20 @@ When we imagine the sound a cherry red metal rod getting dunked in a can of oil,
 This can be modeled as it's own space with enough experience, making the construction much faster and more accurate.
 
 ## ChangeKnobs
+These are elements that can be used to change the state of a space, or interpret/probe changes.
+In the pure form, they modify directly modify primitives or combinations of primitives in isolation.
+In reality they are often messy, and affect all primitives in different non-linear ways. But they are most useful modelled as pure.
+In an ideal abstraction, there are just gradients between the pure primitives, like Newton's laws, or Archimedes' levers. 
 
+In electronics, these are resistors, capacitors, inductors, and they are usually thought of as operating in their simple/predictable ranges.
+Note that a capacitor is different than capacitance - capacitance is a property of a space, while a capacitor is a device that can be used to change the capacitance of a space.
+Capacitance itself is a characteristic that must be inferred from the field. 
+It is a behaviour that characterized, but it doesn't physically exist in the field (there are no 'capacitance particles').
+Where with voltage, current, and frequency, there are physical things about the field that can be measured directly.
 
-
+### Patterns
+Patterns are the interpretation of the space, based on different (change) samples along the gradients.
+These can naturally happen over time (nature's change knobs), or be actively probed (engineered change knobs).
+This becomes a model of the space, and you can predict/test/refine from the model or real space.
+The StatePrimitives, ChangeKnobs, and Patterns are not dissimilar to the state descriptions like Momentum, Change, Cycles, or Current, Voltage, Frequency.
+This isn't to say everything is the same across levels, just there is are fundamental 'model, compare, expect' stages that are table stakes to understanding.

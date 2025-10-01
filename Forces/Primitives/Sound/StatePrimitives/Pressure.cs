@@ -1,4 +1,4 @@
-﻿namespace Forces.Primitives.Sound
+﻿namespace Forces.Primitives.Sound.StatePrimitives
 {
     using System;
     using System.Collections.Generic;

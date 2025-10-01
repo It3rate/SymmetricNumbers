@@ -1,4 +1,4 @@
-﻿namespace Forces.Primitives.Sound
+﻿namespace Forces.Primitives.Suspension.ChangeKnobs
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class Volume
+    public class Mass // not a component, more the thing that causes component behaviour
     {
     }
 }

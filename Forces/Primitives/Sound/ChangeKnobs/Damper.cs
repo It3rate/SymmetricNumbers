@@ -1,4 +1,4 @@
-﻿namespace Forces.Primitives.Suspension.Components
+﻿namespace Forces.Primitives.Sound.ChangeKnobs
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class Inertia
+    public class Damper
     {
     }
 }

@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 namespace Forces.Primitives.Electricity.Gradients
 {
     /// <summary>
-    /// This is Impedance (Z), the ratio of current that has a frequency.   
-    /// The total opposition to the flow of alternating current (AC) in a circuit, combining both resistive and reactive effects.
+    /// This is Impedance (Z), the total opposition to the flow of alternating current (AC) in a circuit, 
+    /// combining both resistive and reactive effects.
     /// So the gradient is from no current to high current, but only for the AC part of the current.
+    /// The opposite is Admittance (Y), how easily the AC current flows.
     /// </summary>
 	public class CurrentByFrequency : SymmetricNumber
 	{
