@@ -1,4 +1,4 @@
-﻿namespace Forces.Primitives.Electricity
+﻿namespace Forces.Primitives.Electricity.Gradients
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class Current // force
+    internal class FrequencyByUnFrequency
     {
     }
 }

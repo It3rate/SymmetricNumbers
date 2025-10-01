@@ -1,4 +1,4 @@
-﻿namespace Forces.Primitives.Electricity.Components
+﻿namespace Forces.Primitives.Electricity.Change
 {
     using System;
     using System.Collections.Generic;
