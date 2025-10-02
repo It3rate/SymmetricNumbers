@@ -51,8 +51,12 @@ public class SymmetricNumber : NumberBase
     /// 
     /// </summary>
     public bool IsContinue => _totalNonZero == 4; // full
+	public long RightResolution => RightUnit.Position;
+	public long LeftResolution => LeftUnit.Position;
+	public long MinResolution => Math.Min(RightResolution, LeftResolution);
+	public long MaxResolution => Math.Max(RightResolution, LeftResolution);
 
-    public SymmetricNumber(long tr, long tl, long br, long bl)
+	public SymmetricNumber(long tr, long tl, long br, long bl)
     {
         RightMeasure = new Measure(tr, Direction.FacesLeft, true);
         LeftUnit = new Measure(tl, Direction.FacesRight, true);
@@ -70,9 +74,9 @@ public class SymmetricValue : NumberValue
     public float GetValue(Measure numerator, Measure denominator) => NumberBase.GetValue(numerator, denominator);
     // todo: public float GetValue(Measure a, Measure b, Measure c) => ;
     // todo: public float GetValue(Measure a, Measure b, Measure c, Measure d) => ;
-    public override long RightResolution => Reference.RightUnit.Position;
-    public override long LeftResolution => Reference.LeftUnit.Position;
-    public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
+    public override long RightResolution => Reference.RightResolution;
+	public override long LeftResolution => Reference.LeftResolution;
+	public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
     {
         Reference = baseNumber;
     }
