@@ -18,20 +18,20 @@
 	{
 		public VoltageByCurrent DynamicValue { get; private set; }
 		public ResistanceByPower Result { get; private set; }
-		private float Voltage
+		public float Voltage
 		{
 			get => DynamicValue.RightValue;
-			set => DynamicValue.RightValue = value;
+			private set => DynamicValue.RightValue = value;
 		}
-		private float Current
+		public float Current
 		{
 			get => DynamicValue.LeftValue;
-			set => DynamicValue.LeftValue = value;
+			private set => DynamicValue.LeftValue = value;
 		}
-		private float Resistance
+		public float Resistance
 		{
 			get => Result.RightValue;
-			set => Result.RightValue = value;
+			private set => Result.RightValue = value;
 		}
 
 		public long _resistanceResolution;
@@ -47,10 +47,19 @@
             var min_resolution = Math.Min(voltageResolution, currentResolution);
 			_resistanceResolution = resistanceResolution;
 			CalculateResistance();
-
+		}
+		public void AdjustVoltage(float voltage)
+		{
+			Voltage = voltage;
+			CalculateResistance();
+		}
+		public void AdjustCurrent(float current)
+		{
+			Current = current;
+			CalculateResistance();
 		}
 
-        private void CalculateResistance()
+		private void CalculateResistance()
         {
             if (Current != 0)
             {
