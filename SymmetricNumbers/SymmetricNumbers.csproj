@@ -76,5 +76,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Forces\Forces.csproj">
+      <Project>{cd05e9c8-2337-4c8b-a063-b8f7753263f1}</Project>
+      <Name>Forces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SymNum\SymNum.csproj">
+      <Project>{426f4609-fc70-4849-9323-d79abe142fca}</Project>
+      <Name>SymNum</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

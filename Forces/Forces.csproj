@@ -26,4 +26,8 @@
     <Folder Include="Primitives\Suspension\Patterns\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SpiceSharp" Version="3.2.3" />
+  </ItemGroup>
+
 </Project>

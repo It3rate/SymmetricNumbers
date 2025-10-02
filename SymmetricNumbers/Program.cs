@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Forces.Primitives.Electricity.Simulation;
 
 namespace SymmetricNumbers
 {
@@ -17,6 +18,8 @@ namespace SymmetricNumbers
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new Form1());
+
+			var circ = new SpiceCircuit();
 		}
 	}
 }
