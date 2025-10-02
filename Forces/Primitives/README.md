@@ -40,6 +40,9 @@ The opposite end can be different things depending on context.
 For example, 12v is relative to ground, but the gradient may go to -12v, or it may be in terms of a 120v AC signal.
 'Red' may fade to dark red and black, or it may fade to pink and white. Or it may increase to blue and white in terms of heat.
 
+**Gradients are defined with symmetric numbers**, the positive forces are the concept, and the negative forces are the opposite.
+These forces can create contratictions, opposites that must both be true. This can be words like 'bittersweet', but can also be a turn into a new concept gradient.
+
 These gradients are manually specified to get into the flow of them, but ultimately they need to be constructed on the fly with assistance from the model/patterns of the system.
 When we imagine the sound a cherry red metal rod getting dunked in a can of oil, we construct and combine gradients from our temperature/color/sound/metal/etc knowledge. 
 This can be modeled as it's own space with enough experience, making the construction much faster and more accurate.
