@@ -15,8 +15,13 @@
     <Folder Include="Primitives\Color\ChangeKnobs\" />
     <Folder Include="Primitives\Color\StatePrimitives\" />
     <Folder Include="Primitives\Color\Patterns\" />
+    <Folder Include="Primitives\Music\ChangeKnobs\" />
+    <Folder Include="Primitives\Music\Gradients\" />
+    <Folder Include="Primitives\Music\Patterns\" />
+    <Folder Include="Primitives\Music\StatePrimitives\" />
     <Folder Include="Primitives\Sound\Gradients\" />
     <Folder Include="Primitives\Sound\Patterns\" />
+    <Folder Include="Primitives\Stories\Gradients\" />
     <Folder Include="Primitives\Suspension\Gradients\" />
     <Folder Include="Primitives\Suspension\Patterns\" />
   </ItemGroup>

@@ -24,7 +24,8 @@ This is voltage, pressure, the goal in a story etc. Like how fast water is flowi
 ### Cycles
 Requires at least three samples of information, a smaple, a change and a repeat (repeat is a single sample in numbers, think exponentiation).
 This is often frequency, but doesn't need to be simple. A AC signal, a fading spring, a texture, a slow beat, a complex rhythm, even the tempo of a three pattern setup joke.
-This suggests time is involved, and is often used to calibrate time. But can also be used to describe spatial repetition like a texture, or harmonics like a chord.
+It is usually from reflection or feedback (vibration), from something turning (generator), or from interference patterns from lower frequencies (moire patterns).
+It suggests time is involved, and frequency is often used to calibrate time. But can also be used to describe spatial repetition like a texture, or harmonics like a chord.
 ### Noise
 Unstated, but important, is noise. Noise is any signal that is not captured, understood, or used by primitives, but still affects the system.
 Most signals are a combination of primitives and noise, and the goal of conceptualizing a space is to maximize the predictive encoding and minimize the noise.
