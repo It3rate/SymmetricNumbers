@@ -24,6 +24,21 @@
         public long VPhaseShift => BottomLeft; // voltage leads (or follows) current 
         public long Frequency => TopLeft;
 
+        // The idea here, is with a current and voltage time series, you can calculate a frequency. By checking which lags (V or I) you can get phase shift.
+        // With the frequency you can calculate impedance (peakV/peakI)
+        // With phase and impedance you can calculate capacitance and inductance.
+
+        // This is a general pattern. You have a sensor, and with a time series you get information not available in the sensor. 
+        // This new information is then treated like a new sensor input, and you can derive new information.
+        // Eventually with enough probe/construct/change cycles, you can infer things in the world
+        // (like the capacitance of a circuit from voltage/current measurements in a changing field, or even the component layout)
+
+        // These samples are stored in Numbers, but they have no inherent zero point or unit size. Like the 'zero point' of a light sensor can 
+        // be the average over recent samples, and the unit could be a normal amount of change that matters over time,
+        // The current is like a unit for the voltage, and the frequency is the unit for the time series.
+        // The numbers are values related to 'something' (the field, the opposite, anything else), and that something can be infered from a time series (equation).
+        // Samples being able to generate their own higher level units allows the scaling up through levels - like voltage/current samples eventually sensing the code in a microchip.
+
         public float PhaseDegrees => ((VPhaseShift % Frequency) / (float)Frequency) * 90f; // from top of head, verify
         public float RMSVoltage => Voltage / SQRT2;
         public float RMSCurrent => Current / SQRT2;
