@@ -18,6 +18,11 @@ namespace SymNum.Patterns;
 public class SymmetricNumber : NumberBase
 {
 
+    public long TopRight => RightMeasure.Position;
+    public long TopLeft => LeftUnit.Position;
+    public long BottomRight => RightUnit.Position;
+    public long BottomLeft => LeftMeasure.Position;
+
     public bool HasTR => RightMeasure.IsFullDefined;
     public bool HasTL => LeftUnit.IsFullDefined;
     public bool HasBR => RightUnit.IsFullDefined;
