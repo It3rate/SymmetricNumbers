@@ -24,6 +24,19 @@
         public long VPhaseShift => BottomLeft; // voltage leads (or follows) current 
         public long Frequency => TopLeft;
 
+        public float PhaseDegrees => ((VPhaseShift % Frequency) / (float)Frequency) * 90f; // from top of head, verify
+        public float RMSVoltage => Voltage / SQRT2;
+        public float RMSCurrent => Current / SQRT2;
+        public float ImpedanceX => RMSVoltage / RMSCurrent;
+        public float ResistanceR => ImpedanceX * MathF.Cos(PhaseDegrees * (MathF.PI / 180f));
+        public float ReactanceX => ImpedanceX * MathF.Sin(PhaseDegrees * (MathF.PI / 180f));
+        public float IndcutiveReactance => PhaseDegrees >= 0 ? ReactanceX : 0;
+        public float CapacitiveReactance => PhaseDegrees < 0 ? ReactanceX : 0;
+
+        public float Inductance => ReactanceX / (MathF.PI * 2f * Frequency); //XL/2πf
+
+
+
         public float ResistanceActual { get; set; } // measured
         public float VIResistance => RightValue; // Current == 0 ? (Voltage >= 0 ? long.MaxValue : long.MinValue) : Voltage / Current; 
         public float ResistanceDiff => ResistanceActual - VIResistance; // the difference is due to everything other than VI (eg. frequency, phase, noise, heat, etc)
@@ -40,5 +53,7 @@
         {
             ResistanceActual = VIResistance;
         }
+
+        public static float SQRT2 = (float)Math.Sqrt(2.0);
     }
 }
