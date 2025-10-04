@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             btRunVIR = new Button();
-            tbOutput = new TextBox();
             brRunRCL = new Button();
+            btRunDiode = new Button();
+            tbOutput = new RichTextBox();
             SuspendLayout();
             // 
             // btRunVIR
@@ -44,15 +45,6 @@
             btRunVIR.UseVisualStyleBackColor = true;
             btRunVIR.Click += btRunVIR_Click;
             // 
-            // tbOutput
-            // 
-            tbOutput.Location = new Point(187, 14);
-            tbOutput.Margin = new Padding(4, 5, 4, 5);
-            tbOutput.Multiline = true;
-            tbOutput.Name = "tbOutput";
-            tbOutput.Size = new Size(935, 1070);
-            tbOutput.TabIndex = 1;
-            // 
             // brRunRCL
             // 
             brRunRCL.Location = new Point(57, 138);
@@ -64,25 +56,46 @@
             brRunRCL.UseVisualStyleBackColor = true;
             brRunRCL.Click += btRunRCL_Click;
             // 
+            // btRunDiode
+            // 
+            btRunDiode.Location = new Point(57, 205);
+            btRunDiode.Margin = new Padding(4, 5, 4, 5);
+            btRunDiode.Name = "btRunDiode";
+            btRunDiode.Size = new Size(107, 38);
+            btRunDiode.TabIndex = 0;
+            btRunDiode.Text = "Run Diode";
+            btRunDiode.UseVisualStyleBackColor = true;
+            btRunDiode.Click += btRunDiode_Click;
+            // 
+            // tbOutput
+            // 
+            tbOutput.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tbOutput.Location = new Point(207, 12);
+            tbOutput.Name = "tbOutput";
+            tbOutput.Size = new Size(924, 1074);
+            tbOutput.TabIndex = 2;
+            tbOutput.Text = "Output";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1143, 1098);
             Controls.Add(tbOutput);
+            Controls.Add(btRunDiode);
             Controls.Add(brRunRCL);
             Controls.Add(btRunVIR);
             Margin = new Padding(4, 5, 4, 5);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
 
         private Button btRunVIR;
-		private TextBox tbOutput;
         private Button brRunRCL;
+        private Button btRunDiode;
+        private RichTextBox tbOutput;
     }
 }

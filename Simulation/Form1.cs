@@ -21,5 +21,12 @@ namespace Simulation
             circuit.RunCircuitRCL();
             tbOutput.Text = circuit.GetOutput();
         }
+        private void btRunDiode_Click(object sender, EventArgs e)
+        {
+            var (circuit, exports) = SpiceParser.DiodeCircuit();
+            var result = SpiceParser.Run(circuit, exports);
+
+            tbOutput.Text = SpiceParser.FormatToColumns(result);
+        }
     }
 }
