@@ -20,52 +20,69 @@
 			base.Dispose(disposing);
 		}
 
-		#region Windows Form Designer generated code
+        #region Windows Form Designer generated code
 
-		/// <summary>
-		///  Required method for Designer support - do not modify
-		///  the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			btRun = new Button();
-			tbOutput = new TextBox();
-			SuspendLayout();
-			// 
-			// btRun
-			// 
-			btRun.Location = new Point(40, 40);
-			btRun.Name = "btRun";
-			btRun.Size = new Size(75, 23);
-			btRun.TabIndex = 0;
-			btRun.Text = "Run";
-			btRun.UseVisualStyleBackColor = true;
-			btRun.Click += btRun_Click;
-			// 
-			// tbOutput
-			// 
-			tbOutput.Location = new Point(246, 28);
-			tbOutput.Multiline = true;
-			tbOutput.Name = "tbOutput";
-			tbOutput.Size = new Size(450, 373);
-			tbOutput.TabIndex = 1;
-			// 
-			// Form1
-			// 
-			AutoScaleDimensions = new SizeF(7F, 15F);
-			AutoScaleMode = AutoScaleMode.Font;
-			ClientSize = new Size(800, 450);
-			Controls.Add(tbOutput);
-			Controls.Add(btRun);
-			Name = "Form1";
-			Text = "Form1";
-			ResumeLayout(false);
-			PerformLayout();
-		}
+        /// <summary>
+        ///  Required method for Designer support - do not modify
+        ///  the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            btRunVIR = new Button();
+            tbOutput = new TextBox();
+            brRunRCL = new Button();
+            SuspendLayout();
+            // 
+            // btRunVIR
+            // 
+            btRunVIR.Location = new Point(57, 67);
+            btRunVIR.Margin = new Padding(4, 5, 4, 5);
+            btRunVIR.Name = "btRunVIR";
+            btRunVIR.Size = new Size(107, 38);
+            btRunVIR.TabIndex = 0;
+            btRunVIR.Text = "Run VIR";
+            btRunVIR.UseVisualStyleBackColor = true;
+            btRunVIR.Click += btRunVIR_Click;
+            // 
+            // tbOutput
+            // 
+            tbOutput.Location = new Point(187, 14);
+            tbOutput.Margin = new Padding(4, 5, 4, 5);
+            tbOutput.Multiline = true;
+            tbOutput.Name = "tbOutput";
+            tbOutput.Size = new Size(935, 1070);
+            tbOutput.TabIndex = 1;
+            // 
+            // brRunRCL
+            // 
+            brRunRCL.Location = new Point(57, 138);
+            brRunRCL.Margin = new Padding(4, 5, 4, 5);
+            brRunRCL.Name = "brRunRCL";
+            brRunRCL.Size = new Size(107, 38);
+            brRunRCL.TabIndex = 0;
+            brRunRCL.Text = "Run RCL";
+            brRunRCL.UseVisualStyleBackColor = true;
+            brRunRCL.Click += btRunRCL_Click;
+            // 
+            // Form1
+            // 
+            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(1143, 1098);
+            Controls.Add(tbOutput);
+            Controls.Add(brRunRCL);
+            Controls.Add(btRunVIR);
+            Margin = new Padding(4, 5, 4, 5);
+            Name = "Form1";
+            Text = "Form1";
+            ResumeLayout(false);
+            PerformLayout();
+        }
 
-		#endregion
+        #endregion
 
-		private Button btRun;
+        private Button btRunVIR;
 		private TextBox tbOutput;
-	}
+        private Button brRunRCL;
+    }
 }

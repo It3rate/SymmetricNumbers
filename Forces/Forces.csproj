@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="SpiceSharp" Version="3.2.3" />
+    <PackageReference Include="SpiceSharp-Parser" Version="3.2.6" />
   </ItemGroup>
 
 </Project>

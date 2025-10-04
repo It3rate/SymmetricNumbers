@@ -9,10 +9,17 @@ namespace Simulation
 			InitializeComponent();
 		}
 
-		private void btRun_Click(object sender, EventArgs e)
-		{
-			var circuit = new SpiceCircuit();
-			tbOutput.Text = circuit.GetOutput();
-		}
-	}
+        private void btRunVIR_Click(object sender, EventArgs e)
+        {
+            var circuit = new SpiceCircuit();
+            circuit.RunCircuitVIR();
+            tbOutput.Text = circuit.GetOutput();
+        }
+        private void btRunRCL_Click(object sender, EventArgs e)
+        {
+            var circuit = new SpiceCircuit();
+            circuit.RunCircuitRCL();
+            tbOutput.Text = circuit.GetOutput();
+        }
+    }
 }
