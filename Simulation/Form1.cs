@@ -23,7 +23,7 @@ namespace Simulation
         }
         private void btRunDiode_Click(object sender, EventArgs e)
         {
-            var (circuit, exports) = SpiceParser.DiodeCircuit();
+            var (circuit, exports) = SpiceParser.RCLCircuit();
             var result = SpiceParser.Run(circuit, exports);
 
             tbOutput.Text = SpiceParser.FormatToColumns(result);
