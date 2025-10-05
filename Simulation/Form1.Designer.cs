@@ -29,43 +29,44 @@
         private void InitializeComponent()
         {
             btRunVIR = new Button();
-            brRunRCL = new Button();
-            btRunDiode = new Button();
+            brRCL_AC = new Button();
+            btRCL_Tran = new Button();
             tbOutput = new RichTextBox();
+            btRclMan = new Button();
             SuspendLayout();
             // 
             // btRunVIR
             // 
-            btRunVIR.Location = new Point(57, 67);
+            btRunVIR.Location = new Point(57, 70);
             btRunVIR.Margin = new Padding(4, 5, 4, 5);
             btRunVIR.Name = "btRunVIR";
             btRunVIR.Size = new Size(107, 38);
             btRunVIR.TabIndex = 0;
-            btRunVIR.Text = "Run VIR";
+            btRunVIR.Text = "VIR man";
             btRunVIR.UseVisualStyleBackColor = true;
-            btRunVIR.Click += btRunVIR_Click;
+            btRunVIR.Click += btRunVIRm_Click;
             // 
-            // brRunRCL
+            // brRCL_AC
             // 
-            brRunRCL.Location = new Point(57, 138);
-            brRunRCL.Margin = new Padding(4, 5, 4, 5);
-            brRunRCL.Name = "brRunRCL";
-            brRunRCL.Size = new Size(107, 38);
-            brRunRCL.TabIndex = 0;
-            brRunRCL.Text = "Run RCL";
-            brRunRCL.UseVisualStyleBackColor = true;
-            brRunRCL.Click += btRunRCL_Click;
+            brRCL_AC.Location = new Point(57, 166);
+            brRCL_AC.Margin = new Padding(4, 5, 4, 5);
+            brRCL_AC.Name = "brRCL_AC";
+            brRCL_AC.Size = new Size(107, 38);
+            brRCL_AC.TabIndex = 0;
+            brRCL_AC.Text = "RCL AC";
+            brRCL_AC.UseVisualStyleBackColor = true;
+            brRCL_AC.Click += btRunRCL_Click;
             // 
-            // btRunDiode
+            // btRCL_Tran
             // 
-            btRunDiode.Location = new Point(57, 205);
-            btRunDiode.Margin = new Padding(4, 5, 4, 5);
-            btRunDiode.Name = "btRunDiode";
-            btRunDiode.Size = new Size(107, 38);
-            btRunDiode.TabIndex = 0;
-            btRunDiode.Text = "Run Diode";
-            btRunDiode.UseVisualStyleBackColor = true;
-            btRunDiode.Click += btRunDiode_Click;
+            btRCL_Tran.Location = new Point(57, 214);
+            btRCL_Tran.Margin = new Padding(4, 5, 4, 5);
+            btRCL_Tran.Name = "btRCL_Tran";
+            btRCL_Tran.Size = new Size(107, 38);
+            btRCL_Tran.TabIndex = 0;
+            btRCL_Tran.Text = "Transient";
+            btRCL_Tran.UseVisualStyleBackColor = true;
+            btRCL_Tran.Click += btRunTransient_Click;
             // 
             // tbOutput
             // 
@@ -76,14 +77,26 @@
             tbOutput.TabIndex = 2;
             tbOutput.Text = "Output";
             // 
+            // btRclMan
+            // 
+            btRclMan.Location = new Point(57, 118);
+            btRclMan.Margin = new Padding(4, 5, 4, 5);
+            btRclMan.Name = "btRclMan";
+            btRclMan.Size = new Size(107, 38);
+            btRclMan.TabIndex = 0;
+            btRclMan.Text = "RCL man";
+            btRclMan.UseVisualStyleBackColor = true;
+            btRclMan.Click += btRunRCLm_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1143, 1098);
             Controls.Add(tbOutput);
-            Controls.Add(btRunDiode);
-            Controls.Add(brRunRCL);
+            Controls.Add(btRCL_Tran);
+            Controls.Add(brRCL_AC);
+            Controls.Add(btRclMan);
             Controls.Add(btRunVIR);
             Margin = new Padding(4, 5, 4, 5);
             Name = "Form1";
@@ -94,8 +107,9 @@
         #endregion
 
         private Button btRunVIR;
-        private Button brRunRCL;
-        private Button btRunDiode;
+        private Button brRCL_AC;
+        private Button btRCL_Tran;
         private RichTextBox tbOutput;
+        private Button btRclMan;
     }
 }

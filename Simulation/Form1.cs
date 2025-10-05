@@ -9,24 +9,29 @@ namespace Simulation
 			InitializeComponent();
 		}
 
-        private void btRunVIR_Click(object sender, EventArgs e)
+        private void btRunVIRm_Click(object sender, EventArgs e)
         {
-            var circuit = new SpiceCircuit();
-            circuit.RunCircuitVIR();
-            tbOutput.Text = circuit.GetOutput();
+            var circuit = new CircuitVIR();
+            circuit.Run();
+            tbOutput.Text = circuit.ResultText;
+        }
+        private void btRunRCLm_Click(object sender, EventArgs e)
+        {
+            var circuit = new CircuitRCL();
+            circuit.Run();
+            tbOutput.Text = circuit.ResultText;
         }
         private void btRunRCL_Click(object sender, EventArgs e)
         {
-            var circuit = new SpiceCircuit();
-            circuit.RunCircuitRCL();
-            tbOutput.Text = circuit.GetOutput();
+            var circuit = new RCL_AC_Circuit();
+            circuit.Run();
+            tbOutput.Text = circuit.ResultText;
         }
-        private void btRunDiode_Click(object sender, EventArgs e)
+        private void btRunTransient_Click(object sender, EventArgs e)
         {
-            var (circuit, exports) = SpiceParser.RCLCircuit();
-            var result = SpiceParser.Run(circuit, exports);
-
-            tbOutput.Text = SpiceParser.FormatToColumns(result);
+            var circuit = new RCL_TRAN_Circuit();
+            circuit.Run();
+            tbOutput.Text = circuit.ResultText;
         }
     }
 }
