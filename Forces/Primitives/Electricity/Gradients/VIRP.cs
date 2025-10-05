@@ -1,4 +1,5 @@
-﻿using SymNum.Patterns;
+﻿using Forces.Primitives.Sound.StatePrimitives;
+using SymNum.Patterns;
 
 namespace Forces.Primitives.Electricity.Gradients;
 
@@ -30,6 +31,11 @@ public class VIRP : SymmetricNumber
 		CurrentState == VIRPState.Set &&
 		PowerState == VIRPState.Set &&
 		ResistanceState == VIRPState.Set;
+	public int SetSlotsValue =>
+		VoltageState.SlotValue(VIRPKind.Voltage) +
+		CurrentState.SlotValue(VIRPKind.Current) +
+		PowerState.SlotValue(VIRPKind.Power) +
+		ResistanceState.SlotValue(VIRPKind.Resistance);
 
 	public VIRP(long? voltage, long? current, long? power, long? resistance) :
 		base(voltage ?? 0, current ?? 0, power ?? 0, resistance ?? 0)
@@ -39,30 +45,51 @@ public class VIRP : SymmetricNumber
 		PowerState = power != null ? VIRPState.Set : VIRPState.Unknown;
 		ResistanceState = resistance != null ? VIRPState.Set : VIRPState.Unknown;
 	}
-	public void SetAndFix(VIRPKind toSet, long value, VIRPKind toFix)
+	public VIRPState GetState(VIRPKind kind)
 	{
-		FixValue(toFix);
-
-	}
-	public void SetTwo(VIRPKind toSet, long valueA, VIRPKind toFix, long valueB) 
-	{
-	}
-	/// <summary>
-	/// Use set and fixed/unknown to calculate all values, and then set them to 'set' when done.
-	/// If not calculable then things turn to ranges with unknowns.
-	/// </summary>
-	private void Calculate()
-	{
-		// Calculate values based on what is set/fixed, and what is unknown/uncertain
-		if(IsFullyDefined)
+		var result = VIRPState.Unknown;
+		switch (kind)
 		{
-			UnfixAll();
+			case VIRPKind.Voltage:
+				result = VoltageState;
+				break;
+			case VIRPKind.Current:
+				result = CurrentState;
+				break;
+			case VIRPKind.Power:
+				result = PowerState;
+				break;
+			case VIRPKind.Resistance:
+				result = ResistanceState;
+				break;
 		}
+		return result;
 	}
-
-	public void SetValue(VIRPKind kind, long value)
+	public long GetValue(VIRPKind kind)
 	{
-		UnfixAll();
+		long result = 0; // probably should be max or min based on direction?
+		if (GetState(kind).HasValue())
+		{
+			switch (kind)
+			{
+				case VIRPKind.Voltage:
+					result = Voltage;
+					break;
+				case VIRPKind.Current:
+					result = Current;
+					break;
+				case VIRPKind.Power:
+					result = Power;
+					break;
+				case VIRPKind.Resistance:
+					result = Resistance;
+					break;
+			}
+		}
+		return result;
+	}
+	public void FixValue(VIRPKind kind)
+	{
 		switch (kind)
 		{
 			case VIRPKind.Voltage: VoltageState = VIRPState.Fixed; break;
@@ -71,17 +98,97 @@ public class VIRP : SymmetricNumber
 			case VIRPKind.Resistance: ResistanceState = VIRPState.Fixed; break;
 		}
 	}
-	public void FixValue(VIRPKind kind)
+	public void SetValue(VIRPKind kind, long value)
 	{
-		UnfixAll();
 		switch (kind)
 		{
-			case VIRPKind.Voltage: VoltageState = VIRPState.Fixed; break;
-			case VIRPKind.Current:	CurrentState = VIRPState.Fixed; break;
-			case VIRPKind.Power: PowerState = VIRPState.Fixed; break;
-			case VIRPKind.Resistance: ResistanceState = VIRPState.Fixed; break;
+			case VIRPKind.Voltage:
+				Voltage = value;
+				VoltageState = VIRPState.Set;
+				break;
+			case VIRPKind.Current:
+				Current = value;
+				CurrentState = VIRPState.Set;
+				break;
+			case VIRPKind.Power:
+				Power = value;
+				PowerState = VIRPState.Set;
+				break;
+			case VIRPKind.Resistance:
+				Resistance = value;
+				ResistanceState = VIRPState.Set;
+				break;
 		}
 	}
+	public void SetAndFix(VIRPKind toSet, long value, VIRPKind toFix)
+	{
+		UnfixAll();
+		FixValue(toFix);
+		SetValue(toSet, value);
+		Calculate();
+	}
+	public void SetTwo(VIRPKind setA, long valueA, VIRPKind setB, long valueB)
+	{
+		UnfixAll();
+		SetValue(setA, valueA);
+		SetValue(setB, valueB);
+		Calculate();
+	}
+	/// <summary>
+	/// Use set and fixed/unknown to calculate all values, and then set them to 'set' when done.
+	/// If not calculable then things turn to ranges with unknowns.
+	/// </summary>
+	private void Calculate()
+	{
+		// Calculate values based on what is set/fixed, and what is unknown/uncertain
+		var ssv = SetSlotsValue;
+		var canFullyCalc = true;
+		//Voltage = 1,
+		//Current = 2,
+		//Power = 4,
+		//Resistance = 8,
+		switch (ssv)
+		{
+			case 3: // VI
+				SetWithVI();
+				break;
+			case 5: // VP
+				SetWithVP();
+				break;
+			case 6: // IP
+				SetWithIP();
+				break;
+			case 7: // VIP
+				SetWithVIP();
+				break;
+			case 8: // VR
+				SetWithVR();
+				break;
+			case 10: // IR
+				SetWithIR();
+				break;
+			case 11: // VIR
+				SetWithVIR();
+				break;
+			case 12: // PR
+				SetWithPR();
+				break;
+			case 13: // VPR
+				SetWithVPR();
+				break;
+			case 14: // IPR
+				SetWithIPR();
+				break;
+			default:
+				canFullyCalc = false;
+				break;
+		}
+		if(canFullyCalc)
+		{
+			UnfixAll();
+		}
+	}
+
 	public void UnfixAll()
 	{
 		VoltageState = VIRPState.Set;
@@ -90,6 +197,22 @@ public class VIRP : SymmetricNumber
 		ResistanceState = VIRPState.Set;
 	}
 
+	private void SetWithVIR()
+	{
+		Power = Voltage * Current;
+	}
+	private void SetWithIPR()
+	{
+		Voltage = Current * Resistance;
+	}
+	private void SetWithVPR()
+	{
+		Current = (long)(Voltage / (double)Resistance);
+	}
+	private void SetWithVIP()
+	{
+		Power = Voltage * Current;
+	}
 	private void SetWithVI()
 	{
 		Resistance = (long)(Voltage / (float)Current);
@@ -115,7 +238,7 @@ public class VIRP : SymmetricNumber
 		Current = (long)(Power / (double)Voltage);
 		Resistance = (long)(Power / ((double)Voltage * Voltage)); 
 	}
-	private void SetWithRP()
+	private void SetWithPR()
 	{
 		Current = (long)(Math.Sqrt(Power / (double)Resistance));
 		Voltage = (long)(Math.Sqrt(Power * Resistance));
@@ -124,11 +247,18 @@ public class VIRP : SymmetricNumber
 
 public enum VIRPKind
 {
-	None,
-	Voltage,
-	Current,
-	Power,
-	Resistance,
+	None = 0,
+	Voltage = 1,
+	Current = 2,
+	Power = 4,
+	Resistance = 8,
+}
+public static class VIRPKindExtensions
+{ 
+	public static int SlotValue(this VIRPKind kind, VIRPState state)
+	{
+		return state.HasValue() ? (int)kind : 0;
+	}
 }
 public enum VIRPState
 {
@@ -136,4 +266,13 @@ public enum VIRPState
 	Uncertain,
 	Set,
 	Fixed,
+}
+
+public static class VIRPStateExtensions
+{
+	public static bool HasValue(this VIRPState state) => state == VIRPState.Fixed || state == VIRPState.Set;
+	public static int SlotValue(this VIRPState state, VIRPKind kind)
+	{
+		return state.HasValue() ? (int)kind : 0;
+	}
 }
