@@ -1,4 +1,5 @@
 using Forces.Primitives.Electricity.Simulation;
+using Forces.Primitives.Electricity.Simulation.Circuits;
 
 namespace Simulation
 {
@@ -11,13 +12,13 @@ namespace Simulation
 
         private void btRunVIRm_Click(object sender, EventArgs e)
         {
-            var circuit = new CircuitVIR();
+            var circuit = new VIR_Man_Circuit();
             circuit.Run();
             tbOutput.Text = circuit.ResultText;
         }
         private void btRunRCLm_Click(object sender, EventArgs e)
         {
-            var circuit = new CircuitRCL();
+            var circuit = new RCL_Man_Circuit();
             circuit.Run();
             tbOutput.Text = circuit.ResultText;
         }
