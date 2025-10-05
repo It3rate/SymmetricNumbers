@@ -17,11 +17,10 @@ namespace SymNum.Patterns;
 /// </summary>
 public class SymmetricNumber : NumberBase
 {
-
-    public long TopRight => RightMeasure.Position;
-    public long TopLeft => LeftUnit.Position;
-    public long BottomRight => RightUnit.Position;
-    public long BottomLeft => LeftMeasure.Position;
+	public long TopRight { get => RightMeasure.Position; protected set => RightMeasure.SetPosition(value); }
+	public long TopLeft { get => LeftUnit.Position; protected set => LeftUnit.SetPosition(value); }
+	public long BottomRight { get => RightUnit.Position; protected set => RightUnit.SetPosition(value); }
+	public long BottomLeft { get => LeftMeasure.Position; protected set => LeftMeasure.SetPosition(value); }
 
     public bool HasTR => RightMeasure.IsFullDefined;
     public bool HasTL => LeftUnit.IsFullDefined;
