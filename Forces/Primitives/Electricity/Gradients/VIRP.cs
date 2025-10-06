@@ -16,9 +16,10 @@ namespace Forces.Primitives.Electricity.Gradients;
 /// </summary>
 public class VIRP : SymmetricNumber
 {
-    // Other things with similar 4 value math (1 ratio and 1 product):
-    // (the meta pattern is something like a thing divisible into two active components where the ratio matters)
-    // The idea is that this pattern is encoded/discovered as a number (four measures) with these constraints. Then similar relations can reuse the pattern.
+    // Other things with similar 4 value math (1 ratio and 1 product, where any two can compute the other two):
+    // The meta pattern is a thing divisible into two active components where the ratio of the two matters.
+    // The idea is that this pattern is encoded/discovered as a number (four measures) with these constraints.
+    // Then similar relations can reuse or expand the pattern.
 
     // Thermodynamics: temp(T), heat capacity(C), heat energy(Q), entropy(S) Q=CT and S=Q/T
     // Optics: wavelength(λ), freqency(f), speed of light(C), energy(E) C=λf and E=ht (h is planck's const)
@@ -28,8 +29,11 @@ public class VIRP : SymmetricNumber
     // Biology; birth rate(B) death rate(D), population(N), net growth(G) G=N(B-D) and pop change relates to B=G/N+D
     // Mechanics: force(F), velocity(V), mass(M), kinetic energy(K) K=1/2MV^2 and F=dK/dx
     // Social groups: status(S), interaction freq(F), connection strength(C), group cohesion(G) G=CF, C=G/S
-    // relations: encounters(e), value(v), strength(s), utility(u) s=ev, u=v/e
+    // Relations: encounters(e), value(v), strength(s), utility(u) s=ev, u=v/e
     // Love: time(t), attraction(A), intimacy(I), commitment(C) C=I/t, A=I/t^2
+
+    // A similar pattern would be additive instead of multiplicative. 
+    // Personal financials: assets(A), liabilities(L), net worth(N), capital(C) C=A+L and N=A-L
 
     public long Voltage { get => TopRight; set => TopRight = value; }
 	public long Current { get => BottomRight; set => BottomRight = value; }
