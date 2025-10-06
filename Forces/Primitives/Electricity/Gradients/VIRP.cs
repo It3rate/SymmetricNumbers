@@ -21,6 +21,7 @@ public class VIRP : SymmetricNumber
     // The idea is that this pattern is encoded/discovered as a number (four measures) with these constraints.
     // Then similar relations can reuse or expand the pattern.
 
+	// Rectangle: width(w), length(l), area(a), aspect ratio(Ar) a=wl and Ar=l/w
     // Thermodynamics: temp(T), heat capacity(C), heat energy(Q), entropy(S) Q=CT and S=Q/T
     // Optics: wavelength(λ), freqency(f), speed of light(C), energy(E) C=λf and E=ht (h is planck's const)
     // Economics: price(P), demand(D), supply(S), revenue(R) R=PD and P=S/D for equilibrium
@@ -224,6 +225,17 @@ public class VIRP : SymmetricNumber
 		CurrentState = VIRPState.Set;
 		PowerState = VIRPState.Set;
 		ResistanceState = VIRPState.Set;
+	}
+
+	/// <summary>
+	/// If you set power, then current and voltage can be anything that multiplies to the power, and resistance is the raito.
+	/// This makes them uncertain, but still constrained, and the value becomes at best a probability based on history.
+	/// It also allows for sampling. You can sample different currents based on a known power and see how it fits when fully calculated.
+	/// This is true of any gradients in this pattern, change the area of a rect, and you are free to sample any widths, lengths, or aspect ratios to test.
+	/// This is sort of the concept separated from the instance, which is the key to encoding patterns.
+	/// </summary>
+	private void SetWithP()
+	{
 	}
 
 	private void SetWithVIR()
