@@ -16,7 +16,22 @@ namespace Forces.Primitives.Electricity.Gradients;
 /// </summary>
 public class VIRP : SymmetricNumber
 {
-	public long Voltage { get => TopRight; set => TopRight = value; }
+    // Other things with similar 4 value math (1 ratio and 1 product):
+    // (the meta pattern is something like a thing divisible into two active components where the ratio matters)
+    // The idea is that this pattern is encoded/discovered as a number (four measures) with these constraints. Then similar relations can reuse the pattern.
+
+    // Thermodynamics: temp(T), heat capacity(C), heat energy(Q), entropy(S) Q=CT and S=Q/T
+    // Optics: wavelength(λ), freqency(f), speed of light(C), energy(E) C=λf and E=ht (h is planck's const)
+    // Economics: price(P), demand(D), supply(S), revenue(R) R=PD and P=S/D for equilibrium
+    // Data Transmission: bandwidth(B), sig2noise(SNR), data rate(R), symbol rate(S) R=Blog2(1+SNR) and S~RB
+    // Chemistry: concentration(C), molar mass(M), volume(V), mass(m = nM) C and V fix n and m with div and mult
+    // Biology; birth rate(B) death rate(D), population(N), net growth(G) G=N(B-D) and pop change relates to B=G/N+D
+    // Mechanics: force(F), velocity(V), mass(M), kinetic energy(K) K=1/2MV^2 and F=dK/dx
+    // Social groups: status(S), interaction freq(F), connection strength(C), group cohesion(G) G=CF, C=G/S
+    // relations: encounters(e), value(v), strength(s), utility(u) s=ev, u=v/e
+    // Love: time(t), attraction(A), intimacy(I), commitment(C) C=I/t, A=I/t^2
+
+    public long Voltage { get => TopRight; set => TopRight = value; }
 	public long Current { get => BottomRight; set => BottomRight = value; }
 	public long Power { get => BottomLeft; set => BottomLeft = value; }
 	public long Resistance { get => TopLeft; set => TopLeft = value; }
