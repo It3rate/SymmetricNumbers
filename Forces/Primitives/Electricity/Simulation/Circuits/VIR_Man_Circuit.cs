@@ -5,7 +5,8 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using SpiceSharp;
+	using Forces.Primitives.Electricity.Gradients;
+	using SpiceSharp;
     using SpiceSharp.Components;
     using SpiceSharp.Simulations;
     using SpiceSharpParser.ModelReaders.Netlist.Spice;
@@ -49,11 +50,12 @@
             _results.Clear();
             for (int i = 0; i < 3; i++)
             {
-                RunDC(0.0, 5.0, 1.0);
+                RunDC(1.0, 10.0, 1.0);
                 Resistance0 += 1000.0; // increase R1 by 1000 Ohm each step
                 Resistance1 -= 100.0;
             }
         }
+        List<VIRP> _samples = new List<VIRP>();
         public void RunDC(double startV, double endV, double step, string currentProbe = "V1", string voltageProbe = "out")
         {
             var dc = new DC("dc", "V1", startV, endV, step);
@@ -62,6 +64,7 @@
             {
                 double current = -dc.GetCurrent(currentProbe);
                 double voltage = dc.GetVoltage(voltageProbe);
+                var sample = new VIRP((long)(voltage * 1000000), null, (long)(current * 1000000), null);
                 double resistance = voltage / current;
                 _results.Add([voltage, current, resistance]);
             }

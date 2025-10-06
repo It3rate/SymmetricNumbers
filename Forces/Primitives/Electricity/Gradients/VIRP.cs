@@ -22,6 +22,7 @@ public class VIRP : SymmetricNumber
     // Then similar relations can reuse or expand the pattern.
 
 	// Rectangle: width(w), length(l), area(a), aspect ratio(Ar) a=wl and Ar=l/w
+	// Propulsion: leftThrust(L), rightThrust(R), forwardForce(F), turnForce(T) F=L+R and T=R-L
     // Thermodynamics: temp(T), heat capacity(C), heat energy(Q), entropy(S) Q=CT and S=Q/T
     // Optics: wavelength(λ), freqency(f), speed of light(C), energy(E) C=λf and E=ht (h is planck's const)
     // Economics: price(P), demand(D), supply(S), revenue(R) R=PD and P=S/D for equilibrium
@@ -67,13 +68,15 @@ public class VIRP : SymmetricNumber
 		PowerState.SlotValue(VIRPKind.Power) +
 		ResistanceState.SlotValue(VIRPKind.Resistance);
 
-	public VIRP(long? voltage, long? current, long? power, long? resistance) :
-		base(voltage ?? 0, current ?? 0, power ?? 0, resistance ?? 0)
+	// long tr, long tl, long br, long bl)
+	public VIRP(long? voltage, long? resistance, long? current, long? power) :
+		base(voltage ?? 0, resistance ?? 0, current ?? 0, power ?? 0)
 	{
 		VoltageState = voltage != null ? VIRPState.Set : VIRPState.Unknown;
 		CurrentState = current != null ? VIRPState.Set : VIRPState.Unknown;
 		PowerState = power != null ? VIRPState.Set : VIRPState.Unknown;
 		ResistanceState = resistance != null ? VIRPState.Set : VIRPState.Unknown;
+		Calculate();
 	}
 	public VIRPState GetState(VIRPKind kind)
 	{

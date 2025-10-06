@@ -74,7 +74,7 @@ public class NumberBase
     /// An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
     /// but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
 
-    private Measure[] _measures;
+    private Measure[] _measures = new Measure[4];
     public Measure RightMeasure { get => _measures[0]; protected set => _measures[0] = value; }
     public Measure RightUnit { get => _measures[1]; protected set => _measures[1] = value; }
     public Measure LeftMeasure { get => _measures[2]; protected set => _measures[2] = value; }

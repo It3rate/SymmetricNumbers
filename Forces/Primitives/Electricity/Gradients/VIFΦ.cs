@@ -24,14 +24,20 @@
         public long VPhaseShift => BottomLeft; // Φ, voltage leads (or follows) current 
 		public long Frequency => TopLeft;
 
-        // Pure Resistance (not ractance) is V/I.
-        // This is easy to calculate with V and I, but when setting resistance
-        // it can be due to a change in voltage or current, caused by a change of component or input.
-        // So changing the pure resistance is potentially from a change in voltage, current, or both.
-        // Either one of these values can be ~anything, but the other has to be calculated off the resistance ratio.
-        // If you set a resistance, and you know one of voltage, current, or power, you can fill in the others.
-        // This means you can also 'fix' one and change a second and still know all the values.
-        // The 'number' here is the relation of the values, it acts like a kind of 'unit' for the logic of the number.
+		// Other things with similar 4 value math (1 ratio and 1 repeat count/freq, 1 progress along repeats
+        // (progress can be mod like in phase, or just the total distance travelled, like 7.2 times around vs 0.2 phase)
+        // Loops: width(W), height(H), progress along diameter(P), repeat count(R) 
+        // ForLoop: firstInstruction(F), lastInstruction(L), currentPosition(P), loopCount(C)
+        // Populations: BirthRate(P), DeathRate(R), Time(T), TimePerGeneration(G)
+
+		// Pure Resistance (not ractance) is V/I.
+		// This is easy to calculate with V and I, but when setting resistance
+		// it can be due to a change in voltage or current, caused by a change of component or input.
+		// So changing the pure resistance is potentially from a change in voltage, current, or both.
+		// Either one of these values can be ~anything, but the other has to be calculated off the resistance ratio.
+		// If you set a resistance, and you know one of voltage, current, or power, you can fill in the others.
+		// This means you can also 'fix' one and change a second and still know all the values.
+		// The 'number' here is the relation of the values, it acts like a kind of 'unit' for the logic of the number.
 
 		public float ResistanceActual { get; set; } // measured
 		public float VIResistance => RightValue; // Current == 0 ? (Voltage >= 0 ? long.MaxValue : long.MinValue) : Voltage / Current; 
