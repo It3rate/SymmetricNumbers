@@ -13,10 +13,10 @@
 
     public class VIR_Man_Circuit : CircuitBase
     {
+        private List<VIRP> _samples = new List<VIRP>();
         private VoltageSource _voltageSource;
         private Resistor _r0;
         private Resistor _r1;
-        private List<double[]> _results = new List<double[]>();
         public VIR_Man_Circuit()
         {
             var r0 = 1.0e3;
@@ -47,7 +47,7 @@
         }
         public override void Run()
         {
-            _results.Clear();
+            _samples.Clear();
             for (int i = 0; i < 3; i++)
             {
                 RunDC(1.0, 10.0, 1.0);
@@ -55,35 +55,32 @@
                 Resistance1 -= 100.0;
             }
         }
-        List<VIRP> _samples = new List<VIRP>();
+        private double _resolution = 10000000;
         public void RunDC(double startV, double endV, double step, string currentProbe = "V1", string voltageProbe = "out")
         {
             var dc = new DC("dc", "V1", startV, endV, step);
-            double resolution = 10000000;
             foreach (int exportType in dc.Run(Circuit))
             {
                 double current = -dc.GetCurrent(currentProbe);
                 double voltage = dc.GetVoltage(voltageProbe);
-                var sample = new VIRP((long)(voltage * resolution), null, (long)(current * resolution), null);
-				double resistance = sample.Resistance;
-				double power = sample.Power / resolution;
-				_results.Add([voltage, current, resistance, power]);
+                var sample = new VIRP((long)(voltage * _resolution), null, (long)(current * _resolution), null);
+                _samples.Add(sample);
             }
         }
-        public override string[]? Headers => ["voltage", "current", "resistance", "power"];
+        public override string[]? Headers => ["voltage", "current", "resist", "power"];
         public override string ResultText
         {
             get
             {
                 var result = new StringBuilder();
                 result.AppendLine(string.Join("\t", Headers!));
-                foreach (var values in _results)
+                foreach (var value in _samples)
                 {
                     result.AppendLine(new string(
-                        values[0].ToString("0.000") + "   \t" +    // voltage V
-                        (values[1] * 1000).ToString("0.000") + "   \t" +  // current mA
-                        values[2].ToString("0.000") + "    \t" + // resistance ohms
-						values[3].ToString("0.000") // power
+                        (value.Voltage / _resolution).ToString("0.000") + "   \t" +    // voltage V
+                        (value.Current / _resolution * 1000).ToString("0.000") + "   \t" +  // current mA
+                        value.Resistance.ToString("0") + "    \t" + // resistance ohms
+						value.Power.ToString("0") // power
 					)
                     );
                 }
