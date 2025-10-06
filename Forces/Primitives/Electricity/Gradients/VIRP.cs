@@ -32,8 +32,18 @@ public class VIRP : SymmetricNumber
     // Relations: encounters(e), value(v), strength(s), utility(u) s=ev, u=v/e
     // Love: time(t), attraction(A), intimacy(I), commitment(C) C=I/t, A=I/t^2
 
-    // A similar pattern would be additive instead of multiplicative. 
+    // A similar pattern would be additive instead of multiplicative. This would be a different pattern, but similar structure.
     // Personal financials: assets(A), liabilities(L), net worth(N), capital(C) C=A+L and N=A-L
+    // Climate Control: Heater(H), AirCon(C), Temperature(T), Energy Use(E) E=H+C and T=H-C
+
+    // Our numbers are measure(M), unit(U), imaginary measure(iM), imaginary unit(iU) U=resolution, iU=-resolution, iM=0, and Value=M/U
+    // Complex numbers are measure(M), unit(U), imaginary measure(iM), imaginary unit(iU) U=resolution, iU=-resolution, Imaginary=iM/iU, and Real=M/U
+    // Symmetric numbers constrain the meanings of the four values (equation patterns), but not any of the values themselves. The units aren't constrained and neither are the ops on them.
+
+    // The same four numbers can be used in different ways, depending on the information you want.
+    // So the constraints are separable from the measures, but together they make a complete number.
+    // Measures can be the output of a different number system, they don't need to be primitive measured values.
+    // e.g. PSI is a value from another number system, but still can be used as a single measure in a new system.
 
     public long Voltage { get => TopRight; set => TopRight = value; }
 	public long Current { get => BottomRight; set => BottomRight = value; }
