@@ -59,17 +59,18 @@
         public void RunDC(double startV, double endV, double step, string currentProbe = "V1", string voltageProbe = "out")
         {
             var dc = new DC("dc", "V1", startV, endV, step);
-
+            double resolution = 10000000;
             foreach (int exportType in dc.Run(Circuit))
             {
                 double current = -dc.GetCurrent(currentProbe);
                 double voltage = dc.GetVoltage(voltageProbe);
-                var sample = new VIRP((long)(voltage * 1000000), null, (long)(current * 1000000), null);
-                double resistance = voltage / current;
-                _results.Add([voltage, current, resistance]);
+                var sample = new VIRP((long)(voltage * resolution), null, (long)(current * resolution), null);
+				double resistance = sample.Resistance;
+				double power = sample.Power / resolution;
+				_results.Add([voltage, current, resistance, power]);
             }
         }
-        public override string[]? Headers => ["voltage", "current", "resistance"];
+        public override string[]? Headers => ["voltage", "current", "resistance", "power"];
         public override string ResultText
         {
             get
@@ -81,8 +82,9 @@
                     result.AppendLine(new string(
                         values[0].ToString("0.000") + "   \t" +    // voltage V
                         (values[1] * 1000).ToString("0.000") + "   \t" +  // current mA
-                        values[2].ToString("0.000")                    // resistance ohms
-                    )
+                        values[2].ToString("0.000") + "    \t" + // resistance ohms
+						values[3].ToString("0.000") // power
+					)
                     );
                 }
                 return result.ToString();
