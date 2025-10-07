@@ -44,7 +44,7 @@ namespace SymNum.Patterns;
 /// Note that these can describe any non random pattern, but have no information about what the pattern represents.
 /// This requires some kind of unit tied to the number. Numbers themselves are pure patterns.
 /// </summary>
-public class NumberBase
+public class UnconstrainedNumber
 {
     //   public Extent RightExtent { get; protected set; }
     //   public Extent LeftExtent { get; protected set; }
@@ -74,11 +74,12 @@ public class NumberBase
     /// An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
     /// but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
 
+    // needs to be protected to allow subclasses to enforce their constraints.
     private Measure[] _measures = new Measure[4];
-    public Measure RightMeasure { get => _measures[0]; protected set => _measures[0] = value; }
-    public Measure RightUnit { get => _measures[1]; protected set => _measures[1] = value; }
-    public Measure LeftMeasure { get => _measures[2]; protected set => _measures[2] = value; }
-    public Measure LeftUnit { get => _measures[3]; protected set => _measures[3] = value; }
+    protected Measure RightMeasure { get => _measures[0]; set => _measures[0] = value; }
+    protected Measure RightUnit { get => _measures[1]; set => _measures[1] = value; }
+    protected Measure LeftMeasure { get => _measures[2]; set => _measures[2] = value; }
+    protected Measure LeftUnit { get => _measures[3]; set => _measures[3] = value; }
 
 
     public virtual bool IsFullyDefined => _measures.All(m => m.IsFullDefined);
@@ -106,6 +107,7 @@ public class NumberBase
         }
         return result;
     }
+
     /// <summary>
     /// RightValue is the positive polarity value, up vs down, right vs left, large vs small etc.
     /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
@@ -124,7 +126,18 @@ public class NumberBase
         get => GetValue(LeftMeasure, LeftUnit);
         set => SetValue(LeftMeasure, LeftUnit, value);
     }
-
+    // B | A
+    // D | C
+    // Multiply         A/C * D/B
+    // Relation         A/C / D/B
+    // Ratio            A/C | D/B
+    // DotProduct       A*B/C*D
+    // CrossProduct     A*D/B*C
+    // NormalizeMin     resolution is min(B,C), scale other (BD or AC) to this resolution -- needed to not overstate resolution, may be more elaborate or better expressed as a range
+    // NormalizeMax     resolution is max(B,C), scale other (BD or AC) to this resolution
+    // ComplexAdd       NormalizeMin, (D+A)/B <- B and C will be same value after norm
+    // ComplexSubtract  NormalizeMin, (D-A)/B <- B and C will be same value after norm
+    // ComplexMult      NormalizeMin, A=(AC-BD), B=-res, C=res, D=(AD+BC)
 
 
 
@@ -143,11 +156,11 @@ public class NumberBase
 
 public abstract class NumberValue
 {
-    public NumberBase NumberReference { get; }
+    public UnconstrainedNumber NumberReference { get; }
     public abstract long RightResolution { get; }
     public abstract long LeftResolution { get; }
 
-    public NumberValue(NumberBase number)
+    public NumberValue(UnconstrainedNumber number)
     {
         NumberReference = number;
     }

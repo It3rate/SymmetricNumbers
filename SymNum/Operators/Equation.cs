@@ -29,7 +29,7 @@ namespace SymNum.Operators;
 
 // all of these are equations, and can be represented with numbers and operations (plus, minus, multiply, divide, repeat/exponent, state referential, dynamic follower etc)
 
-public class Equation : NumberBase
+public class Equation : UnconstrainedNumber
 {
     public Sequencer Sequence { get; set; }
     public RepeatableNumber RepetitionPattern { get; set; }

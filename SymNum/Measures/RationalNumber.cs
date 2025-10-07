@@ -10,7 +10,7 @@ namespace SymNum.Patterns;
 /// A rational number is made of two segments, where the denominator is a segment from zero to a positive number,
 /// and the numerator is a segment from zero to an arbitrary postion.
 /// </summary>
-public class RationalNumber : NumberBase
+public class RationalNumber : UnconstrainedNumber
 {
     public long MeasurePosition
     {

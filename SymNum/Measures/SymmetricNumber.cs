@@ -15,7 +15,7 @@ namespace SymNum.Patterns;
 /// a concept requiring the existance of some 'y' dimension, but fully describable in the 1D 'x' dimension.
 /// See: https://x.com/debreuil/status/1876646280451051933
 /// </summary>
-public class SymmetricNumber : NumberBase
+public class SymmetricNumber : UnconstrainedNumber
 {
 	public long TopRight { get => RightMeasure.Position; protected set => RightMeasure.SetPosition(value); }
 	public long TopLeft { get => LeftUnit.Position; protected set => LeftUnit.SetPosition(value); }
@@ -67,21 +67,21 @@ public class SymmetricNumber : NumberBase
         RightUnit = new Measure(br, Direction.FacesRight, true);
         LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
     }
-    public SymmetricValue SymmetricValue => new SymmetricValue(this);
-}
-public class SymmetricValue : NumberValue
-{
-    public SymmetricNumber Reference { get; }
-    public float RightValue => NumberBase.GetValue(Reference.RightMeasure, Reference.RightUnit);
-    public float LeftValue => NumberBase.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
-    public float GetValue(Measure measure) => measure.IsFullDefined ? (float)measure.Position : 0;
-    public float GetValue(Measure numerator, Measure denominator) => NumberBase.GetValue(numerator, denominator);
-    // todo: public float GetValue(Measure a, Measure b, Measure c) => ;
-    // todo: public float GetValue(Measure a, Measure b, Measure c, Measure d) => ;
-    public override long RightResolution => Reference.RightResolution;
-	public override long LeftResolution => Reference.LeftResolution;
-	public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
+    public SymmetricValue Symmetric => new SymmetricValue(this);
+    public class SymmetricValue : NumberValue
     {
-        Reference = baseNumber;
+        public SymmetricNumber Reference { get; }
+        public float RightValue => UnconstrainedNumber.GetValue(Reference.RightMeasure, Reference.RightUnit);
+        public float LeftValue => UnconstrainedNumber.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
+        public float GetValue(Measure measure) => measure.IsFullDefined ? (float)measure.Position : 0;
+        public float GetValue(Measure numerator, Measure denominator) => UnconstrainedNumber.GetValue(numerator, denominator);
+        // todo: public float GetValue(Measure a, Measure b, Measure c) => ;
+        // todo: public float GetValue(Measure a, Measure b, Measure c, Measure d) => ;
+        public override long RightResolution => Reference.RightResolution;
+	    public override long LeftResolution => Reference.LeftResolution;
+	    public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
+        {
+            Reference = baseNumber;
+        }
     }
 }

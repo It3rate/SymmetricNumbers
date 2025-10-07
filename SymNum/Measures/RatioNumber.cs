@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 /// A number out of three samples. This may not need to be a separate class, 
 /// or at least other number classes should be able to use it.
 /// </summary>
-public class RatioNumber : NumberBase
+public class RatioNumber : UnconstrainedNumber
 {
 	public long StartPosition => LeftMeasure.Position;
 	public long MidPosition => RightMeasure.Position;

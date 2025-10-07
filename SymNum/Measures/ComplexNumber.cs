@@ -10,7 +10,7 @@ namespace SymNum.Patterns
 	/// A ComplexNumber is made of two extents, where the denominator is a -1 to 1 segment,
 	/// and the numerator is a segment not fixed at zero.
 	/// </summary>
-	public class ComplexNumber : NumberBase
+	public class ComplexNumber : UnconstrainedNumber
     {
         public ComplexNumber(long resolution, long startPosition, long endPosition)
         {
@@ -21,18 +21,18 @@ namespace SymNum.Patterns
         }
         public ComplexNumber(long resolution, float startPosition, float endPosition) :
             this(resolution, (long)(startPosition / resolution), (long)(endPosition / resolution)) { }  
-        public ComplexValue ComplexValue => new ComplexValue(this);
-    }
-    public class ComplexValue : NumberValue
-    {
-        public ComplexNumber Reference { get; }
-        public float Real => Reference.RightValue;
-        public float Imaginary => Reference.LeftValue;
-        public override long RightResolution => Reference.LeftUnit.Position;
-        public override long LeftResolution => RightResolution; // real and imaginary resolution are always the same in complex numbers.
-        public ComplexValue(ComplexNumber complexNumber) : base(complexNumber)
+        public ComplexValue Complex => new ComplexValue(this);
+        public class ComplexValue : NumberValue
         {
-            Reference = complexNumber;
+            public ComplexNumber Reference { get; }
+            public float Real => Reference.RightValue;
+            public float Imaginary => Reference.LeftValue;
+            public override long RightResolution => Reference.LeftUnit.Position;
+            public override long LeftResolution => RightResolution; // real and imaginary resolution are always the same in complex numbers.
+            public ComplexValue(ComplexNumber complexNumber) : base(complexNumber)
+            {
+                Reference = complexNumber;
+            }
         }
     }
 }
