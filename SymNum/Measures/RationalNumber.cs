@@ -12,15 +12,17 @@ namespace SymNum.Patterns;
 /// </summary>
 public class RationalNumber : UnconstrainedNumber
 {
+    // contraint is that left unit is always -UnitPosition, and left measure is always 0.
+    // All operations on complex numbers should apply? So really it is a 'subclass' of ComplexNumber, but this isn't really an oop system like that.
     public long MeasurePosition
     {
         get => RightMeasure.Position;
-        set => RightMeasure.SetPosition(value);
+        set { RightMeasure.SetPosition(value); LeftMeasure.SetPosition(0); }
     }
     public long UnitPosition
     {
         get => RightUnit.Position;
-        set => RightUnit.SetPosition(value);
+        set { RightUnit.SetPosition(value); LeftUnit.SetPosition(-value); }
     }
     public long TickCount => MeasurePosition;
     public long Resolution{
@@ -36,12 +38,15 @@ public class RationalNumber : UnconstrainedNumber
         get =>  RightValue;
         protected set => RightValue = value;
     }
+    /// <summary>
+    /// A RationalNumber is a complex number with constraints on the left side.
+    /// </summary>
     public RationalNumber(long resolution, long value)
     {
-        LeftMeasure = Measure.ZeroUnknown();
-        LeftUnit = Measure.ZeroUnknown();
-        RightMeasure = new Measure(value, Direction.Unknown, true);
+        RightMeasure = new Measure(value, Direction.FacesRight, true);
         RightUnit = new Measure(resolution, Direction.FacesRight, true);
+        LeftUnit = new Measure(-resolution, Direction.FacesLeft, true);
+        LeftMeasure = new Measure(0, Direction.FacesLeft, true);
     }
     public RationalNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
 
