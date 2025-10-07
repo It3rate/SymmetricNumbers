@@ -80,7 +80,7 @@
                         (value.Voltage / _resolution).ToString("0.000") + "   \t" +    // voltage V
                         (value.Current / _resolution * 1000).ToString("0.000") + "   \t" +  // current mA
                         value.Resistance.ToString("0") + "    \t" + // resistance ohms
-						value.Power.ToString("0") // power
+						(value.Power / (_resolution * (_resolution / 1000))).ToString("0.00") // power
 					)
                     );
                 }

@@ -9,18 +9,22 @@
     using System.Threading.Tasks;
     using SpiceSharp;
     using SpiceSharpParser;
+    using SpiceSharpParser.Common;
     using SpiceSharpParser.ModelReaders.Netlist.Spice;
     using SpiceSharpParser.ModelReaders.Netlist.Spice.Readers.Controls.Exporters;
 
     public abstract class CircuitBase
     {
+        public event EventHandler<Export[]>? SampleReceived;
+
         public SpiceSharpModel? Model { get; protected set; }
         public Circuit? Circuit => Model?.Circuit;
         public Export[]? Exports { get; protected set; }
-        public List<double[]> Results { get; protected set; } = new List<double[]>();
+        public List<Export[]> Results { get; protected set; } = new List<Export[]>();
 
         protected StringBuilder _log = new StringBuilder();
         protected string? _netlist { get; }
+        protected ISimulationWithEvents? CurrentSim { get; private set; }
 
 
         public CircuitBase()
@@ -64,21 +68,23 @@
             {
                 Create();
             }
-            Results = new List<double[]>();
-            var sim = Model!.Simulations.Single();
-            sim.EventExportData += (sender, args) =>
+            Results = new List<Export[]>();
+            CurrentSim = Model!.Simulations.Single();
+            CurrentSim.EventExportData += (sender, args) =>
             {
-                var vals = new double[Exports!.Length];
+                var vals = new Export[Exports!.Length];
                 for (int i = 0; i < Exports.Length; i++)
                 {
-                    vals[i] = Exports[i].Extract();
+                    var export = Exports[i];
+                    vals[i] = export;
                 }
                 Results.Add(vals);
+                SampleReceived?.Invoke(this, vals);
             };
-            var codes = sim.Run(Circuit, -1);
-            codes = sim.InvokeEvents(codes);
+            var codes = CurrentSim.Run(Circuit, -1);
+            codes = CurrentSim.InvokeEvents(codes);
             codes.ToArray(); //eval
-
+            CurrentSim = null;
         }
         protected string[] GetExportNames(string netlistText)
         {
