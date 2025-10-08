@@ -1,6 +1,8 @@
 ﻿namespace SymNum.Measures.PatternNumbers;
 
 using System;
+using System.Data;
+using Microsoft.VisualBasic;
 using SymNum.Patterns;
 
 
@@ -62,17 +64,25 @@ public class SplitNumber : UnconstrainedNumber
 	public RationalNumber ActualRatioImaginary => new RationalNumber(Imaginary, Real);
 
 
+
+
+    // the natural constraints of a split number are r=rm/ru and i=im/iu.
+    // Changing the real unit will either change the real value or the real measure, so one must be locked.
+    // (locking the value changes the resolution, locking the measure changes the value and resolution.)
+
 	#region Fix and Transform
     // this is going to be its own class, where you can assert relations in a number
     // and then lock the number into certain behaviours and patterns with them.
+
+
 	public override bool IsFullyDefined =>
 		base.IsFullyDefined &&
 		RealState.IsSet && ImaginaryState.IsSet && AreaState.IsSet && RatioState.IsSet;
 	public int SetSlotsValue =>
 		RealState.State.SlotValue(MultiplicativeRelation.Real) +
-		RealState.State.SlotValue(MultiplicativeRelation.Ratio) +
+		RatioState.State.SlotValue(MultiplicativeRelation.Ratio) +
 		ImaginaryState.State.SlotValue(MultiplicativeRelation.Imaginary) +
-		ImaginaryState.State.SlotValue(MultiplicativeRelation.Area);
+		AreaState.State.SlotValue(MultiplicativeRelation.Area);
 
 	public ValueSample RealState { get; private set; }
 	public ValueSample ImaginaryState { get; private set; }
@@ -83,6 +93,14 @@ public class SplitNumber : UnconstrainedNumber
 	public double AreaValue => RealValue * ImaginaryValue;
 	public double RatioValue => RealValue / ImaginaryValue;
 
+    private void UpdateStates()
+	{
+		RealState.UpdateValue(RealValue);
+		ImaginaryState.UpdateValue(ImaginaryValue);
+        RatioState.UpdateValue(RatioValue);
+        AreaState.UpdateValue(AreaValue);
+
+	}
 	public MeasureState GetState(MultiplicativeRelation kind)
     {
         var result = MeasureState.Unknown;
@@ -181,15 +199,17 @@ public class SplitNumber : UnconstrainedNumber
 	}
 
 	public void SetAndFix(MultiplicativeRelation toSet, long value, MultiplicativeRelation toFix)
-    {
-        SetAll();
+	{
+		UpdateStates();
+		SetAll();
         FixValue(toFix);
         SetValue(toSet, value);
         Calculate();
     }
     public void SetTwo(MultiplicativeRelation setA, long valueA, MultiplicativeRelation setB, long valueB)
     {
-        SetAll();
+        UpdateStates();
+		SetAll();
         SetValue(setA, valueA);
         SetValue(setB, valueB);
         Calculate();
@@ -208,37 +228,29 @@ public class SplitNumber : UnconstrainedNumber
         //Area = 4,
         //Ratio = 8,
         switch (ssv)
-        {
-            //case 3: // VI
-            //    SetWithVI();
-            //    break;
-            //case 5: // VP
-            //    SetWithVP();
-            //    break;
-            //case 6: // IP
-            //    SetWithIP();
-            //    break;
-            //case 7: // VIP
-            //    SetWithVIP();
-            //    break;
-            //case 8: // VR
-            //    SetWithVR();
-            //    break;
-            //case 10: // IR
-            //    SetWithIR();
-            //    break;
-            //case 11: // VIR
-            //    SetWithVIR();
-            //    break;
-            //case 12: // PR
-            //    SetWithPR();
-            //    break;
-            //case 13: // VPR
-            //    SetWithVPR();
-            //    break;
-            //case 14: // IPR
-            //    SetWithIPR();
-            //    break;
+		{
+			case 3: // RI
+			case 7: // RIA
+			case 11: // RIRa
+				SetWithRI();
+                break;
+            case 5: // RA
+			case 13: // RARa
+				SetWithRA();
+                break;
+            case 6: // IA
+			case 14: // IARa
+				SetWithIA();
+                break;
+            case 9: // RRa
+                SetWithRRa();
+                break;
+            case 10: // IRa
+                SetWithIRa();
+                break;
+            case 12: // ARa
+                SetWithARa();
+                break;
             default:
                 canFullyCalc = false;
                 break;
@@ -255,57 +267,41 @@ public class SplitNumber : UnconstrainedNumber
     /// This is true of any gradients in this pattern, change the area of a rect, and you are free to sample any reals, lengths, or aspect ratios to test.
     /// This is sort of the concept separated from the instance, which is the key to encoding patterns.
     /// </summary>
-    private void SetWithP()
+    private void SetWithArea()
     {
+        // todo: this results in an ambiguous but constrained value.
     }
-
-	//private void SetWithVIR()
-	//{
-	//    Area = Real * Imaginary;
-	//}
-	//private void SetWithIPR()
-	//{
-	//    Real = Imaginary * Aspect;
-	//}
-	//private void SetWithVPR()
-	//{
-	//    Imaginary = (long)(Real / (double)Aspect);
-	//}
-	//private void SetWithVIP()
-	//{
-	//    Area = Real * Imaginary;
-	//}
-	//private void SetWithVI()
-	//{
-	//    Aspect = (long)(Real / (float)Imaginary);
-	//    Area = Real * Imaginary;
-	//}
-	//private void SetWithIR()
-	//{
-	//    Real = Imaginary * Aspect;
-	//    Area = Imaginary * Imaginary * Aspect;
-	//}
-	//private void SetWithIP()
-	//{
-	//    Real = (long)(Area / (double)Imaginary);
-	//    Aspect = (long)(Area / (double)(Imaginary * Imaginary));
-	//}
-	//private void SetWithVR()
-	//{
-	//    Imaginary = (long)(Real / (double)Aspect);
-	//    Area = Real * Imaginary;
-	//}
-	//private void SetWithVP()
-	//{
-	//    Imaginary = (long)(Area / (double)Real);
-	//    Aspect = (long)(Area / ((double)Real * Real));
-	//}
-	//private void SetWithPR()
-	//{
-	//    Imaginary = (long)(Math.Sqrt(Area / (double)Aspect));
-	//    Real = (long)(Math.Sqrt(Area * Aspect));
-	//}
-	#endregion
+    private void SetWithRI()
+    {
+        UpdateStates();
+    }
+    private void SetWithRA()
+    {
+        Imaginary = (long)(AreaState.Value / RealState.Value);
+		UpdateStates();
+	}
+    private void SetWithIA()
+    {
+        Real = (long)(AreaState.Value / ImaginaryState.Value);
+		UpdateStates();
+	}
+    private void SetWithRRa()
+    {
+        Imaginary = (long)((1.0 / RatioState .Value) * RealState.Value);
+		UpdateStates();
+	}
+    private void SetWithIRa()
+    {
+        Real = (long)(( RatioState .Value) * ImaginaryState.Value);
+		UpdateStates();
+	}
+    private void SetWithARa()
+	{
+		Real = (long)Math.Sqrt(AreaState.Value * RatioState.Value);
+		Imaginary = (long)(long)Math.Sqrt(AreaState.Value / RatioState.Value);
+		UpdateStates();
+	}
+    #endregion
 }
 
 public enum NumberQuadrant
@@ -382,6 +378,10 @@ public class ValueSample
 		State = state;
 		Calculate();
 	}
+    public void UpdateValue(double value)
+    {
+        Value = value;
+    }
     public void Fix() => State = MeasureState.Fixed;
     public void Set() => State = MeasureState.Set;
     public void Unset() => State = MeasureState.Uncertain;
