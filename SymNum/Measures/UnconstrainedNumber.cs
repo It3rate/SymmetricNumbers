@@ -38,6 +38,7 @@ namespace SymNum.Patterns;
 
 /// <summary>
 /// There are many types of numbers, they just mean measures calibrated in some way. 
+/// Left units and measures are positive left, so do not negate them unless pointing right.
 /// This is the base class which can grow into numbers, complex numbers, symmetric numbers, dynamic zero point numbers,
 /// equations, patterns etc. All of these are just ways of organizing and calibrating values to have meaning 
 /// (aka be non random).
@@ -76,10 +77,23 @@ public class UnconstrainedNumber
 
     // needs to be protected to allow subclasses to enforce their constraints.
     private Measure[] _measures = new Measure[4];
-    protected Measure RightMeasure { get => _measures[0]; set => _measures[0] = value; }
-    protected Measure RightUnit { get => _measures[1]; set => _measures[1] = value; }
+	/// <summary>
+	/// A positive right measured number of ticks.
+	/// </summary>
+	protected Measure RightMeasure { get => _measures[0]; set => _measures[0] = value; }
+	/// <summary>
+	/// A positive right resolution in ticks.
+	/// </summary>
+	protected Measure RightUnit { get => _measures[1]; set => _measures[1] = value; }
+    /// <summary>
+    /// A positive left measured number of ticks.
+    /// </summary>
     protected Measure LeftMeasure { get => _measures[2]; set => _measures[2] = value; }
+    /// <summary>
+    /// A positive left resolution in ticks.
+    /// </summary>
     protected Measure LeftUnit { get => _measures[3]; set => _measures[3] = value; }
+    public long ZeroPoint => 0; // this may be adjustable eventually, as a shift can just shift zero.
 
 
     public virtual bool IsFullyDefined => _measures.All(m => m.IsFullDefined);
@@ -87,7 +101,10 @@ public class UnconstrainedNumber
     protected UnconstrainedNumber()
     {
     }
-    public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
+	/// <summary>
+	/// Left values are positive left, so do not negate them unless pointing right.
+	/// </summary>
+	public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
     {
         var result = new UnconstrainedNumber();
         result.RightMeasure = new Measure(tr, Direction.FacesRight, true);

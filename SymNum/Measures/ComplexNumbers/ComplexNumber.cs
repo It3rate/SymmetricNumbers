@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SymNum.Patterns;
 
-namespace SymNum.Patterns
+namespace SymNum.Measures.PatternNumbers
 {
-	/// <summary>
-	/// A ComplexNumber is made of two extents, where the denominator is a -1 to 1 segment,
-	/// and the numerator is a segment not fixed at zero.
-	/// </summary>
-	public class ComplexNumber : UnconstrainedNumber
+    /// <summary>
+    /// A ComplexNumber is made of two extents, where the denominator is a -1 to 1 segment,
+    /// and the numerator is a segment not fixed at zero.
+    /// </summary>
+    public class ComplexNumber : UnconstrainedNumber
     {
         public ComplexNumber(long resolution, long startPosition, long endPosition)
         {
@@ -20,7 +21,8 @@ namespace SymNum.Patterns
             LeftMeasure = new Measure(startPosition);
         }
         public ComplexNumber(long resolution, float startPosition, float endPosition) :
-            this(resolution, (long)(startPosition / resolution), (long)(endPosition / resolution)) { }  
+            this(resolution, (long)(startPosition / resolution), (long)(endPosition / resolution))
+        { }
         public ComplexValue Complex => new ComplexValue(this);
         public class ComplexValue : NumberValue
         {
