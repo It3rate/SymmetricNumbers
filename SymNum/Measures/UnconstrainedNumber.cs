@@ -69,10 +69,10 @@ public class UnconstrainedNumber
     //	set => LeftExtent.StartPosition = value;
     //
 
-    /// A number can be composed of multiple measures with different restrictions. 
-    /// A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
-    /// An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
-    /// but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
+    // A number can be composed of multiple measures with different restrictions. 
+    // A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
+    // An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
+    // but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
 
     // needs to be protected to allow subclasses to enforce their constraints.
     private Measure[] _measures = new Measure[4];
@@ -83,6 +83,19 @@ public class UnconstrainedNumber
 
 
     public virtual bool IsFullyDefined => _measures.All(m => m.IsFullDefined);
+
+    protected UnconstrainedNumber()
+    {
+    }
+    public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
+    {
+        var result = new UnconstrainedNumber();
+        result.RightMeasure = new Measure(tr, Direction.FacesRight, true);
+        result.LeftUnit = new Measure(tl, Direction.FacesLeft, true);
+        result.RightUnit = new Measure(br, Direction.FacesRight, true);
+        result.LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
+        return result;
+    }
 
     // this might be best to use floats as external facing values - it can stil use internal resolution and polarities,
     // but the outside world is floats (and ratios still need to be represented somehow).
@@ -126,6 +139,14 @@ public class UnconstrainedNumber
         get => GetValue(LeftMeasure, LeftUnit);
         set => SetValue(LeftMeasure, LeftUnit, value);
     }
+
+    // there is a general question with operations, what happens to the original value? Three possibilities:
+    // 1) It can be modified in place, like 'gaining' in the additive sense, stretching, or exponentially growing (repeated stretching)
+    // 2) It can be combined with something else to create a new value, like adding, or repeatedly adding (multiply, but use additive exponents 2+2+2 vs 2x3), and repeat that.
+    // 3) It can be unchanged, but the perspective shifts. Like move the zero point and a static segment shifts (+), or move closer and it grows (*).
+    // The system of numbers and operations should be able to express all three of these without metadata (words that tell of the operation).
+    // When modeling the world and its transforms using numbers, these operations matter.
+
     // B | A
     // D | C
     // Multiply         A/C * D/B

@@ -62,8 +62,8 @@ public class SymmetricNumber : UnconstrainedNumber
 
 	public SymmetricNumber(long tr, long tl, long br, long bl)
     {
-        RightMeasure = new Measure(tr, Direction.FacesLeft, true);
-        LeftUnit = new Measure(tl, Direction.FacesRight, true);
+        RightMeasure = new Measure(tr, Direction.FacesRight, true);
+        LeftUnit = new Measure(tl, Direction.FacesLeft, true);
         RightUnit = new Measure(br, Direction.FacesRight, true);
         LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
     }

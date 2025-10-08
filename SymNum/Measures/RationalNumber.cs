@@ -12,8 +12,9 @@ namespace SymNum.Patterns;
 /// </summary>
 public class RationalNumber : UnconstrainedNumber
 {
-    // contraint is that left unit is always -UnitPosition, and left measure is always 0.
-    // All operations on complex numbers should apply? So really it is a 'subclass' of ComplexNumber, but this isn't really an oop system like that.
+    // the only constraints are that left unit is always -UnitPosition, and left measure is always 0.
+    // All operations on complex numbers should apply? (and imaginary part will always be zero)
+    // So really it is a 'subclass' of ComplexNumber, but this isn't really an oop system like that.
     public long MeasurePosition
     {
         get => RightMeasure.Position;
@@ -49,6 +50,13 @@ public class RationalNumber : UnconstrainedNumber
         LeftMeasure = new Measure(0, Direction.FacesLeft, true);
     }
     public RationalNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
+
+    // ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
+    // Value - measure / unit, what we normally consider the number to be.
+    // Reciprocal - unit/value.
+    // Shift - this is akin to add and subtract, but there is no added value. Essentially it is shifting the zero point. Add requires two things.
+
+    // Add, multiply etc all require a second rational number.
 
 }
 public class RationalValue : NumberValue
