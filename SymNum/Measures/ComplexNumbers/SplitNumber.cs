@@ -5,16 +5,13 @@ using System.Data;
 using Microsoft.VisualBasic;
 using SymNum.Patterns;
 
-
-// May need to rethink this. The aspect is a ratio, but the only valid reolution of the ratio is literally 
-// this real in ticks over this imaginary in ticks.
-// What are natural imaginary values here? Maybe w*h and w-h? 
-// ** Also, there needs to be interoporability between measures, Numbers, and Number equations.
-// Changing now, will delete after checkin.
+// There needs to be interoporability between measures, Numbers, and Number equations.
+// Gradients are about the 0-1 part of interpolation, but interpolation has that AND two endpoints.
+// A SplitNumber (or complex number) defines the two endpoints. The interpolation point can be the zero, or defined elsewhere.
 
 /// <summary>
 /// A SplitNumber is a complex number where the two units do no need to be the same resolution.
-/// They still need to point in opposite directions, and the right side is the real part.
+/// They still need to point in opposite directions, and the right side is still the real part.
 /// </summary>
 public class SplitNumber : UnconstrainedNumber
 {
