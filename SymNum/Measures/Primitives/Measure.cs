@@ -1,4 +1,5 @@
 ﻿using SymNum.Measures.Expressions;
+using SymNum.Measures.Numbers;
 using System;
 namespace SymNum.Measures.Primitives;
 
@@ -19,6 +20,7 @@ public class Measure : IValue
 		get => (double)Position;
 		protected set => Position = (long)value;
 	}
+	public CertaintyLevel CertaintyLevel { get; set; } = CertaintyLevel.Set;
 
 	public Measure(long position, Direction direction, bool inclusive = true)
 	{

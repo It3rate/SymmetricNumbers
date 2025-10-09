@@ -11,6 +11,7 @@ public class ValueRef : IValue
 {
 	private UnconstrainedNumber _number;
 	private RefKind _refKind;
+	public CertaintyLevel CertaintyLevel { get; set; } = CertaintyLevel.Set;
 	public double Value
 	{
 		get => (double)_number.ValueFromRefKind(_refKind).Value;

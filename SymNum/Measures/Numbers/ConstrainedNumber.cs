@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SymNum.Measures.Expressions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,21 @@ namespace SymNum.Measures.Numbers;
 /// but you do know the height for whatever the width is set to and vice versa.
 /// This fact can be be expressed with a new constraint number, or derived from the area constraint (a=wh) in fact.
 /// </summary>
-public class ConstraintNumber
+public class ConstrainedNumber
 {
+	public UnconstrainedNumber Number { get; }
+	/// <summary>
+	/// Values are constrained by equations that must be true.
+	/// Starting with BinaryExpressions, but will include things like greater than, shared start point, 
+	/// and more complex relations such are perpendicular to, etc.
+	/// </summary>
+	public List<BinaryExpression> Constraints { get; }
+
+	public  ConstrainedNumber(UnconstrainedNumber number, params BinaryExpression[] constraints)
+	{
+		Number = number;
+		Constraints = constraints.ToList();
+	}
+
+	public void Calculate() { }
 }

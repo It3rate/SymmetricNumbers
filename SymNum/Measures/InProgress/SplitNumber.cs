@@ -40,12 +40,12 @@ public class SplitNumber : UnconstrainedNumber
         RightUnit = new Measure(realResolution ?? 0, Direction.FacesRight, true);
         LeftMeasure = new Measure(imaginaryResolution ?? 0, Direction.FacesLeft, true);
 
-        var rstate = (real != null && realResolution != null) ? MeasureState.Set : MeasureState.Unknown;
+        var rstate = (real != null && realResolution != null) ? CertaintyLevel.Set : CertaintyLevel.Unknown;
         RealState = new BinaryExpression(
             CreateValueRef(RefKind.TopRight),
 			CreateValueRef(RefKind.BottomRight), 
             BinaryOp.Divide, rstate);
-        var iState = (imaginary != null && imaginaryResolution != null) ? MeasureState.Set : MeasureState.Unknown;
+        var iState = (imaginary != null && imaginaryResolution != null) ? CertaintyLevel.Set : CertaintyLevel.Unknown;
 		ImaginaryState = new BinaryExpression(
 			CreateValueRef(RefKind.BottomLeft),
 			CreateValueRef(RefKind.TopLeft),
@@ -90,10 +90,10 @@ public class SplitNumber : UnconstrainedNumber
 		base.IsFullyDefined &&
 		RealState.IsSet && ImaginaryState.IsSet && AreaState.IsSet && RatioState.IsSet;
 	public int SetSlotsValue =>
-		RealState.State.SlotValue(MultiplicativeRelation.Real) +
-		RatioState.State.SlotValue(MultiplicativeRelation.Ratio) +
-		ImaginaryState.State.SlotValue(MultiplicativeRelation.Imaginary) +
-		AreaState.State.SlotValue(MultiplicativeRelation.Area);
+		RealState.CertaintyLevel.SlotValue(MultiplicativeRelation.Real) +
+		RatioState.CertaintyLevel.SlotValue(MultiplicativeRelation.Ratio) +
+		ImaginaryState.CertaintyLevel.SlotValue(MultiplicativeRelation.Imaginary) +
+		AreaState.CertaintyLevel.SlotValue(MultiplicativeRelation.Area);
 
 	public BinaryExpression RealState { get; private set; }
 	public BinaryExpression ImaginaryState { get; private set; }
@@ -112,22 +112,22 @@ public class SplitNumber : UnconstrainedNumber
         AreaState.UpdateValue(AreaValue);
 
 	}
-	public MeasureState GetState(MultiplicativeRelation kind)
+	public CertaintyLevel GetState(MultiplicativeRelation kind)
     {
-        var result = MeasureState.Unknown;
+        var result = CertaintyLevel.Unknown;
         switch (kind)
         {
             case MultiplicativeRelation.Real:
-                result = RealState.State;
+                result = RealState.CertaintyLevel;
                 break;
             case MultiplicativeRelation.Ratio:
-                result = RatioState.State;
+                result = RatioState.CertaintyLevel;
                 break;
             case MultiplicativeRelation.Imaginary:
-                result = ImaginaryState.State;
+                result = ImaginaryState.CertaintyLevel;
                 break;
             case MultiplicativeRelation.Area:
-                result = AreaState.State;
+                result = AreaState.CertaintyLevel;
                 break;
         }
         return result;
@@ -325,7 +325,7 @@ public enum NumberQuadrant
 }
 public static class NumberQuadrantExtensions
 {
-    public static int SlotValue(this NumberQuadrant kind, MeasureState state)
+    public static int SlotValue(this NumberQuadrant kind, CertaintyLevel state)
     {
         return state.HasValue() ? (int)kind : 0;
     }
@@ -340,23 +340,24 @@ public enum MultiplicativeRelation
 }
 public static class MultiplicativeRelationExtensions
 {
-    public static int SlotValue(this MultiplicativeRelation kind, MeasureState state)
+    public static int SlotValue(this MultiplicativeRelation kind, CertaintyLevel state)
     {
         return state.HasValue() ? (int)kind : 0;
     }
 }
-public enum MeasureState
+public enum CertaintyLevel
 {
     Unknown,
-    Uncertain,
-    Set,
+	Uncertain,
+	Derived,
+	Set,
     Fixed,
 }
 
 public static class MeasureStateExtensions
 {
-    public static bool HasValue(this MeasureState state) => state == MeasureState.Fixed || state == MeasureState.Set;
-    public static int SlotValue(this MeasureState state, MultiplicativeRelation kind)
+    public static bool HasValue(this CertaintyLevel state) => state == CertaintyLevel.Fixed || state == CertaintyLevel.Set;
+    public static int SlotValue(this CertaintyLevel state, MultiplicativeRelation kind)
     {
         return state.HasValue() ? (int)kind : 0;
     }

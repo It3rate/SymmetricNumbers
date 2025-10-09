@@ -16,7 +16,7 @@
     public class VItoR : Laws
 	{
 		public VoltageByCurrent DynamicValue { get; private set; }
-		public ResistanceByPower Result { get; private set; }
+		public ResistanceByPower? Result { get; private set; }
 		public float Voltage
 		{
 			get => DynamicValue.RightValue;
@@ -29,8 +29,8 @@
 		}
 		public float Resistance
 		{
-			get => Result.RightValue;
-			private set => Result.RightValue = value;
+			get => Result!.RightValue;
+			private set => Result!.RightValue = value;
 		}
 
 		public long _resistanceResolution;

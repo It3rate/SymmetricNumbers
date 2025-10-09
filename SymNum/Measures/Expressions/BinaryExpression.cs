@@ -16,24 +16,24 @@ public class BinaryExpression : IValue
 	// and adjusts them as needed. If both are variable, it creates a new constraint that
 	// the solution must follow (or perhaps this is that constraint already, need to try).
 	public double Value { get; protected set; }
-	public MeasureState State { get; set; }
+	public CertaintyLevel CertaintyLevel { get; set; }
 	public BinaryOp Op { get; set; }
-	public bool IsSet => State.HasValue();
-	public BinaryExpression(IValue first, IValue second, BinaryOp op, MeasureState state = MeasureState.Unknown)
+	public bool IsSet => CertaintyLevel.HasValue();
+	public BinaryExpression(IValue first, IValue second, BinaryOp op, CertaintyLevel state = CertaintyLevel.Unknown)
 	{
 		First = first;
 		Second = second;
 		Op = op;
-		State = state;
+		CertaintyLevel = state;
 		Calculate();
 	}
 	public void UpdateValue(double value)
 	{
 		Value = value;
 	}
-	public void Fix() => State = MeasureState.Fixed;
-	public void Set() => State = MeasureState.Set;
-	public void Unset() => State = MeasureState.Uncertain;
+	public void Fix() => CertaintyLevel = CertaintyLevel.Fixed;
+	public void Set() => CertaintyLevel = CertaintyLevel.Set;
+	public void Unset() => CertaintyLevel = CertaintyLevel.Uncertain;
 	private void Calculate()
 	{
 		switch (Op)

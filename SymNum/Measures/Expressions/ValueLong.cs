@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SymNum.Measures.Numbers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ public class ValueLong : IValue
 		get => (double)_longValue;
 		protected set => _longValue = (long)value;
 	}
+	public CertaintyLevel CertaintyLevel => CertaintyLevel.Fixed;
 	public ValueLong(long value)
 	{
 		_longValue = value;
