@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace SymNum.Measures.Expressions;
 
-public abstract class ValueRef : ValueBase
+public class ValueRef : IValue
 {
 	private UnconstrainedNumber _number;
-	private int _measureIndex;
-	public override double Value
+	private RefKind _refKind;
+	public double Value
 	{
-		get => (double)_number.MeasureFromIndex(_measureIndex).Position;
-		protected set => _number.MeasureFromIndex(_measureIndex).SetPosition((long)value);
+		get => (double)_number.ValueFromRefKind(_refKind).Value;
+		set => _number.SetValueFromRefKind(_refKind, value);
 	}
-	public ValueRef(UnconstrainedNumber number, int index)
+	public ValueRef(UnconstrainedNumber number, RefKind refKind)
 	{
 		_number = number;
-		_measureIndex = index;
+		_refKind = refKind;
 	}
 }

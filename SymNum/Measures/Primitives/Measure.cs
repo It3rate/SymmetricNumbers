@@ -1,7 +1,8 @@
-﻿using System;
+﻿using SymNum.Measures.Expressions;
+using System;
 namespace SymNum.Measures.Primitives;
 
-public class Measure
+public class Measure : IValue
 {
 	public static readonly Measure Unknown = new Measure(0, Direction.Unknown, false);
 
@@ -13,6 +14,11 @@ public class Measure
 	public bool IsMax => Position == long.MaxValue;
 	public bool IsMin => Position == long.MinValue;
 	public bool IsZero => Position == 0 && IsFullDefined;
+	public double Value
+	{
+		get => (double)Position;
+		protected set => Position = (long)value;
+	}
 
 	public Measure(long position, Direction direction, bool inclusive = true)
 	{

@@ -41,11 +41,19 @@ public class SplitNumber : UnconstrainedNumber
         LeftMeasure = new Measure(imaginaryResolution ?? 0, Direction.FacesLeft, true);
 
         var rstate = (real != null && realResolution != null) ? MeasureState.Set : MeasureState.Unknown;
-        RealState = new BinaryExpression(Real, RealResolution, BinaryOp.Divide, rstate);
+        RealState = new BinaryExpression(
+            CreateValueRef(RefKind.TopRight),
+			CreateValueRef(RefKind.BottomRight), 
+            BinaryOp.Divide, rstate);
         var iState = (imaginary != null && imaginaryResolution != null) ? MeasureState.Set : MeasureState.Unknown;
-		ImaginaryState = new BinaryExpression(Imaginary, ImaginaryResolution, BinaryOp.Divide, rstate);
-		RatioState = new BinaryExpression(RealValue, ImaginaryValue, BinaryOp.Divide);
-		AreaState = new BinaryExpression(RealValue, ImaginaryValue, BinaryOp.Multiply);
+		ImaginaryState = new BinaryExpression(
+			CreateValueRef(RefKind.BottomLeft),
+			CreateValueRef(RefKind.TopLeft),
+            BinaryOp.Divide, rstate);
+		var realRef = new ValueRef(this, RefKind.RealValue);
+		var imagRef = new ValueRef(this, RefKind.ImaginaryValue);
+		RatioState = new BinaryExpression(realRef, imagRef, BinaryOp.Divide);
+		AreaState = new BinaryExpression(realRef, imagRef, BinaryOp.Multiply);
 		Calculate();
 	}
 	public ComplexNumber GetComplexNumber()

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SymNum.Concepts;
+using SymNum.Measures.Expressions;
 using SymNum.Measures.Primitives;
 
 namespace SymNum.Measures.Numbers;
@@ -101,18 +102,69 @@ public class UnconstrainedNumber
     {
     }
 
-    public Measure MeasureFromIndex(int index)
-    {
-        if (index < 0 || index >= _measures.Length)
+	public Measure MeasureFromIndex(int index)
+	{
+		if (index < 0 || index >= _measures.Length)
+		{
+			throw new ArgumentOutOfRangeException("MeasureFromIndex index");
+		}
+		return _measures[index];
+	}
+	public ValueRef CreateValueRef(RefKind refKind) => new ValueRef(this, refKind);
+	public IValue ValueFromRefKind(RefKind refKind)
+	{
+		IValue result = EmptyValue.Instance;
+        switch (refKind)
         {
-            throw new ArgumentOutOfRangeException("MeasureFromIndex index");
-        }
-        return _measures[index];
-    }
-    /// <summary>
-    /// Left values are positive left, so do not negate them unless pointing right.
-    /// </summary>
-    public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
+            case RefKind.TopRight:
+                result = RightMeasure;
+                break;
+            case RefKind.TopLeft:
+                result = LeftUnit;
+                break;
+            case RefKind.BottomRight:
+                result = RightUnit;
+                break;
+            case RefKind.BottomLeft:
+                result = LeftUnit;
+                break;
+			case RefKind.RealValue:
+				result = new ValueDouble(RightValue);
+				break;
+			case RefKind.ImaginaryValue:
+				result = new ValueDouble(LeftValue);
+				break;
+		}
+        return result;
+	}
+    public void SetValueFromRefKind(RefKind refKind, double value)
+	{
+        switch (refKind)
+        {
+            case RefKind.TopRight:
+                RightMeasure.SetPosition((long)value);
+                break;
+            case RefKind.TopLeft:
+                LeftUnit.SetPosition((long)value);
+                break;
+            case RefKind.BottomRight:
+                RightUnit.SetPosition((long)value);
+                break;
+            case RefKind.BottomLeft:
+                LeftUnit.SetPosition((long)value);
+                break;
+			case RefKind.RealValue:
+                // need to check for locks etc.
+				break;
+			case RefKind.ImaginaryValue:
+				// need to check for locks etc.
+				break;
+		}
+	}
+	/// <summary>
+	/// Left values are positive left, so do not negate them unless pointing right.
+	/// </summary>
+	public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
     {
         var result = new UnconstrainedNumber();
         result.RightMeasure = new Measure(tr, Direction.FacesRight, true);
@@ -200,6 +252,16 @@ public class UnconstrainedNumber
 
 }
 
+public enum RefKind
+{
+	TopRight,
+	TopLeft,
+	BottomRight,
+	BottomLeft,
+	RealValue,
+	ImaginaryValue,
+	// others...
+}
 public abstract class NumberValue
 {
     public UnconstrainedNumber NumberReference { get; }

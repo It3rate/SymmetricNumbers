@@ -63,7 +63,12 @@
             {
                 double current = -dc.GetCurrent(currentProbe);
                 double voltage = dc.GetVoltage(voltageProbe);
+
+                // create a complex number using current and voltage
+                // add binary equation constraints for Power and Resistance
+                // The equation should have a get and set, that adjust the inputs based on what is fixed and what is variable.
                 var sample = new VIRP((long)(voltage * _resolution), null, (long)(current * _resolution), null);
+
                 _samples.Add(sample);
             }
         }

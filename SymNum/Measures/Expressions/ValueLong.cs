@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace SymNum.Measures.Expressions;
 
-public class ValueLong : ValueBase
+public class ValueLong : IValue
 {
 	private long _longValue;
-	public override double Value
+	public double Value
 	{
 		get => (double)_longValue;
 		protected set => _longValue = (long)value;

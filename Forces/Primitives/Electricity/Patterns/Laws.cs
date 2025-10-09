@@ -1,7 +1,6 @@
 ﻿namespace Forces.Primitives.Electricity.Patterns
 {
 	using Forces.Primitives.Electricity.Gradients;
-	using SymNum.Patterns;
 	using System;
     using System.Collections.Generic;
     using System.Linq;
