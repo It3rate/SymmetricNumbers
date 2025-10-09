@@ -100,7 +100,22 @@ public class UnconstrainedNumber
 
     protected UnconstrainedNumber()
     {
-    }
+	}
+    protected UnconstrainedNumber(long tr, long tl, long br, long bl)
+    {
+		RightMeasure = new Measure(tr, Direction.FacesRight, true);
+		LeftUnit = new Measure(tl, Direction.FacesLeft, true);
+		RightUnit = new Measure(br, Direction.FacesRight, true);
+		LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
+	}
+	/// <summary>
+	/// Left values are positive left, so do not negate them unless pointing right.
+	/// </summary>
+	public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
+	{
+		var result = new UnconstrainedNumber(tr, tl, br, bl);
+		return result;
+	}
 
 	public Measure MeasureFromIndex(int index)
 	{
@@ -161,18 +176,6 @@ public class UnconstrainedNumber
 				break;
 		}
 	}
-	/// <summary>
-	/// Left values are positive left, so do not negate them unless pointing right.
-	/// </summary>
-	public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
-    {
-        var result = new UnconstrainedNumber();
-        result.RightMeasure = new Measure(tr, Direction.FacesRight, true);
-        result.LeftUnit = new Measure(tl, Direction.FacesLeft, true);
-        result.RightUnit = new Measure(br, Direction.FacesRight, true);
-        result.LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
-        return result;
-    }
 
     // this might be best to use floats as external facing values - it can stil use internal resolution and polarities,
     // but the outside world is floats (and ratios still need to be represented somehow).

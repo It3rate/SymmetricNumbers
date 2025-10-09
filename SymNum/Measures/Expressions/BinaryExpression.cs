@@ -6,10 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SymNum.Measures.Expressions;
-public class BinaryExpression : IValue
+/// <summary>
+/// A binary expression is a constraint. It can be named and optionally set.
+/// Setting it will constrain/adjust the other values to satisfy the new value, based on their CertaintyLevel.
+/// A number can have multiple constraints, which will be solved together.
+/// Example: You have a complex number that is length and width, and add an Area constraint.
+///   You can now lock width, set area, and it will adjust length to satisfy the constraint.
+///   You could do the same with aspect ratio, or perimeter, the constraints determine the utility and character of a number.
+///   These constraints could also happen on multiple numbers, like area and height making volume. 
+///   Volume is then an expression (which is a type of number), constrained by the product of area and height.
+/// </summary>
+public class BinaryExpression : IValue, IConstraint
 {
 	public IValue First { get; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
 	public IValue Second { get; }
+	public BinaryOp Op { get; set; }
 
 	// This can not set its own value, as the value is calculated.
 	// Instead, it examines which inputs (First and Second) are fixed and which are variable,
@@ -17,14 +28,15 @@ public class BinaryExpression : IValue
 	// the solution must follow (or perhaps this is that constraint already, need to try).
 	public double Value { get; protected set; }
 	public CertaintyLevel CertaintyLevel { get; set; }
-	public BinaryOp Op { get; set; }
+	public string Name { get; }
 	public bool IsSet => CertaintyLevel.HasValue();
-	public BinaryExpression(IValue first, IValue second, BinaryOp op, CertaintyLevel state = CertaintyLevel.Unknown)
+	public BinaryExpression(IValue first, IValue second, BinaryOp op, CertaintyLevel state = CertaintyLevel.Unknown, string name = "")
 	{
 		First = first;
 		Second = second;
 		Op = op;
 		CertaintyLevel = state;
+		Name = name;
 		Calculate();
 	}
 	public void UpdateValue(double value)
@@ -70,4 +82,10 @@ public enum BinaryOp
 	Pow,
 	Mod,
 	// sin cos Math.etc
+	Custom0,
+	Custom1,
+	Custom2,
+	Custom3,
+	Custom4,
+	Custom5,
 }

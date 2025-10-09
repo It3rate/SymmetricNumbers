@@ -15,9 +15,8 @@ namespace SymNum.Measures.Numbers;
 /// but you do know the height for whatever the width is set to and vice versa.
 /// This fact can be be expressed with a new constraint number, or derived from the area constraint (a=wh) in fact.
 /// </summary>
-public class ConstrainedNumber
+public class ConstrainedNumber : UnconstrainedNumber
 {
-	public UnconstrainedNumber Number { get; }
 	/// <summary>
 	/// Values are constrained by equations that must be true.
 	/// Starting with BinaryExpressions, but will include things like greater than, shared start point, 
@@ -25,11 +24,71 @@ public class ConstrainedNumber
 	/// </summary>
 	public List<BinaryExpression> Constraints { get; }
 
-	public  ConstrainedNumber(UnconstrainedNumber number, params BinaryExpression[] constraints)
+	public ConstrainedNumber(params BinaryExpression[] constraints)  
 	{
-		Number = number;
 		Constraints = constraints.ToList();
 	}
 
-	public void Calculate() { }
+	public void Calculate()
+	{
+		// check fixed and settable, calculate result.
+		// account for custom equations.
+		// can loop through Binary expression and get them to set things.
+		// may require multiple passes.
+	}
+	public virtual void SetCustom0() { }
+	public virtual void SetCustom0Value(double value) { }
+	public virtual double GetCustom0() => 0;
+	public virtual void SetCustom1() { }
+	public virtual double GetCustom1() => 0;
+	public virtual void SetCustom2() { }
+	public virtual double GetCustom2() => 0;
+	public virtual void SetCustom3() { }
+	public virtual double GetCustom3() => 0;
+	public virtual void SetCustom4() { }
+	public virtual double GetCustom4() => 0;
+	public virtual void SetCustom5() { }
+	public virtual double GetCustom5() => 0;
+}
+// example
+public class RectangleNumber : ConstrainedNumber
+{
+	IValue Length { get; }
+	IValue Width { get; }
+	public BinaryExpression Area { get; }
+	public BinaryExpression AspectRatio { get; }
+	public BinaryExpression Perimeter { get; }
+	public RectangleNumber(IValue length, IValue width)
+	{
+		Length = length;
+		Width = width;
+		Area = new BinaryExpression(
+			Length,
+			Width,
+			BinaryOp.Multiply,
+			CertaintyLevel.Derived);
+		AspectRatio = new BinaryExpression(
+			Length,
+			Width,
+			BinaryOp.Divide,
+			CertaintyLevel.Derived);
+		Perimeter = new BinaryExpression(
+			Length,
+			Width,
+			BinaryOp.Custom0,
+			CertaintyLevel.Derived);
+		Calculate();
+	}
+	public override void SetCustom0()
+	{
+		Perimeter.UpdateValue(2.0 * (RightValue + LeftValue));
+	}
+	public override void SetCustom0Value(double value)
+	{
+		// Should be generic code that checks for a frozen value and adjusts the other ones based on this value.
+	}
+	public override double GetCustom0()
+	{
+		return Perimeter.Value;
+	}
 }
