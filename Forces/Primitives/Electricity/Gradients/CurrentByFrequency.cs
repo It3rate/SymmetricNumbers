@@ -1,4 +1,4 @@
-﻿using SymNum.Patterns;
+﻿using SymNum.Measures.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

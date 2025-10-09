@@ -1,10 +1,11 @@
-﻿using System;
+﻿using SymNum.Measures.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Patterns;
+namespace SymNum.Measures.Numbers;
 
 /// <summary>
 /// A symmetric number is made of four measures, where nothing is fixed at zero or 'unit'.
@@ -17,10 +18,10 @@ namespace SymNum.Patterns;
 /// </summary>
 public class SymmetricNumber : UnconstrainedNumber
 {
-	public long TopRight { get => RightMeasure.Position; protected set => RightMeasure.SetPosition(value); }
-	public long TopLeft { get => LeftUnit.Position; protected set => LeftUnit.SetPosition(value); }
-	public long BottomRight { get => RightUnit.Position; protected set => RightUnit.SetPosition(value); }
-	public long BottomLeft { get => LeftMeasure.Position; protected set => LeftMeasure.SetPosition(value); }
+    public long TopRight { get => RightMeasure.Position; protected set => RightMeasure.SetPosition(value); }
+    public long TopLeft { get => LeftUnit.Position; protected set => LeftUnit.SetPosition(value); }
+    public long BottomRight { get => RightUnit.Position; protected set => RightUnit.SetPosition(value); }
+    public long BottomLeft { get => LeftMeasure.Position; protected set => LeftMeasure.SetPosition(value); }
 
     public bool HasTR => RightMeasure.IsFullDefined;
     public bool HasTL => LeftUnit.IsFullDefined;
@@ -36,17 +37,17 @@ public class SymmetricNumber : UnconstrainedNumber
     /// <summary>
     /// scale the up or down values.
     /// </summary>
-    public bool IsMove => _totalNonZero == 2 && (HasTR == HasBR); // vertical 
+    public bool IsMove => _totalNonZero == 2 && HasTR == HasBR; // vertical 
     /// <summary>
     /// change the 'somewhere between' scale, don't know the actual position or calibrated values.
     /// </summary>
-    public bool IsLine => _totalNonZero == 2 && (HasTR == HasBL); // diagonal
+    public bool IsLine => _totalNonZero == 2 && HasTR == HasBL; // diagonal
     /// <summary>
     /// Change down resolution, up value, or vice versa. 
     /// Adjusts certainty of how far below resolution one is, and 'at least how large' the other is.
     /// Increasing values increases the certainty they aren't touching. (eg at least more than 40 -> at least less than 0.001)
     /// </summary>
-    public bool IsSplitJoin => _totalNonZero == 2 && (HasTR == HasTL); // horizontal 
+    public bool IsSplitJoin => _totalNonZero == 2 && HasTR == HasTL; // horizontal 
     /// <summary>
     /// 
     /// </summary>
@@ -55,12 +56,12 @@ public class SymmetricNumber : UnconstrainedNumber
     /// 
     /// </summary>
     public bool IsContinue => _totalNonZero == 4; // full
-	public long RightResolution => RightUnit.Position;
-	public long LeftResolution => LeftUnit.Position;
-	public long MinResolution => Math.Min(RightResolution, LeftResolution);
-	public long MaxResolution => Math.Max(RightResolution, LeftResolution);
+    public long RightResolution => RightUnit.Position;
+    public long LeftResolution => LeftUnit.Position;
+    public long MinResolution => Math.Min(RightResolution, LeftResolution);
+    public long MaxResolution => Math.Max(RightResolution, LeftResolution);
 
-	public SymmetricNumber(long tr, long tl, long br, long bl)
+    public SymmetricNumber(long tr, long tl, long br, long bl)
     {
         RightMeasure = new Measure(tr, Direction.FacesRight, true);
         LeftUnit = new Measure(tl, Direction.FacesLeft, true);
@@ -73,13 +74,13 @@ public class SymmetricNumber : UnconstrainedNumber
         public SymmetricNumber Reference { get; }
         public float RightValue => UnconstrainedNumber.GetValue(Reference.RightMeasure, Reference.RightUnit);
         public float LeftValue => UnconstrainedNumber.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
-        public float GetValue(Measure measure) => measure.IsFullDefined ? (float)measure.Position : 0;
+        public float GetValue(Measure measure) => measure.IsFullDefined ? measure.Position : 0;
         public float GetValue(Measure numerator, Measure denominator) => UnconstrainedNumber.GetValue(numerator, denominator);
         // todo: public float GetValue(Measure a, Measure b, Measure c) => ;
         // todo: public float GetValue(Measure a, Measure b, Measure c, Measure d) => ;
         public override long RightResolution => Reference.RightResolution;
-	    public override long LeftResolution => Reference.LeftResolution;
-	    public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
+        public override long LeftResolution => Reference.LeftResolution;
+        public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
         {
             Reference = baseNumber;
         }

@@ -1,5 +1,5 @@
 ﻿
-using SymNum.Patterns;
+using SymNum.Measures.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;

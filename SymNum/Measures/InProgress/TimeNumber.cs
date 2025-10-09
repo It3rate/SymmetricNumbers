@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Patterns;
+namespace SymNum.Measures.InProgress;
 
 /// <summary>
 /// Time has a special restriction in that it can only go forward and can't change its rate.

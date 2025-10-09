@@ -1,4 +1,5 @@
-﻿using SymNum.Patterns;
+﻿using SymNum.Measures.InProgress;
+using SymNum.Measures.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,8 @@ namespace SymNum.Operators;
 
 public class Equation : UnconstrainedNumber
 {
-    public Sequencer Sequence { get; set; }
-    public RepeatableNumber RepetitionPattern { get; set; }
+    public Sequencer? Sequence { get; set; }
+    public RepeatableNumber? RepetitionPattern { get; set; }
 }
 public enum Operations
 {

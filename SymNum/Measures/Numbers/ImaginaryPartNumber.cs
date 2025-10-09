@@ -1,11 +1,11 @@
-﻿
+﻿using SymNum.Measures.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Patterns;
+namespace SymNum.Measures.Numbers;
 
 /// <summary>
 /// A Imaginary Part number is the left side of a complex number (or split number).

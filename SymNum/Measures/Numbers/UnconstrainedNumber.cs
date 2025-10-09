@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SymNum.Concepts;
+using SymNum.Measures.Primitives;
 
-namespace SymNum.Patterns;
-
-
+namespace SymNum.Measures.Numbers;
 
 // A number is made of at least 4 points, two for a unit (start and end), and two for a value (start and end).
 // There is often an implied 5th point, 'here', or 'now', or 'this'. This is the floating zero point, or reference point.
@@ -77,14 +76,14 @@ public class UnconstrainedNumber
 
     // needs to be protected to allow subclasses to enforce their constraints.
     private Measure[] _measures = new Measure[4];
-	/// <summary>
-	/// A positive right measured number of ticks.
-	/// </summary>
-	protected Measure RightMeasure { get => _measures[0]; set => _measures[0] = value; }
-	/// <summary>
-	/// A positive right resolution in ticks.
-	/// </summary>
-	protected Measure RightUnit { get => _measures[1]; set => _measures[1] = value; }
+    /// <summary>
+    /// A positive right measured number of ticks.
+    /// </summary>
+    protected Measure RightMeasure { get => _measures[0]; set => _measures[0] = value; }
+    /// <summary>
+    /// A positive right resolution in ticks.
+    /// </summary>
+    protected Measure RightUnit { get => _measures[1]; set => _measures[1] = value; }
     /// <summary>
     /// A positive left measured number of ticks.
     /// </summary>
@@ -101,10 +100,19 @@ public class UnconstrainedNumber
     protected UnconstrainedNumber()
     {
     }
-	/// <summary>
-	/// Left values are positive left, so do not negate them unless pointing right.
-	/// </summary>
-	public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
+
+    public Measure MeasureFromIndex(int index)
+    {
+        if (index < 0 || index >= _measures.Length)
+        {
+            throw new ArgumentOutOfRangeException("MeasureFromIndex index");
+        }
+        return _measures[index];
+    }
+    /// <summary>
+    /// Left values are positive left, so do not negate them unless pointing right.
+    /// </summary>
+    public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
     {
         var result = new UnconstrainedNumber();
         result.RightMeasure = new Measure(tr, Direction.FacesRight, true);
@@ -147,10 +155,10 @@ public class UnconstrainedNumber
         get => GetValue(RightMeasure, RightUnit);
         set => SetValue(RightMeasure, RightUnit, value);
     }
-	/// <summary>
-	/// LeftValue is the negative polarity value, down vs up, left vs right, small vs large etc.
-	/// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
-	/// </summary>
+    /// <summary>
+    /// LeftValue is the negative polarity value, down vs up, left vs right, small vs large etc.
+    /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
+    /// </summary>
     public float LeftValue
     {
         get => GetValue(LeftMeasure, LeftUnit);

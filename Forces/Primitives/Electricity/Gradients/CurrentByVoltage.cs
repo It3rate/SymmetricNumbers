@@ -1,4 +1,4 @@
-﻿using SymNum.Patterns;
+﻿using SymNum.Measures.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Forces.Primitives.Electricity.Gradients
 {
-	public class CurrentByVoltage : SymmetricNumber
+    public class CurrentByVoltage : SymmetricNumber
 	{
 		public List<CurrentByVoltage> Samples { get; } = new List<CurrentByVoltage>();
 		public CurrentByVoltage(long currentMeasure, long voltageUnit, long currentUnit, long voltageMeasure) :

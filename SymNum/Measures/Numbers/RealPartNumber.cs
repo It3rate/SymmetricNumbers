@@ -1,10 +1,11 @@
-﻿using System;
+﻿using SymNum.Measures.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Patterns;
+namespace SymNum.Measures.Numbers;
 
 /// <summary>
 /// A Real Part number is the right side of a complex number (or split number).

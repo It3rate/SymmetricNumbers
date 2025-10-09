@@ -1,10 +1,11 @@
-﻿using System;
+﻿using SymNum.Measures.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Patterns;
+namespace SymNum.Measures.Numbers;
 
 /// <summary>
 /// A rational number is made of two segments, where the denominator is a segment from zero to a positive number,
@@ -26,17 +27,18 @@ public class RationalNumber : UnconstrainedNumber
         set { RightUnit.SetPosition(value); LeftUnit.SetPosition(-value); }
     }
     public long TickCount => MeasurePosition;
-    public long Resolution{
+    public long Resolution
+    {
         get => UnitPosition;
         protected set
         {
             MeasurePosition = (long)(FloatValue * value);
             UnitPosition = value;
         }
-    } 
+    }
     public float FloatValue
     {
-        get =>  RightValue;
+        get => RightValue;
         protected set => RightValue = value;
     }
     /// <summary>

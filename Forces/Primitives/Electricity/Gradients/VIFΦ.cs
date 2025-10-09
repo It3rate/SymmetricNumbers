@@ -5,7 +5,7 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using SymNum.Patterns;
+    using SymNum.Measures.Numbers;
 
     /// <summary>
     /// Describes the voltage, current, frequency and phase shift of a measure. 

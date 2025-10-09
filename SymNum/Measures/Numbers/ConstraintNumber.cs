@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Measures.ComplexNumbers;
+namespace SymNum.Measures.Numbers;
 /// <summary>
 /// These are relations across four measures that form a constraint.
 /// Different values can be locked or relaxed while others are changed.

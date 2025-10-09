@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Patterns;
+namespace SymNum.Measures.InProgress;
 
 /// <summary>
 /// A repeating operation that may be parameterized. 

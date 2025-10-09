@@ -1,13 +1,18 @@
-﻿namespace SymNum.Measures.PatternNumbers;
+﻿namespace SymNum.Measures.Numbers;
 
 using System;
 using System.Data;
 using Microsoft.VisualBasic;
-using SymNum.Patterns;
+using SymNum.Measures.Expressions;
+using SymNum.Measures.Numbers;
+using SymNum.Measures.Primitives;
 
 // There needs to be interoporability between measures, Numbers, and Number equations.
 // Gradients are about the 0-1 part of interpolation, but interpolation has that AND two endpoints.
 // A SplitNumber (or complex number) defines the two endpoints. The interpolation point can be the zero, or defined elsewhere.
+// When merging resolutions into a complex number, you don't always pick the minimum. For example:
+//  - if time is one component, you can move from seconds to miliseconds (you need to track the meaning of the resolution though)
+//  - if you have samples per minute over hours, your resolution per minute is higher through statistics.
 
 /// <summary>
 /// A SplitNumber is a complex number where the two units do no need to be the same resolution.
@@ -36,11 +41,11 @@ public class SplitNumber : UnconstrainedNumber
         LeftMeasure = new Measure(imaginaryResolution ?? 0, Direction.FacesLeft, true);
 
         var rstate = (real != null && realResolution != null) ? MeasureState.Set : MeasureState.Unknown;
-        RealState = new ValueSample(Real, RealResolution, BinaryOp.Divide, rstate);
+        RealState = new BinaryExpression(Real, RealResolution, BinaryOp.Divide, rstate);
         var iState = (imaginary != null && imaginaryResolution != null) ? MeasureState.Set : MeasureState.Unknown;
-		ImaginaryState = new ValueSample(Imaginary, ImaginaryResolution, BinaryOp.Divide, rstate);
-		RatioState = new ValueSample(RealValue, ImaginaryValue, BinaryOp.Divide);
-		AreaState = new ValueSample(RealValue, ImaginaryValue, BinaryOp.Multiply);
+		ImaginaryState = new BinaryExpression(Imaginary, ImaginaryResolution, BinaryOp.Divide, rstate);
+		RatioState = new BinaryExpression(RealValue, ImaginaryValue, BinaryOp.Divide);
+		AreaState = new BinaryExpression(RealValue, ImaginaryValue, BinaryOp.Multiply);
 		Calculate();
 	}
 	public ComplexNumber GetComplexNumber()
@@ -71,6 +76,7 @@ public class SplitNumber : UnconstrainedNumber
     // this is going to be its own class, where you can assert relations in a number
     // and then lock the number into certain behaviours and patterns with them.
 
+    // the inputs here need to be 'equations' of some sort, which includes ValueSamples (numbers with ops).
 
 	public override bool IsFullyDefined =>
 		base.IsFullyDefined &&
@@ -81,10 +87,10 @@ public class SplitNumber : UnconstrainedNumber
 		ImaginaryState.State.SlotValue(MultiplicativeRelation.Imaginary) +
 		AreaState.State.SlotValue(MultiplicativeRelation.Area);
 
-	public ValueSample RealState { get; private set; }
-	public ValueSample ImaginaryState { get; private set; }
-	public ValueSample AreaState { get; private set; }
-	public ValueSample RatioState { get; private set; }
+	public BinaryExpression RealState { get; private set; }
+	public BinaryExpression ImaginaryState { get; private set; }
+	public BinaryExpression AreaState { get; private set; }
+	public BinaryExpression RatioState { get; private set; }
 	protected double RealValue => Real / (double)RealResolution;
 	protected double ImaginaryValue => Imaginary / (double)ImaginaryResolution;
 	public double AreaValue => RealValue * ImaginaryValue;
@@ -345,65 +351,5 @@ public static class MeasureStateExtensions
     public static int SlotValue(this MeasureState state, MultiplicativeRelation kind)
     {
         return state.HasValue() ? (int)kind : 0;
-    }
-}
-public enum BinaryOp
-{
-    None,
-    Multiply,
-    Divide,
-    Add,
-    Subtract,
-	Pow,
-	Mod,
-    // sin cos Math.etc
-}
-
-public class ValueSample
-{
-    public double First { get; }
-    public double Second { get; }
-    public double Value { get; set; }
-	public MeasureState State { get; set; }
-	public BinaryOp Op { get; set; }
-    public bool IsSet => State.HasValue();
-	public ValueSample(double first, double second, BinaryOp op, MeasureState state = MeasureState.Unknown)
-	{
-		First = first;
-		Second = second;
-        Op = op;
-		State = state;
-		Calculate();
-	}
-    public void UpdateValue(double value)
-    {
-        Value = value;
-    }
-    public void Fix() => State = MeasureState.Fixed;
-    public void Set() => State = MeasureState.Set;
-    public void Unset() => State = MeasureState.Uncertain;
-    private void Calculate()
-    {
-        switch (Op)
-        {
-            case BinaryOp.Multiply:
-                Value = First * Second;
-                break;
-            case BinaryOp.Divide:
-                Value = Second == 0 ? 0 : First / (double)Second;
-                break;
-            case BinaryOp.Add:
-                Value = First + Second;
-                break;
-            case BinaryOp.Subtract:
-                Value = First - Second;
-                break;
-            case BinaryOp.Pow:
-                Value = Math.Pow(First, Second);
-                break;
-            case BinaryOp.Mod:
-                Value = First % Second;
-                break;
-        }
     }
 }

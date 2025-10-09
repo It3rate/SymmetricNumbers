@@ -1,5 +1,5 @@
-﻿using SymNum.Operators;
-using SymNum.Patterns;
+﻿using SymNum.Measures.Numbers;
+using SymNum.Operators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +19,8 @@ namespace SymNum.Concepts;
 /// </summary>
 public class PropertyUnit
 {
-	public string Name { get; set; } // temperature could be C or F, they would need to map somehow to the same concept
-	public object SensorySource { get; set; } // like vision, touch, sound, emotion, spatial, etc. or abstractions of these
+	public string? Name { get; set; } // temperature could be C or F, they would need to map somehow to the same concept
+	public object? SensorySource { get; set; } // like vision, touch, sound, emotion, spatial, etc. or abstractions of these
 
 	/// <summary>
 	/// the unit value used to calibrate whatever numerator (instance measured value) is used.
@@ -28,7 +28,7 @@ public class PropertyUnit
 	/// This is specifically a number, not an extent, and a type needs to include its opposite, in that everything is defined against something.
 	/// This allows happy/sad, happy/angry and happy/meh to all cooexist.
 	/// </summary>
-	public UnconstrainedNumber Denominator;
+	public UnconstrainedNumber? Denominator;
 	/// <summary>
 	/// Not sure how this works, but we have more than one calibration for a concept, and we can translate them roughly.
 	/// I don't think there is a universal 'dollar' or 'temperature' that canadian dollars and celcius get converted to,
@@ -38,5 +38,5 @@ public class PropertyUnit
 	/// our brains work, it might be useful to have a universal high res (arbitrary) temperature scale stored as a long, and have
 	/// all temperature measurements calibrate against it. (I hope not? not sure.)
 	/// </summary>
-	public Equation TransformFromDefault { get; set; }
+	public Equation? TransformFromDefault { get; set; }
 }
