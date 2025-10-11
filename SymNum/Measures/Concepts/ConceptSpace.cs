@@ -54,5 +54,11 @@ public class ConceptSpace
     List<IConstraint> ExpectedConstraints; // if you guess a category, you can guess other properties. Can be generated based on context.
     List<IConstraint> ForwardReferences; // things that use this concept as input help define it. Do not need to be stored like this.
 
-    // AllPossibleConstraints are computed as much as looked up
+	// AllPossibleConstraints are computed as much as looked up
+
+	// There is a whole category of binary operations that represent expected motion.
+	// This is akin to prepositions. The position is static, but over time the position changes, and this is expected.
+	// so move near, move over, move across, move to etc are expected motions of a position,
+	// and can be encoded in a second equation (or just default move left to right on a segment that is part of an equation).
+	List<UnconstrainedNumber> Motions;
 }

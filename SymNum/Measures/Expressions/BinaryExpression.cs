@@ -81,6 +81,7 @@ public enum BinaryOp
 	Subtract,
 	Pow,
 	Mod,
+	Interpolate, // There is a whole category of binary operations that represent expected motion.
 	// sin cos Math.etc
 	Custom0,
 	Custom1,
