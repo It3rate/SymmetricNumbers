@@ -15,7 +15,7 @@ using SymNum.Measures.Numbers;
 // Not all input information needs to be present, and not all constraints need to be satisfied.
 // There are many true facts and relations we can say about a concept, but we will only use the ones that are relevant in a context.
 // The concept itself is all the 'usually true' things that can stated about it, though many more things than this are derivable.
-public class ConceptSpace
+public abstract class ConceptSpace
 {
     // *** A concept is defined by what it does (forward) as much as where it came from (backward).***
     //    Power is current * voltage, but power is also the amount of work it can do, the work it does, the cost, the power grid, force, control, etc.
@@ -46,13 +46,13 @@ public class ConceptSpace
     //    You can go back to primitives to estimate missing information. A lot of solving is filling in missing information based on partial context.
 
 
-    string? Name; // optional, if it matches a general category or concept.
-    List<UnconstrainedNumber> ActiveInputs; // you may only see the head and color of a dog, this makes 'leg count' not an input, though it can be inferred in ExpectedContstraints.
-    List<IConstraint> ActiveConstraints; // relations between inputs, or external values.
-    List<IValue> ActiveProperties; // can be inputs or derived from constraint results;
+    public virtual string? Name { get; } = ""; // optional, if it matches a general category or concept.
+    public List<UnconstrainedNumber> ActiveInputs = new List<UnconstrainedNumber>(); // you may only see the head and color of a dog, this makes 'leg count' not an input, though it can be inferred in ExpectedContstraints.
+    public List<IConstraint> ActiveConstraints = new List<IConstraint>(); // relations between inputs, or external values.
+    public List<IValue> ActiveProperties = new List<IValue>(); // can be inputs or derived from constraint results;
 
-    List<IConstraint> ExpectedConstraints; // if you guess a category, you can guess other properties. Can be generated based on context.
-    List<IConstraint> ForwardReferences; // things that use this concept as input help define it. Do not need to be stored like this.
+    public List<IConstraint> ExpectedConstraints = new List<IConstraint>(); // if you guess a category, you can guess other properties. Can be generated based on context.
+    public List<IConstraint> ForwardReferences = new List<IConstraint>(); // things that use this concept as input help define it. Do not need to be stored like this.
 
 	// AllPossibleConstraints are computed as much as looked up
 
@@ -60,5 +60,7 @@ public class ConceptSpace
 	// This is akin to prepositions. The position is static, but over time the position changes, and this is expected.
 	// so move near, move over, move across, move to etc are expected motions of a position,
 	// and can be encoded in a second equation (or just default move left to right on a segment that is part of an equation).
-	List<UnconstrainedNumber> Motions;
+
+    // It seems all primitive input is measures (no meaning without calibration), and all change/diff involves complex/symmetric numbers.
+	public List<UnconstrainedNumber> Motions = new List<UnconstrainedNumber>();
 }

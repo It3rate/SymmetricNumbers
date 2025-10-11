@@ -5,8 +5,12 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using SymNum.Measures.Numbers;
 
-    public class Voltage // force
+    public class Voltage : ComplexNumber
     {
+        public Voltage(long resolution, long startPosition, long endPosition) : base(resolution, startPosition, endPosition)
+        {
+        }
     }
 }

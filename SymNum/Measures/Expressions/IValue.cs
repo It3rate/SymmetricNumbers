@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace SymNum.Measures.Expressions;
 
+// todo: IValue needs to be an number than can be unconstrained, or complex, not just a float value.
 public interface IValue
 {
 	// The set part of this can't always set it's own value.

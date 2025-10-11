@@ -1,4 +1,5 @@
-﻿using SymNum.Measures.Primitives;
+﻿using SymNum.Measures.Expressions;
+using SymNum.Measures.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace SymNum.Measures.Numbers;
 /// </summary>
 public class ComplexNumber : UnconstrainedNumber
 {
+    public RationalNumber RealPart { get; }
+    public Measure ImaginaryMeasure => LeftMeasure;
     public ComplexNumber(long resolution, long startPosition, long endPosition)
     {
         RightUnit = new Measure(resolution, Direction.FacesLeft, true);

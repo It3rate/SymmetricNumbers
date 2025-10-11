@@ -18,9 +18,9 @@ namespace SymNum.Measures.Expressions;
 /// </summary>
 public class BinaryExpression : IValue, IConstraint
 {
-	public IValue First { get; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
-	public IValue Second { get; }
-	public BinaryOp Op { get; set; }
+	public IValue First { get; set; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
+    public IValue Second { get; set; }
+    public BinaryOp Op { get; set; }
 
 	// This can not set its own value, as the value is calculated.
 	// Instead, it examines which inputs (First and Second) are fixed and which are variable,
@@ -28,18 +28,20 @@ public class BinaryExpression : IValue, IConstraint
 	// the solution must follow (or perhaps this is that constraint already, need to try).
 	public double Value { get; protected set; }
 	public CertaintyLevel CertaintyLevel { get; set; }
-	public string Name { get; }
+    public virtual string Name { get; } = "";
 	public bool IsSet => CertaintyLevel.HasValue();
-	public BinaryExpression(IValue first, IValue second, BinaryOp op, CertaintyLevel state = CertaintyLevel.Unknown, string name = "")
+	public BinaryExpression(IValue first, IValue second, BinaryOp op, CertaintyLevel state = CertaintyLevel.Unknown)
 	{
 		First = first;
 		Second = second;
 		Op = op;
 		CertaintyLevel = state;
-		Name = name;
 		Calculate();
-	}
-	public void UpdateValue(double value)
+    }
+    protected BinaryExpression()
+    {
+    }
+    public void UpdateValue(double value)
 	{
 		Value = value;
 	}

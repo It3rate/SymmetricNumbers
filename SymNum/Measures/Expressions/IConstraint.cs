@@ -11,5 +11,5 @@ public interface IConstraint : IValue
 	IValue First { get; }
 	IValue Second { get; }
 	BinaryOp Op { get; set; }
-	string Name { get; }
+	string? Name { get; }
 }
