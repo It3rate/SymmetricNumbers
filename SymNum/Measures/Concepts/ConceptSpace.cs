@@ -56,6 +56,12 @@ public abstract class ConceptSpace
 
 	// AllPossibleConstraints are computed as much as looked up
 
+    // The general idea is 
+    // one sample - meaningless, but can be used as zero
+    // two samples - an amount with no value other than more or less. But there is something. Motion, change.
+    // three samples - a rational number, reuse the zero. A ratio, a difference, modulus. calibrated motion/change.
+    // four samples - a potential segment, complex or symmetric. A full number. Before and after states, not just a diff.
+
 	// There is a whole category of binary operations that represent expected motion.
 	// This is akin to prepositions. The position is static, but over time the position changes, and this is expected.
 	// so move near, move over, move across, move to etc are expected motions of a position,

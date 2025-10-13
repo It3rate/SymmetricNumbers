@@ -21,7 +21,7 @@ public class ComplexNumber : UnconstrainedNumber
         RightUnit = new Measure(resolution, Direction.FacesLeft, true);
         RightMeasure = new Measure(endPosition, Direction.Unknown, true);
         LeftUnit = new Measure(-resolution, Direction.FacesRight, true);
-        LeftMeasure = new Measure(startPosition);
+        LeftMeasure = new Measure(startPosition, Direction.Unknown, true);
     }
     public ComplexNumber(long resolution, float startPosition, float endPosition) :
         this(resolution, (long)(startPosition / resolution), (long)(endPosition / resolution))

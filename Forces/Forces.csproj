@@ -21,6 +21,7 @@
     <Folder Include="Primitives\Music\StatePrimitives\" />
     <Folder Include="Primitives\Sound\Gradients\" />
     <Folder Include="Primitives\Sound\Patterns\" />
+    <Folder Include="Primitives\Steering\Simulation\Maps\" />
     <Folder Include="Primitives\Stories\Gradients\" />
     <Folder Include="Primitives\Suspension\Gradients\" />
     <Folder Include="Primitives\Suspension\Patterns\" />
