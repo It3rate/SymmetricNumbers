@@ -61,6 +61,7 @@ public abstract class ConceptSpace
 	// so move near, move over, move across, move to etc are expected motions of a position,
 	// and can be encoded in a second equation (or just default move left to right on a segment that is part of an equation).
 
-    // It seems all primitive input is measures (no meaning without calibration), and all change/diff involves complex/symmetric numbers.
+    // It seems all primitive input is measures (no meaning without calibration), and all change/diff involves complex/symmetric numbers with two states forming a segment?
+    // It doesn't mean measures are the 'primitive', opposite actually - they are just samples of 'complex number things' happening in the real world.
 	public List<UnconstrainedNumber> Motions = new List<UnconstrainedNumber>();
 }
