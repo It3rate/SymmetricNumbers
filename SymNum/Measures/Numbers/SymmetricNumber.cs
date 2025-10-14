@@ -79,10 +79,10 @@ public class SymmetricNumber : UnconstrainedNumber
     public class SymmetricValue : NumberValue
     {
         public SymmetricNumber Reference { get; }
-        public float RightValue => UnconstrainedNumber.GetValue(Reference.RightMeasure, Reference.RightUnit);
-        public float LeftValue => UnconstrainedNumber.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
-        public float GetValue(Measure measure) => measure.IsFullDefined ? measure.Position : 0;
-        public float GetValue(Measure numerator, Measure denominator) => UnconstrainedNumber.GetValue(numerator, denominator);
+        public float RightFloat => UnconstrainedNumber.GetValue(Reference.RightMeasure, Reference.RightUnit);
+        public float LeftFloat => UnconstrainedNumber.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
+        public float GetFloat(Measure measure) => measure.IsFullDefined ? measure.Position : 0;
+        public float GetFloat(Measure numerator, Measure denominator) => UnconstrainedNumber.GetValue(numerator, denominator);
         // todo: public float GetValue(Measure a, Measure b, Measure c) => ;
         // todo: public float GetValue(Measure a, Measure b, Measure c, Measure d) => ;
         public override long RightResolution => Reference.RightResolution;

@@ -149,6 +149,12 @@ public class UnconstrainedNumber
 			case RefKind.ImaginaryValue:
 				result = new ValueDouble(LeftValue);
 				break;
+			case RefKind.UnitAverage:
+				result = new ValueDouble((LeftUnit.Value + RightUnit.Value) / 2.0);
+				break;
+			case RefKind.ValueAverage:
+				result = new ValueDouble((LeftMeasure.Value + RightMeasure.Value) / (LeftUnit.Value + RightUnit.Value));
+				break;
 		}
         return result;
 	}
@@ -263,6 +269,8 @@ public enum RefKind
 	BottomLeft,
 	RealValue,
 	ImaginaryValue,
+	UnitAverage,
+	ValueAverage,
 	// others...
 }
 public abstract class NumberValue
