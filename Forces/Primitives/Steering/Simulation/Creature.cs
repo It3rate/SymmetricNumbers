@@ -28,6 +28,20 @@ public class Creature
 
 	public IMeasure RightThrust { get; } = new Measure(0, Direction.FacesRight);
 	public IMeasure LeftThrust { get; } = new Measure(0, Direction.FacesLeft);
+	private static long _thrustResolution = 10;
+	public IMeasure LeftThrustRes { get; } = new Measure(_thrustResolution, Direction.FacesLeft);
+	public IMeasure RightThrustRes { get; } = new Measure(_thrustResolution, Direction.FacesRight);
+	public SymmetricNumber Motion { get; }
+
+	public BinaryExpression TurnLeft { get; }
+	public BinaryExpression TurnRight { get; }
+	public BinaryExpression FollowTheLight { get; }
+
+	public double Speed { get; set; } = 5;
+	// this will be held in arena
+	public double XLocation { get; set; }
+	public double YLocation { get; set; }
+	public double FacingDirection { get; set; }
 
 	public Creature()
 	{
@@ -44,5 +58,34 @@ public class Creature
 		SightLeftDif = new BinaryExpression(LeftValue, SightNeutral, BinaryOp.Divide);
 		SightRightDif = new BinaryExpression(RightValue, SightNeutral, BinaryOp.Divide);
 		BrightnessDirection = new BinaryExpression(SightLeftDif, SightRightDif, BinaryOp.Subtract);
+
+		Motion = new SymmetricNumber(RightThrust, LeftThrustRes, RightThrustRes, LeftThrust);
+
+		var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
+		var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
+		var motionTurn = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Subtract);
+		// map the brightness diff to the default thrust (maybe based on darkenss) plus the turn signal.
+		// the turn could just be the complex number diff, or multiply in each of the left and right ratios.
+		TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
+		TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, BinaryOp.Add);
+	}
+	public void OnTick()
+	{
+		// read light input
+		var rightLight = 100; // get from environment
+		RightEye.SetPosition(rightLight);
+		var leftLight = 100; // get from environment
+		LeftEye.SetPosition(leftLight);
+
+		// set thrust
+		Motion.SetValueFromRefKind(RefKind.RealValue, TurnRight.Value);
+		Motion.SetValueFromRefKind(RefKind.ImaginaryValue, TurnLeft.Value);
+
+		// move creature in environment based on thrust
+		var rot = (TurnLeft.Value - TurnRight.Value) * 30; // max 60 degrees
+		FacingDirection += rot;
+		// add motion at constant speed in this Direction, wrap if at edge of image.
+		// todo: motion and env read for creature.
+		// This is probably the arena reading direction change and speed, creature doesn't know where it is.
 	}
 }
