@@ -21,6 +21,7 @@ public class MeasureMemory : MeasureBase
 		Measure = measure;
 		Kind = kind;
 		MaxHistory = maxHistory;
+		Measure.PositionChanged += (pos) => SetPosition(pos);
 	}
 	public long GetPostionByKind(MemoryKind kind)
 	{
@@ -56,7 +57,6 @@ public class MeasureMemory : MeasureBase
 	}
 	public override void SetPosition(long value)
 	{
-		base.SetPosition(value);
 		if (_isFirst)
 		{
 			for (int i = 0; i < MaxHistory; i++)

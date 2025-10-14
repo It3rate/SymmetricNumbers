@@ -76,23 +76,23 @@ public class UnconstrainedNumber
     // but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
 
     // needs to be protected to allow subclasses to enforce their constraints.
-    private Measure[] _measures = new Measure[4];
+    private IMeasure[] _measures = new Measure[4];
     /// <summary>
     /// A positive right measured number of ticks.
     /// </summary>
-    protected Measure RightMeasure { get => _measures[0]; set => _measures[0] = value; }
+    protected IMeasure RightMeasure { get => _measures[0]; set => _measures[0] = value; }
     /// <summary>
     /// A positive right resolution in ticks.
     /// </summary>
-    protected Measure RightUnit { get => _measures[1]; set => _measures[1] = value; }
+    protected IMeasure RightUnit { get => _measures[1]; set => _measures[1] = value; }
     /// <summary>
     /// A positive left measured number of ticks.
     /// </summary>
-    protected Measure LeftMeasure { get => _measures[2]; set => _measures[2] = value; }
+    protected IMeasure LeftMeasure { get => _measures[2]; set => _measures[2] = value; }
     /// <summary>
     /// A positive left resolution in ticks.
     /// </summary>
-    protected Measure LeftUnit { get => _measures[3]; set => _measures[3] = value; }
+    protected IMeasure LeftUnit { get => _measures[3]; set => _measures[3] = value; }
     public long ZeroPoint => 0; // this may be adjustable eventually, as a shift can just shift zero.
 
 
@@ -117,7 +117,7 @@ public class UnconstrainedNumber
 		return result;
 	}
 
-	public Measure MeasureFromIndex(int index)
+	public IMeasure MeasureFromIndex(int index)
 	{
 		if (index < 0 || index >= _measures.Length)
 		{
@@ -181,7 +181,7 @@ public class UnconstrainedNumber
     // but the outside world is floats (and ratios still need to be represented somehow).
     // That said, all training and inference should be on these types of numbers.
 
-    public static float GetValue(Measure numerator, Measure denominator)
+    public static float GetValue(IMeasure numerator, IMeasure denominator)
     {
         var result = float.NaN;
         if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
@@ -190,7 +190,7 @@ public class UnconstrainedNumber
         }
         return result;
     }
-    public static bool SetValue(Measure numerator, Measure denominator, float value)
+    public static bool SetValue(IMeasure numerator, IMeasure denominator, float value)
     {
         var result = false;
         if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)

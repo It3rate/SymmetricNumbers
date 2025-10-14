@@ -61,14 +61,21 @@ public class SymmetricNumber : UnconstrainedNumber
     public long MinResolution => Math.Min(RightResolution, LeftResolution);
     public long MaxResolution => Math.Max(RightResolution, LeftResolution);
 
-    public SymmetricNumber(long tr, long tl, long br, long bl)
-    {
-        RightMeasure = new Measure(tr, Direction.FacesRight, true);
-        LeftUnit = new Measure(tl, Direction.FacesLeft, true);
-        RightUnit = new Measure(br, Direction.FacesRight, true);
-        LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
-    }
-    public SymmetricValue Symmetric => new SymmetricValue(this);
+	public SymmetricNumber(long tr, long tl, long br, long bl)
+	{
+		RightMeasure = new Measure(tr, Direction.FacesRight, true);
+		LeftUnit = new Measure(tl, Direction.FacesLeft, true);
+		RightUnit = new Measure(br, Direction.FacesRight, true);
+		LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
+	}
+	public SymmetricNumber(IMeasure tr, IMeasure tl, IMeasure br, IMeasure bl)
+	{
+		RightMeasure = tr;
+		LeftUnit = tl;
+		RightUnit = br;
+		LeftMeasure = bl;
+	}
+	public SymmetricValue Symmetric => new SymmetricValue(this);
     public class SymmetricValue : NumberValue
     {
         public SymmetricNumber Reference { get; }

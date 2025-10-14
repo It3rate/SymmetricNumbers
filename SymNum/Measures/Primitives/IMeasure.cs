@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SymNum.Measures.Expressions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace SymNum.Measures.Primitives;
 
-public interface IMeasure
+public interface IMeasure : IValue
 {
+	public event Action<long> PositionChanged;
 	long Position { get; }
 	Direction Direction { get; }
 	void SetPosition(long position);
@@ -16,7 +18,6 @@ public interface IMeasure
 	bool IsMax => Position == long.MaxValue;
 	bool IsMin => Position == long.MinValue;
 	bool IsZero => Position == 0 && IsFullDefined;
-	double Value { get; }
 
 	public static IMeasure CreateExtreme(bool positive, Direction dir, bool inclusive)
 	{

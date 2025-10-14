@@ -15,7 +15,7 @@ namespace SymNum.Measures.Numbers;
 public class ComplexNumber : UnconstrainedNumber
 {
     public RationalNumber RealPart { get; }
-    public Measure ImaginaryMeasure => LeftMeasure;
+    public IMeasure ImaginaryMeasure => LeftMeasure;
     public ComplexNumber(long resolution, long startPosition, long endPosition)
     {
         RightUnit = new Measure(resolution, Direction.FacesLeft, true);

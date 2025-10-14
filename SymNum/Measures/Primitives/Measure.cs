@@ -24,10 +24,11 @@ public class Measure : MeasureBase
 	//	Direction = facesRight ? Direction.FacesRight : Direction.FacesLeft; // a measure must have at least a direction, unknown position and direction is meaningless.
 	//}
 }
-public abstract class MeasureBase : IValue, IMeasure
+public abstract class MeasureBase : IMeasure
 {
 	public static readonly IMeasure Unknown = new Measure(0, Direction.Unknown, false);
 
+	public event Action<long> PositionChanged;
 
 	public virtual long Position { get; protected set; }
 	public bool Inclusive { get; protected set; }
@@ -56,6 +57,7 @@ public abstract class MeasureBase : IValue, IMeasure
 	public virtual void SetPosition(long position)
 	{
 		Position = position;
+		PositionChanged?.Invoke(position);
 	}
 	public static IMeasure MaxDown()
 	{
