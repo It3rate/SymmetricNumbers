@@ -5,7 +5,8 @@ namespace SymNum.Measures.Primitives;
 
 public class Measure : MeasureBase
 {
-	public Measure(long position, Direction direction, bool inclusive = true) : base(position, direction, inclusive)
+	public Measure(long position, Direction direction, bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Set) :
+				base(position, direction, inclusive, certainty)
 	{
 	}
 
@@ -42,18 +43,19 @@ public abstract class MeasureBase : IMeasure
 		get => (double)Position;
 		protected set => Position = (long)value;
 	}
-	public CertaintyLevel CertaintyLevel { get; set; } = CertaintyLevel.Set;
+	public CertaintyLevel CertaintyLevel { get; set; }
 
 	protected MeasureBase()
 	{
 	}
-	public MeasureBase(long position, Direction direction, bool inclusive = true)
+	public MeasureBase(long position, Direction direction, bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Set)
 	{
 		Position = position;
 		Direction = direction;
 		Inclusive = inclusive;
+		CertaintyLevel = certainty;
 	}
-
+	public bool IsCertain => CertaintyLevel.HasValue();
 	public virtual void SetPosition(long position)
 	{
 		Position = position;

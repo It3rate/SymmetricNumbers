@@ -21,7 +21,7 @@ public class Creature : ConceptSpace
 	public MeasureMemory LeftEyeMemory { get; }
 	public MeasureMemory RightEyeMemory { get; }
 	public Measure LeftEye { get; } = new Measure(0, Direction.FacesLeft);
-	public SymmetricNumber Sight { get; }
+	public SplitNumber Sight { get; }
 
 	public IValue LeftValue { get; }
 	public IValue RightValue { get; }
@@ -37,7 +37,7 @@ public class Creature : ConceptSpace
 	private static long _thrustResolution = 10;
 	public IMeasure LeftThrustRes { get; } = new Measure(_thrustResolution, Direction.FacesLeft);
 	public IMeasure RightThrustRes { get; } = new Measure(_thrustResolution, Direction.FacesRight);
-	public SymmetricNumber Motion { get; }
+	public SplitNumber Motion { get; }
 
 	public BinaryExpression TurnLeft { get; }
 	public BinaryExpression TurnRight { get; }
@@ -52,7 +52,7 @@ public class Creature : ConceptSpace
 	{
 		LeftEyeMemory = new MeasureMemory(LeftEye,  MeasureMemory.MemoryKind.Average);
 		RightEyeMemory = new MeasureMemory(RightEye, MeasureMemory.MemoryKind.Average);
-		Sight = new SymmetricNumber(RightEye, LeftEyeMemory, RightEyeMemory, LeftEye);
+		Sight = new SplitNumber(RightEye, LeftEyeMemory, RightEyeMemory, LeftEye);
 
 		LeftValue = Sight.CreateValueRef(RefKind.ImaginaryValue);
 		RightValue = Sight.CreateValueRef(RefKind.RealValue);
@@ -64,7 +64,7 @@ public class Creature : ConceptSpace
 		SightRightDif = new BinaryExpression(RightValue, SightNeutral, BinaryOp.Divide);
 		BrightnessDirection = new BinaryExpression(SightLeftDif, SightRightDif, BinaryOp.Subtract);
 
-		Motion = new SymmetricNumber(RightThrust, LeftThrustRes, RightThrustRes, LeftThrust);
+		Motion = new SplitNumber(RightThrust, LeftThrustRes, RightThrustRes, LeftThrust);
 
 		var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
 		var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);

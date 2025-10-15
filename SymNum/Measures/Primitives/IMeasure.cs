@@ -1,4 +1,5 @@
 ﻿using SymNum.Measures.Expressions;
+using SymNum.Measures.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,8 @@ public interface IMeasure : IValue
 	Direction Direction { get; }
 	void SetPosition(long position);
 	bool Inclusive { get; }
+	public CertaintyLevel CertaintyLevel { get; }
+	public bool IsCertain { get; }
 	bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;
 	bool IsMax => Position == long.MaxValue;
 	bool IsMin => Position == long.MinValue;

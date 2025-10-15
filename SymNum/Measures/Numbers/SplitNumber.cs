@@ -25,6 +25,8 @@ public class SplitNumber : UnconstrainedNumber
     public long Imaginary { get => LeftMeasure.Position; private set => LeftMeasure.SetPosition(value); }
 	public long ImaginaryResolution { get => LeftUnit.Position; private set => LeftUnit.SetPosition(value); }
 
+	public bool RealIsCertain => RightMeasure.IsCertain && RightUnit.IsCertain;
+	public bool ImaginaryIsCertain => LeftMeasure.IsCertain && LeftUnit.IsCertain;
 
 	public long MinResolution => Math.Min(RealResolution, ImaginaryResolution);
     public long MaxResolution => Math.Max(RealResolution, ImaginaryResolution);
@@ -32,24 +34,38 @@ public class SplitNumber : UnconstrainedNumber
 	public RationalNumber ImaginaryPart => new RationalNumber(RealResolution, Real);
 
 
-    // long tr, long tl, long br, long bl)
-    public SplitNumber(long? real, long? imaginary, long? realResolution, long? imaginaryResolution)
+    public SplitNumber(IMeasure real, IMeasure imaginary, IMeasure realResolution, IMeasure imaginaryResolution)
+	{
+		RightMeasure = real;
+		LeftUnit = imaginary;
+		RightUnit = realResolution;
+		LeftMeasure = imaginaryResolution;
+        Initialize();
+	}
+	public SplitNumber(long? real, long? imaginary, long? realResolution, long? imaginaryResolution)
     {
-        RightMeasure = new Measure(real ?? 0, Direction.FacesRight, true);
-        LeftUnit = new Measure(imaginary ?? 0, Direction.FacesLeft, true);
-        RightUnit = new Measure(realResolution ?? 0, Direction.FacesRight, true);
-        LeftMeasure = new Measure(imaginaryResolution ?? 0, Direction.FacesLeft, true);
-
-        var rstate = (real != null && realResolution != null) ? CertaintyLevel.Set : CertaintyLevel.Unknown;
-        RealState = new BinaryExpression(
-            CreateValueRef(RefKind.TopRight),
-			CreateValueRef(RefKind.BottomRight), 
-            BinaryOp.Divide, rstate);
-        var iState = (imaginary != null && imaginaryResolution != null) ? CertaintyLevel.Set : CertaintyLevel.Unknown;
+        RightMeasure = new Measure(real ?? 0, Direction.FacesRight, true,
+			(real == null) ? CertaintyLevel.Unknown : CertaintyLevel.Set );
+        LeftUnit = new Measure(imaginary ?? 0, Direction.FacesLeft, true,
+			(imaginary == null) ? CertaintyLevel.Unknown : CertaintyLevel.Set);
+        RightUnit = new Measure(realResolution ?? 0, Direction.FacesRight, true,
+			(realResolution == null) ? CertaintyLevel.Unknown : CertaintyLevel.Set);
+        LeftMeasure = new Measure(imaginaryResolution ?? 0, Direction.FacesLeft, true,
+			(imaginaryResolution == null) ? CertaintyLevel.Unknown : CertaintyLevel.Set);
+        Initialize();
+	}
+    private void Initialize()
+	{
+		var rstate = RealIsCertain ? CertaintyLevel.Set : CertaintyLevel.Unknown;
+		RealState = new BinaryExpression(
+			CreateValueRef(RefKind.TopRight),
+			CreateValueRef(RefKind.BottomRight),
+			BinaryOp.Divide, rstate);
+		var iState = ImaginaryIsCertain ? CertaintyLevel.Set : CertaintyLevel.Unknown;
 		ImaginaryState = new BinaryExpression(
 			CreateValueRef(RefKind.BottomLeft),
 			CreateValueRef(RefKind.TopLeft),
-            BinaryOp.Divide, rstate);
+			BinaryOp.Divide, rstate);
 		var realRef = new ValueRef(this, RefKind.RealValue);
 		var imagRef = new ValueRef(this, RefKind.ImaginaryValue);
 		RatioState = new BinaryExpression(realRef, imagRef, BinaryOp.Divide);
