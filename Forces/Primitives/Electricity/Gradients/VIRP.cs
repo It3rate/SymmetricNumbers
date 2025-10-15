@@ -51,8 +51,9 @@ public class VIRP : SymmetricNumber
     //     This segment must overlap zero (unless you allow negative lengths), so the answer is a segment with a known length and loosely constrained position.
     //     (it can slide back and forth along the numberline, and left of zero, imaginary, is length, while right is zero is width)
     // *** Now, if you do the same with area, you know the product of length and width, but not either one. This is also a segment, but it grows in a different way.
-    //     However, you can use squared numbers to represent the length and width here, then the segments slide exactly as before.
-    //     This is key - the IValue in a number does not have to represent a normal linear number. For a more obvious example, loudness is logarithmic, but we can consider it with linear numbers.
+    //     However, you can use reciprocal numbers to represent the length and width here, then the segments slide linearly as before (denominator grows).
+    //     This is key - the IValue in a number does not have to represent a normal linear number, they can be squared, accelerating or any equations.
+    //     For a more obvious example, loudness is logarithmic, but we can consider it with linear numbers.
     //     *** Once you have added an expression to an IValue positon in a number, it behaves linearly, even if the underlying value is not linear.
 
     public long Voltage { get => TopRight; set => TopRight = value; }
