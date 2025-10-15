@@ -21,8 +21,8 @@ public class VIRP : SymmetricNumber
     // The idea is that this pattern is encoded/discovered as a number (four measures) with these constraints.
     // Then similar relations can reuse or expand the pattern.
 
-	// Rectangle: width(w), length(l), area(a), aspect ratio(Ar) a=wl and Ar=l/w
-	// Propulsion: leftThrust(L), rightThrust(R), forwardForce(F), turnForce(T) F=L+R and T=R-L
+    // Rectangle: width(w), length(l), area(a), aspect ratio(Ar) a=wl and Ar=l/w
+    // Propulsion: leftThrust(L), rightThrust(R), forwardForce(F), turnForce(T) F=L+R and T=R-L
     // Thermodynamics: temp(T), heat capacity(C), heat energy(Q), entropy(S) Q=CT and S=Q/T
     // Optics: wavelength(λ), freqency(f), speed of light(C), energy(E) C=λf and E=ht (h is planck's const)
     // Economics: price(P), demand(D), supply(S), revenue(R) R=PD and P=S/D for equilibrium
@@ -46,6 +46,14 @@ public class VIRP : SymmetricNumber
     // So the constraints are separable from the measures, but together they make a complete number.
     // Measures can be the output of a different number system, they don't need to be primitive measured values.
     // e.g. PSI is a value from another number system, but still can be used as a single measure in a new system.
+
+    // *** If you set a length+width value (half perimeter), you don't know the length or width, but you do know it is a segment of length+width.
+    //     This segment must overlap zero (unless you allow negative lengths), so the answer is a segment with a known length and loosely constrained position.
+    //     (it can slide back and forth along the numberline, and left of zero, imaginary, is length, while right is zero is width)
+    // *** Now, if you do the same with area, you know the product of length and width, but not either one. This is also a segment, but it grows in a different way.
+    //     However, you can use squared numbers to represent the length and width here, then the segments slide exactly as before.
+    //     This is key - the IValue in a number does not have to represent a normal linear number. For a more obvious example, loudness is logarithmic, but we can consider it with linear numbers.
+    //     *** Once you have added an expression to an IValue positon in a number, it behaves linearly, even if the underlying value is not linear.
 
     public long Voltage { get => TopRight; set => TopRight = value; }
 	public long Current { get => BottomRight; set => BottomRight = value; }

@@ -1,4 +1,6 @@
-﻿using SymNum.Measures.Expressions;
+﻿using Forces.Primitives.Electricity.Concepts;
+using SymNum.Measures.Concepts;
+using SymNum.Measures.Expressions;
 using SymNum.Measures.Numbers;
 using SymNum.Measures.Primitives;
 using System;
@@ -9,9 +11,13 @@ using System.Threading.Tasks;
 
 namespace Forces.Primitives.Steering.Simulation;
 
-public class Creature
+public class Creature : ConceptSpace
 {
-	public Measure RightEye { get; } = new Measure(0, Direction.FacesRight);
+    // This eventually will be an learned concept space, where active elements are brought into focus based on context.
+    // For now it is all manual to get the feel of it.
+    // The whole creature is a concept space, but light is also a concept space, as is brightness.
+    // Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
+    public Measure RightEye { get; } = new Measure(0, Direction.FacesRight);
 	public MeasureMemory LeftEyeMemory { get; }
 	public MeasureMemory RightEyeMemory { get; }
 	public Measure LeftEye { get; } = new Measure(0, Direction.FacesLeft);
@@ -35,7 +41,6 @@ public class Creature
 
 	public BinaryExpression TurnLeft { get; }
 	public BinaryExpression TurnRight { get; }
-	public BinaryExpression FollowTheLight { get; }
 
 	public double Speed { get; set; } = 5;
 	// this will be held in arena

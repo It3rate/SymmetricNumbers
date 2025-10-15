@@ -9,6 +9,8 @@ using Forces.Primitives.Electricity.Momentum;
 using SymNum.Measures.Expressions;
 using SymNum.Measures.Numbers;
 
+// Power is voltage * current, akin to area in length * width.
+// 
 public class Power : BinaryExpression
 {
     public IValue Voltage => First;
