@@ -72,7 +72,19 @@ public class SplitNumber : UnconstrainedNumber
 		AreaState = new BinaryExpression(realRef, imagRef, BinaryOp.Multiply);
 		Calculate();
 	}
-	public ComplexNumber GetComplexNumber()
+    /// <summary>
+    /// Resets the value based on a discovered zero (may be an average or expectation), calibrating the measures as well as the two sides.
+    /// The resolution can be manipulated to vary the 'importance' of each side assuming there are enough bits (lower denominator => higher value)
+    /// </summary>
+    public void Reset(long leftZero, long leftMeasure, long leftResolution, long rightZero, long rightMeasure, long rightResolution)
+    {
+        LeftMeasure.SetPosition(leftMeasure - leftZero);
+        LeftUnit.SetPosition(leftResolution);
+        RightMeasure.SetPosition(rightMeasure - rightZero);
+        RightUnit.SetPosition(rightResolution);
+    }
+
+    public ComplexNumber GetComplexNumber()
 	{
 		var res = MinResolution;
 		var real = (long)(RealValue * res);

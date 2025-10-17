@@ -69,5 +69,6 @@ public abstract class ConceptSpace
 
     // It seems all primitive input is measures (no meaning without calibration), and all change/diff involves complex/symmetric numbers with two states forming a segment?
     // It doesn't mean measures are the 'primitive', opposite actually - they are just samples of 'complex number things' happening in the real world.
+
 	public List<UnconstrainedNumber> Motions = new List<UnconstrainedNumber>();
 }

@@ -53,6 +53,7 @@ public class VIRP : SymmetricNumber
     // *** Now, if you do the same with area, you know the product of length and width, but not either one. This is also a segment, but it grows in a different way.
     //     However, you can use reciprocal numbers to represent the length and width here, then the segments slide linearly as before (denominator grows).
     //     This is key - the IValue in a number does not have to represent a normal linear number, they can be squared, accelerating or any equations.
+    //     It could also be encoded as a denominator change, as in, if length is 10 and width is unknown, then area is width/0.1. A full solved number has values of all quadrants.
     //     For a more obvious example, loudness is logarithmic, but we can consider it with linear numbers.
     //     *** Once you have added an expression to an IValue positon in a number, it behaves linearly, even if the underlying value is not linear.
 

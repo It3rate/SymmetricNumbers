@@ -17,13 +17,15 @@ public class Creature : ConceptSpace
     // For now it is all manual to get the feel of it.
     // The whole creature is a concept space, but light is also a concept space, as is brightness.
     // Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
-    public Measure RightEye { get; } = new Measure(0, Direction.FacesRight);
-	public MeasureMemory LeftEyeMemory { get; }
 	public MeasureMemory RightEyeMemory { get; }
+    public Measure RightEye { get; } = new Measure(0, Direction.FacesRight);
+    public Measure RightEyeResolution { get; } // creates a number, but also can be used to adjust sensitivity (reduce or increase the denominator realtive to the numerator)
+    public MeasureMemory LeftEyeMemory { get; } // memory is used as the zero point
 	public Measure LeftEye { get; } = new Measure(0, Direction.FacesLeft);
-	public SplitNumber Sight { get; }
+    public Measure LeftEyeResolution { get; } 
+    public SplitNumber Sight { get; } // sight is constructed from the left and right eye, based around Sight zero according to above, regardless of the actual eye input values.
 
-	public IValue LeftValue { get; }
+    public IValue LeftValue { get; }
 	public IValue RightValue { get; }
 	public IValue SightNeutral { get; }
 	public IValue SightBrightness { get; }
@@ -74,13 +76,20 @@ public class Creature : ConceptSpace
 		TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
 		TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, BinaryOp.Add);
 	}
-	public void OnTick()
+    private Random _rnd = new Random();
+    public void OnTick()
 	{
-		// read light input
-		var rightLight = 100; // get from environment
-		RightEye.SetPosition(rightLight);
-		var leftLight = 100; // get from environment
+		var rightLight = _rnd.Next(2000) + 4000; // get from environment
+		var leftLight = _rnd.Next(2000) + 4000; // get from environment
+        long tempResLeft = 1000;
+        long tempResRight = 1000;
+        // read light input
+        RightEye.SetPosition(rightLight);
 		LeftEye.SetPosition(leftLight);
+
+        // this can be done with equations eventually (avg, val-avg, res)
+        Sight.Reset(LeftEyeMemory.Position, leftLight, tempResLeft, RightEyeMemory.Position, rightLight, tempResRight);
+
 
 		// set thrust
 		Motion.SetValueFromRefKind(RefKind.RealValue, TurnRight.Value);
