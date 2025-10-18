@@ -36,21 +36,27 @@ public class Creature : ConceptSpace
 
 	public IMeasure RightThrust { get; } = new Measure(0, Direction.FacesRight);
 	public IMeasure LeftThrust { get; } = new Measure(0, Direction.FacesLeft);
-	private static long _thrustResolution = 10;
-	public IMeasure LeftThrustRes { get; } = new Measure(_thrustResolution, Direction.FacesLeft);
-	public IMeasure RightThrustRes { get; } = new Measure(_thrustResolution, Direction.FacesRight);
+	public IMeasure LeftThrustResolution { get; } = new Measure(_leftThrustResolution, Direction.FacesLeft);
+	public IMeasure RightThrustResolution { get; } = new Measure(_rightThrustResolution, Direction.FacesRight);
 	public SplitNumber Motion { get; }
 
-	public BinaryExpression TurnLeft { get; }
-	public BinaryExpression TurnRight { get; }
+    public BinaryExpression Turn { get; }
+    public BinaryExpression TurnLeft { get; }
+    public BinaryExpression TurnRight { get; }
 
-	public double Speed { get; set; } = 5;
+    public double Speed { get; set; } = 5;
 	// this will be held in arena
 	public double XLocation { get; set; }
 	public double YLocation { get; set; }
 	public double FacingDirection { get; set; }
 
-	public Creature()
+    // these will be tuned values for sight and motion sensitivity
+    private static long _leftSightResolution = 1000;
+    private static long _rightSightResolution = 1000;
+    private static long _leftThrustResolution = 10;
+    private static long _rightThrustResolution = 10;
+
+    public Creature()
 	{
 		LeftEyeMemory = new MeasureMemory(LeftEye,  MeasureMemory.MemoryKind.Average);
 		RightEyeMemory = new MeasureMemory(RightEye, MeasureMemory.MemoryKind.Average);
@@ -66,29 +72,33 @@ public class Creature : ConceptSpace
 		SightRightDif = new BinaryExpression(RightValue, SightNeutral, BinaryOp.Divide);
 		BrightnessDirection = new BinaryExpression(SightLeftDif, SightRightDif, BinaryOp.Subtract);
 
-		Motion = new SplitNumber(RightThrust, LeftThrustRes, RightThrustRes, LeftThrust);
+		Motion = new SplitNumber(RightThrust, LeftThrustResolution, RightThrustResolution, LeftThrust);
 
-		var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
-		var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
-		var motionTurn = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Subtract);
-		// map the brightness diff to the default thrust (maybe based on darkenss) plus the turn signal.
-		// the turn could just be the complex number diff, or multiply in each of the left and right ratios.
-		TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
-		TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, BinaryOp.Add);
+        var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
+        var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
+        Turn = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Subtract);
+        // map the brightness diff to the default thrust (maybe based on darkenss) plus the turn signal.
+        // the turn could just be the complex number diff, or multiply in each of the left and right ratios.
+        TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
+        TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, BinaryOp.Add);
 	}
+
     private Random _rnd = new Random();
     public void OnTick()
-	{
-		var rightLight = _rnd.Next(2000) + 4000; // get from environment
+    {
+
+        // the resolution of a number will often not be set by the sensor itself. The light input is an eye thing, but the calibration 
+        // is up to whatever uses that information. In this case, the leg thrust and the eye have to negotiate a resolution that powers the leg correctly.
+        // The eye input value can be used by many other things, so there will be many numbers made with it, there is no single 'lumen' value everyone uses.
+        var rightLight = _rnd.Next(2000) + 4000; // get from environment
 		var leftLight = _rnd.Next(2000) + 4000; // get from environment
-        long tempResLeft = 1000;
-        long tempResRight = 1000;
+
         // read light input
         RightEye.SetPosition(rightLight);
 		LeftEye.SetPosition(leftLight);
 
         // this can be done with equations eventually (avg, val-avg, res)
-        Sight.Reset(LeftEyeMemory.Position, leftLight, tempResLeft, RightEyeMemory.Position, rightLight, tempResRight);
+        Sight.Reset(LeftEyeMemory.Position, leftLight, _leftThrustResolution, RightEyeMemory.Position, rightLight, _rightThrustResolution);
 
 
 		// set thrust
@@ -98,8 +108,28 @@ public class Creature : ConceptSpace
 		// move creature in environment based on thrust
 		var rot = (TurnLeft.Value - TurnRight.Value) * 30; // max 60 degrees
 		FacingDirection += rot;
-		// add motion at constant speed in this Direction, wrap if at edge of image.
-		// todo: motion and env read for creature.
-		// This is probably the arena reading direction change and speed, creature doesn't know where it is.
-	}
+        // add motion at constant speed in this Direction, wrap if at edge of image.
+        // todo: motion and env read for creature.
+        // This is probably the arena reading direction change and speed, creature doesn't know where it is.
+    }
+    private void SetSight(long leftLight, long rightLight)
+    {
+        LeftEye.SetPosition(leftLight);
+        RightEye.SetPosition(rightLight);
+    }
+    private void SetSightDenominators(long leftThrustRes, long rightThrustRes)
+    {
+        LeftEyeResolution.SetPosition(leftThrustRes);
+        RightEyeResolution.SetPosition(rightThrustRes);
+    }
+    private void SetMotion(long leftThrust, long rightThrust)
+    {
+        LeftThrust.SetPosition(leftThrust);
+        RightThrust.SetPosition(rightThrust);
+    }
+    private void SetMotionDenominators(long leftThrustRes, long rightThrustRes)
+    {
+        LeftThrustResolution.SetPosition(leftThrustRes);
+        RightThrustResolution.SetPosition(rightThrustRes);
+    }
 }
