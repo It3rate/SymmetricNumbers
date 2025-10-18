@@ -1,0 +1,43 @@
+﻿
+using SkiaSharp;
+using System.Drawing;
+
+namespace Simulation.Render;
+
+public static class SkRectExtension
+{
+    public static SKRect SKRect(this RectangleF rectF) =>
+        new SKRect(rectF.Left, rectF.Top, rectF.Right, rectF.Bottom);
+
+    public static SKRect SKRect(this Rectangle rect) =>
+        new SKRect(rect.Left, rect.Top, rect.Right, rect.Bottom);
+
+    public static SKPoint Center(this SKRect self) =>
+        new SKPoint(
+            (self.Right - self.Left) / 2f + self.Left,
+            (self.Bottom - self.Top) / 2f + self.Top);
+    public static SKPoint BottomLeft(this SKRect self) => new(self.Left, self.Bottom);
+    public static SKPoint TopLeft(this SKRect self) => new(self.Left, self.Top);
+    public static SKPoint TopRight(this SKRect self) => new(self.Right, self.Top);
+    public static SKPoint BottomRight(this SKRect self) => new(self.Right, self.Bottom);
+    public static SKSegment TopLine(this SKRect self) => new SKSegment(self.Left, self.Top, self.Right, self.Top);
+    public static SKSegment LeftLine(this SKRect self) => new SKSegment(self.Left, self.Bottom, self.Left, self.Top);
+    public static SKSegment BottomLine(this SKRect self) => new SKSegment(self.Left, self.Bottom, self.Right, self.Bottom);
+    public static SKSegment RightLine(this SKRect self) => new SKSegment(self.Right, self.Bottom, self.Right, self.Top);
+
+    public static SKPoint[] ClockWisePointsFromBL(this SKRect self) =>
+        [self.BottomLeft(), self.TopLeft(), self.TopRight(), self.BottomRight()];
+    public static SKPoint CornerFromOrientaion(this SKRect self, RectDirections rd) =>
+        new SKPoint(rd.HasLeft() ? self.Left : self.Right, rd.HasTop() ? self.Top : self.Bottom);
+
+    public static (SKSegment, SKSegment) CornerLinesFromOrientaion(this SKRect self, RectDirections rd)
+    {
+        var corner = self.CornerFromOrientaion(rd);
+        var endX = rd.HasLeft() ? self.Right : self.Left;
+        var endY = rd.HasTop() ? self.Bottom : self.Top;
+        return (
+            new SKSegment(corner, new SKPoint(corner.X, endY)),
+            new SKSegment(corner, new SKPoint(endX, corner.Y))
+            );
+    }
+}

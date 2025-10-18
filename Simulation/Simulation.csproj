@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="3.119.2-preview.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Forces\Forces.csproj" />
     <ProjectReference Include="..\SymNum\SymNum.csproj" />
   </ItemGroup>
