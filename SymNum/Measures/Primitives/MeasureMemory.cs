@@ -55,22 +55,36 @@ public class MeasureMemory : MeasureBase
 		}
 		return result;
 	}
+	private readonly object _historyLock = new object();
+
 	public override void SetPosition(long value)
 	{
-		if (_isFirst)
+		lock (_historyLock)
 		{
-			for (int i = 0; i < MaxHistory; i++)
+			if (_isFirst)
 			{
-				History.Enqueue(value);
+				for (int i = 0; i < MaxHistory; i++)
+				{
+					History.Enqueue(value);
+				}
+				_isFirst = false;
 			}
-			_isFirst = false;
-		}
 
-		History.Enqueue(value);
-		History.Dequeue();
+			History.Enqueue(value);
+			History.Dequeue();
+		}
 	}
 
-	public double MemoryAverage => History.Count > 0 ? History.Average() : 0;
+	public double MemoryAverage
+	{
+		get
+		{
+			lock (_historyLock)
+			{
+				return History.Count > 0 ? History.Average() : 0;
+			}
+		}
+	}
 	public double MemorySum => History.Sum();
 	public double MemoryMin => History.Min();
 	public double MemoryMax => History.Max();

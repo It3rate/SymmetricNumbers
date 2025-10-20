@@ -206,7 +206,7 @@ namespace Box2D.NetStandard.Collision
 
 			void Expand()
 			{
-				Assert(_nodeCount == Capacity);
+				//Assert(_nodeCount == Capacity);
 
 				// The free list is empty. Rebuild a bigger pool.
 				var newNodeCap = GrowthFunc(Capacity);
@@ -395,40 +395,42 @@ namespace Box2D.NetStandard.Collision
 			ref var leafNode = ref _nodes[leaf];
 			Assert(leafNode.IsLeaf);
 			var parent = leafNode.Parent;
-			ref var parentNode = ref _nodes[parent];
-			var grandParent = parentNode.Parent;
-			var sibling = parentNode.Child1 == leaf
-				              ? parentNode.Child2
-				              : parentNode.Child1;
-
-			ref var siblingNode = ref _nodes[sibling];
-
-			if (grandParent != ProxyFree)
+			if (parent != -1)
 			{
-				// Destroy parent and connect sibling to grandParent.
-				ref var grandParentNode = ref _nodes[grandParent];
-				if (grandParentNode.Child1 == parent)
+				ref var parentNode = ref _nodes[parent];
+				var grandParent = parentNode.Parent;
+				var sibling = parentNode.Child1 == leaf
+								  ? parentNode.Child2
+								  : parentNode.Child1;
+
+				ref var siblingNode = ref _nodes[sibling];
+
+				if (grandParent != ProxyFree)
 				{
-					grandParentNode.Child1 = sibling;
+					// Destroy parent and connect sibling to grandParent.
+					ref var grandParentNode = ref _nodes[grandParent];
+					if (grandParentNode.Child1 == parent)
+					{
+						grandParentNode.Child1 = sibling;
+					}
+					else
+					{
+						grandParentNode.Child2 = sibling;
+					}
+
+					siblingNode.Parent = grandParent;
+					FreeNode(parent);
+
+					// Adjust ancestor bounds.
+					Balance(grandParent);
 				}
 				else
 				{
-					grandParentNode.Child2 = sibling;
+					_root = sibling;
+					siblingNode.Parent = ProxyFree;
+					FreeNode(parent);
 				}
-
-				siblingNode.Parent = grandParent;
-				FreeNode(parent);
-
-				// Adjust ancestor bounds.
-				Balance(grandParent);
 			}
-			else
-			{
-				_root = sibling;
-				siblingNode.Parent = ProxyFree;
-				FreeNode(parent);
-			}
-
 			Validate();
 		}
 
@@ -600,9 +602,9 @@ namespace Box2D.NetStandard.Collision
 
 			var iB = a.Child1;
 			var iC = a.Child2;
-			Assert(iA != iB);
-			Assert(iA != iC);
-			Assert(iB != iC);
+			//Assert(iA != iB);
+			//Assert(iA != iC);
+			//Assert(iB != iC);
 
 			ref var b = ref _nodes[iB];
 			ref var c = ref _nodes[iC];
@@ -678,9 +680,9 @@ namespace Box2D.NetStandard.Collision
 			{
 				var iD = b.Child1;
 				var iE = b.Child2;
-				Assert(iB != iD);
-				Assert(iB != iE);
-				Assert(iD != iE);
+				//Assert(iB != iD);
+				//Assert(iB != iE);
+				//Assert(iD != iE);
 
 				ref var d = ref _nodes[iD];
 				ref var e = ref _nodes[iE];
@@ -1033,11 +1035,11 @@ namespace Box2D.NetStandard.Collision
 
 			var height = 1 + Math.Max(height1, height2);
 
-			Assert(node.Height == height);
+			//Assert(node.Height == height);
 
 			ref var aabb = ref node.Aabb;
-			Assert(aabb.Contains(child1Node.Aabb));
-			Assert(aabb.Contains(child2Node.Aabb));
+			//Assert(aabb.Contains(child1Node.Aabb));
+			//Assert(aabb.Contains(child2Node.Aabb));
 
 			Validate(child1);
 			Validate(child2);

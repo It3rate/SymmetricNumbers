@@ -50,7 +50,7 @@ public class CreatureBody : DrawableBase
 
     public void ApplyActions()
     {
-        _creature.OnTick();
+        //_creature.OnTick();
         if(PhysicsBody != null)
         {
             var turn = 3f;// (float)_creature.Turn.Value;

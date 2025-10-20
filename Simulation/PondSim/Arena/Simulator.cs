@@ -55,7 +55,7 @@ public class Simulator : DrawableBase
                 creature.UpdateLightSensor(_arena, _lights);
                 creature.Update(deltaTime);
             }
-            _arena.PhysicsWorld.Step(_fixedDt, 8, 3); // Vel/pos iterations
+            _arena.PhysicsWorld.Step(_fixedDt, 2, 1);// 8, 3); // Vel/pos iterations
 
             _accumulator -= _fixedDt;
         }
