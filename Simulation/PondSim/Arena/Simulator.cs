@@ -23,48 +23,39 @@ public class Simulator : DrawableBase
     {
         _arena = arena;
 
-        var creature1 = new Creature();
-
-        var creature = new CreatureBody(creature1);
-        creature.InitPhysics(_arena, new Vector2(400, 300), 0f);
-        _creatures.Add(creature);
-
         var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
         _lights.Add(light);
 
+        var creature1 = new Creature();
+
+        var creature = new CreatureBody(creature1);
+        creature.InitPhysics(_arena, new Vector2(400, 600), 10f);
+        _creatures.Add(creature);
+
         Renderer.CurrentDrawable = this;
     }
-    public Simulator(PondArena arena, List<CreatureBody> creatures, List<LightSource> lights)
+    public Simulator(PondArena arena, IEnumerable<CreatureBody> creatures, IEnumerable<LightSource> lights)
     {
         _arena = arena;
-        foreach(var light in lights)
-        {
-            _lights.Add(light);
-        }
+        _lights.AddRange(lights);
+        _creatures.AddRange(creatures);
 
         foreach (var creature in _creatures)
         {
             creature.InitPhysics(_arena, creature.Position, creature.Rotation);
         }
     }
-    public void Update(float deltaTime)
+    public override void Update(float deltaTime)
     {
         _accumulator += deltaTime;
         while (_accumulator >= _fixedDt)
         {
             foreach (var creature in _creatures)
             {
-                creature.ApplyActions(1f, 0f); // e.g., constant forward
                 creature.UpdateLightSensor(_arena, _lights);
-                //creature.SetSight(leftLight, rightLight);
+                creature.Update(deltaTime);
             }
-
-            // Step physics
             _arena.PhysicsWorld.Step(_fixedDt, 8, 3); // Vel/pos iterations
-            foreach (var creature in _creatures)
-            {
-                creature.SyncFromPhysics();
-            }
 
             _accumulator -= _fixedDt;
         }
@@ -76,14 +67,12 @@ public class Simulator : DrawableBase
         {
             Canvas.Clear(SKColors.DarkSlateBlue);
             //todo: draw obstacles/lights
-
-            using var creaturePaint = Pens.DrawPen;
             foreach (var creature in _creatures)
             {
                 Canvas.Save();
                 Canvas.Translate(creature.Position.X, creature.Position.Y);
                 Canvas.RotateDegrees(creature.Rotation * 180f / MathF.PI);
-                Canvas.DrawCircle(0, 0, 5f, creaturePaint);
+                creature.Draw();
                 Canvas.Restore();
             }
         }

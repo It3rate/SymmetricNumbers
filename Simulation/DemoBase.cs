@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Simulation.Motion;
+using SkiaSharp.Views.Desktop;
 
 namespace Simulation;
 
@@ -14,9 +15,17 @@ public abstract class DemoBase
 	protected int Count => Pages.Count;
 	protected int _testIndex = 0;
 	protected MouseAgent _currentMouseAgent;
-	//protected List<int> _tests{get;} = new List<int>();
+    //protected List<int> _tests{get;} = new List<int>();
 
-	public DemoBase PreviousTest(MouseAgent mouseAgent)
+    public SKControl Control { get; }
+
+    public DemoBase(SKControl control)
+    {
+        Control = control;
+    }
+
+
+    public DemoBase PreviousTest(MouseAgent mouseAgent)
 	{
 		int index = _testIndex >= 1 ? _testIndex - 1 : Pages.Count - 1;
 		return LoadTest(index, mouseAgent);

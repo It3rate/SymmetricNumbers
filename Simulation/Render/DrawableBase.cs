@@ -13,6 +13,7 @@ public interface IDrawable
     CorePens Pens { get; }
     SKCanvas? Canvas { get; }
     void Draw();
+    void Update(float deltaTime);
 }
 
 public abstract class DrawableBase : IDrawable
@@ -21,4 +22,5 @@ public abstract class DrawableBase : IDrawable
     public CorePens Pens => Renderer.Pens;
     public SKCanvas? Canvas => Renderer.Canvas;
     public abstract void Draw();
+    public abstract void Update(float deltaTime);
 }

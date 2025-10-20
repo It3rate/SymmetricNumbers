@@ -65,10 +65,13 @@ public class Runner
 
 			_lastTime = _currentTime;
 			_needsUpdate = !HasUpdated;
-		}
+            _isBusy = false;
+        }
 
 		_isBusy = false;
-	}
+        Agent.Demos.Control.Invalidate();
+
+    }
 
 	public void ActivateComposite(int id)
 	{
@@ -107,7 +110,7 @@ public class Runner
 
 		_sysTimer = new Timer();
 		_sysTimer.Elapsed += Tick;
-		_sysTimer.Interval = 8;
+		_sysTimer.Interval = 16;
 		_sysTimer.Enabled = true;
 	}
 

@@ -69,6 +69,7 @@ public class MouseAgent
 
 	public void Update(double currentTime, double deltaTime)
 	{
+        Renderer.CurrentDrawable?.Update((float)deltaTime);
 	}
 
 	#region Mouse

@@ -46,12 +46,14 @@ public partial class CoreForm : Form
 		KeyUp += OnKeyUp;
 
 		//_demos = new Demos(_workspace.Brain);
-		_demos = new PondArena();
+		_demos = new PondArena(_control);
 		_mouseAgent = new MouseAgent(_renderer, _demos);
 		_runner = _mouseAgent.Runner;
 		_runner.OnContextStringChanged += _runner_OnContextStringChanged;
 		_ = Execute(null, 50);
-	}
+
+        NextPanel();
+    }
 
 	private void OnResize(object? sender, EventArgs e)
 	{
@@ -157,7 +159,7 @@ public partial class CoreForm : Form
 		Arena,
 	}
 	private SimulationState _state = SimulationState.Electric;
-	private void btNext_Click(object sender, EventArgs e)
+	private void NextPanel(object? sender = null, EventArgs? e = null)
 	{
 		if (_state == SimulationState.Electric)
 		{

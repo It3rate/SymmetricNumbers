@@ -99,7 +99,7 @@
             btNext.TabIndex = 3;
             btNext.Text = "Next";
             btNext.UseVisualStyleBackColor = true;
-            btNext.Click += btNext_Click;
+            btNext.Click += NextPanel;
             // 
             // corePanel
             // 

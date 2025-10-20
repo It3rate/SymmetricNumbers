@@ -6,12 +6,13 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using Box2DSharp.Collision.Shapes;
-using Box2DSharp.Common;
-using Box2DSharp.Dynamics;
 using Forces.Primitives.Steering.Simulation;
 using SkiaSharp;
 using Simulation.Render;
+using Box2D.NetStandard.Dynamics.Fixtures;
+using Box2D.NetStandard.Dynamics.Bodies;
+using Box2D.NetStandard.Collision.Shapes;
+
 
 public class CreatureBody : DrawableBase
 {
@@ -22,7 +23,7 @@ public class CreatureBody : DrawableBase
     public Body? PhysicsBody { get; private set; }
     private Creature _creature;
     private float _thrustForce = 50f; // Tune for sim scale
-    private float _turnTorque = 10f;
+    private float _turnTorque = 2f;
 
     private float _creatureRadius = 5f;
 
@@ -35,38 +36,38 @@ public class CreatureBody : DrawableBase
     {
         var bodyDef = new BodyDef
         {
-            BodyType = BodyType.DynamicBody,
-            Position = new Vector2(startPos.X, startPos.Y),
-            Angle = startRot,
-            LinearDamping = 0.5f,
-            AngularDamping = 2f
+            type = BodyType.Dynamic,
+            position = new Vector2(startPos.X, startPos.Y),
+            angle = startRot,
+            linearDamping = 0.5f,
+            angularDamping = 2f
         };
         PhysicsBody = arena.PhysicsWorld.CreateBody(bodyDef);
 
         var circleShape = new CircleShape { Radius = _creatureRadius };
-        PhysicsBody.CreateFixture(new FixtureDef { Shape = circleShape, Density = 1f, Friction = 0.3f, Restitution = 0.1f });
+        PhysicsBody.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
     }
 
-    // Call per sim step with RL action (e.g., float thrust, float turn from agent)
-    public void ApplyActions(float thrust, float turn)
+    public void ApplyActions()
     {
-        // Forward thrust in facing direction
-        var facing = new Vector2((float)Math.Cos(PhysicsBody.GetAngle()), (float)Math.Sin(PhysicsBody.GetAngle()));
-        PhysicsBody.ApplyForceToCenter(facing * thrust * _thrustForce, true);
+        _creature.OnTick();
+        if(PhysicsBody != null)
+        {
+            var turn = 3f;// (float)_creature.Turn.Value;
+            var thrust = .2f; // (float)Math.Abs(_creature.LeftThrust.Value - _creature.RightThrust.Value);
+            // Forward thrust in facing direction
+            var facing = new Vector2((float)Math.Cos(PhysicsBody.GetAngle()), (float)Math.Sin(PhysicsBody.GetAngle()));
+            PhysicsBody.ApplyForceToCenter(facing * thrust * _thrustForce, true);
 
-        // Rotation torque
-        PhysicsBody.ApplyTorque(turn * _turnTorque, true);
+            // Rotation torque
+            PhysicsBody.ApplyTorque(turn * _turnTorque, true);
+        }
     }
 
     // Sync after sim step (for rendering/sensor)
-    public void SyncFromPhysics()
+    public override void Update(float deltaTime)
     {
-        if (PhysicsBody != null)
-        {
-            //var pos = PhysicsBody.GetPosition();
-            //Position = new Vector2(pos.X, pos.Y);
-            //Rotation = PhysicsBody.GetAngle();
-        }
+        ApplyActions();
     }
 
     public void UpdateLightSensor(PondArena arena, List<LightSource> lights)
@@ -74,59 +75,58 @@ public class CreatureBody : DrawableBase
         float totalIntensity = 0f;
         foreach (var light in lights)
         {
-            Vector2 toLight = new(light.Position.X - Position.X, light.Position.Y - Position.Y);
+            Vector2 toLight = new Vector2(light.Position.X - Position.X, light.Position.Y - Position.Y);
             float distance = toLight.Length();
-            toLight.Normalize();
+            //toLight.Normalize();
 
             // Raycast callback collector
-            var rayCastCallback = new RayCastCallback(distance);
-            arena.PhysicsWorld.RayCast(rayCastCallback,
-                new Vector2(Position.X, Position.Y),
-                new Vector2(Position.X, Position.Y) + toLight * distance);
+            //var rayCastCallback = new RayCastCallback(distance);
+            //arena.PhysicsWorld.RayCast(rayCastCallback,
+            //    new Vector2(Position.X, Position.Y),
+            //    new Vector2(Position.X, Position.Y) + toLight * distance);
 
-            bool visible = !rayCastCallback.ClosestHitDist.HasValue || rayCastCallback.ClosestHitDist >= distance;
-            if (visible)
-            {
-                float angleDiff = MathF.Acos(Vector2.Dot(new Vector2(toLight.X, toLight.Y),
-                    new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))));
-                if (angleDiff < MathF.PI / 2)
-                {
-                    float intensity = light.Brightness / (distance * distance + 1f);
-                    totalIntensity += (float)Math.Clamp(intensity, 0f, 1f);
-                }
-            }
+            //bool visible = !rayCastCallback.ClosestHitDist.HasValue || rayCastCallback.ClosestHitDist >= distance;
+            //if (visible)
+            //{
+            //    float angleDiff = MathF.Acos(Vector2.Dot(new Vector2(toLight.X, toLight.Y),
+            //        new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))));
+            //    if (angleDiff < MathF.PI / 2)
+            //    {
+            //        float intensity = light.Brightness / (distance * distance + 1f);
+            //        totalIntensity += (float)Math.Clamp(intensity, 0f, 1f);
+            //    }
+            //}
         }
         LightSensorValue = (float)Math.Clamp(totalIntensity / lights.Count, 0f, 1f);
     }
 
-    private class RayCastCallback : IRayCastCallback
-    {
-        public float? ClosestHitDist { get; private set; }
-        private float _distance;
+    //private class RayCastCallback : IRayCastCallback
+    //{
+    //    public float? ClosestHitDist { get; private set; }
+    //    private float _distance;
 
-        public RayCastCallback(float distance)
-        {
-            _distance = distance;
-            ClosestHitDist = null;
-        }
+    //    public RayCastCallback(float distance)
+    //    {
+    //        _distance = distance;
+    //        ClosestHitDist = null;
+    //    }
 
-        public float ReportFixture(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
-        {
-            ClosestHitDist ??= fraction * _distance;
-            return -1f; // Continue to find closest
-        }
+    //    public float ReportFixture(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
+    //    {
+    //        ClosestHitDist ??= fraction * _distance;
+    //        return -1f; // Continue to find closest
+    //    }
 
-        float IRayCastCallback.RayCastCallback(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
-        {
-            throw new NotImplementedException();
-        }
-    }
+    //    float IRayCastCallback.RayCastCallback(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
+    //    {
+    //        return 0; //throw new NotImplementedException();
+    //    }
+    //}
     public override void Draw()
     {
         if (PhysicsBody != null)
         {
-            var pos = PhysicsBody.GetPosition();
-            Canvas?.DrawCircle(pos.SKPoint(), _creatureRadius, Pens.DrawPen);
+            Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, Pens.DrawPen);
         }
     }
 }
