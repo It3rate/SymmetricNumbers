@@ -2,6 +2,7 @@ using Forces.Primitives.Electricity.Simulation.Circuits;
 using Simulation.PondSim;
 using Simulation.Render;
 using Simulation.Motion;
+using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using Sys = System.Windows.Forms;
 using SymNum.Mind;
@@ -65,6 +66,7 @@ public partial class CoreForm : Form
 	private void DrawOnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
 	{
 		_renderer.DrawOnCanvas(e.Surface.Canvas);
+        e.Surface.Canvas.DrawCircle(new SKPoint(100, 100), 5, _renderer.Pens.DrawPen);
 	}
 	public async Task Execute(Action action, int timeoutInMilliseconds)
 	{

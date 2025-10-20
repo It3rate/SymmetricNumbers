@@ -11,8 +11,10 @@ using Box2DSharp.Common;
 using Box2DSharp.Dynamics;
 using Simulation.PondSim.Arena;
 using Forces.Primitives.Steering.Simulation;
+using SkiaSharp;
+using Simulation.Render;
 
-public class CreatureBody
+public class CreatureBody : DrawableBase
 {
     public Vector2 Position;
     public float Rotation; // Facing direction
@@ -22,6 +24,8 @@ public class CreatureBody
     private Creature _creature;
     private float _thrustForce = 50f; // Tune for sim scale
     private float _turnTorque = 10f;
+
+    private float _creatureRadius = 5f;
 
     public CreatureBody(Creature creature)
     {
@@ -35,12 +39,12 @@ public class CreatureBody
             BodyType = BodyType.DynamicBody,
             Position = new Vector2(startPos.X, startPos.Y),
             Angle = startRot,
-            LinearDamping = 0.5f, // Friction-like slowdown
+            LinearDamping = 0.5f,
             AngularDamping = 2f
         };
         PhysicsBody = arena.PhysicsWorld.CreateBody(bodyDef);
 
-        var circleShape = new CircleShape { Radius = 5f }; // Tiny creature radius
+        var circleShape = new CircleShape { Radius = _creatureRadius };
         PhysicsBody.CreateFixture(new FixtureDef { Shape = circleShape, Density = 1f, Friction = 0.3f, Restitution = 0.1f });
     }
 
@@ -114,5 +118,10 @@ public class CreatureBody
         {
             throw new NotImplementedException();
         }
+    }
+    public void Draw(SKCanvas canvas)
+    {
+        var pos = PhysicsBody.GetPosition();
+        canvas.DrawCircle(pos.SKPoint(), _creatureRadius, _pens.DrawPen);
     }
 }
