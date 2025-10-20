@@ -6,6 +6,7 @@ using SkiaSharp;
 using SkiaSharp.Views.Desktop;
 using Sys = System.Windows.Forms;
 using SymNum.Mind;
+using Simulation.PondSim.Arena;
 
 namespace Simulation;
 
@@ -45,7 +46,7 @@ public partial class CoreForm : Form
 		KeyUp += OnKeyUp;
 
 		//_demos = new Demos(_workspace.Brain);
-		_demos = new ArenaDemo();
+		_demos = new PondArena();
 		_mouseAgent = new MouseAgent(_renderer, _demos);
 		_runner = _mouseAgent.Runner;
 		_runner.OnContextStringChanged += _runner_OnContextStringChanged;
@@ -66,7 +67,6 @@ public partial class CoreForm : Form
 	private void DrawOnPaintSurface(object? sender, SKPaintSurfaceEventArgs e)
 	{
 		_renderer.DrawOnCanvas(e.Surface.Canvas);
-        e.Surface.Canvas.DrawCircle(new SKPoint(100, 100), 5, _renderer.Pens.DrawPen);
 	}
 	public async Task Execute(Action action, int timeoutInMilliseconds)
 	{

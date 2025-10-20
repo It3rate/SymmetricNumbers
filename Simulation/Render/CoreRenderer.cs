@@ -10,7 +10,7 @@ namespace Simulation.Render;
 
 public class CoreRenderer
 {
-    private static CoreRenderer _instance;
+    private static CoreRenderer _instance = Instance;
     public static CoreRenderer Instance
     {
         get
@@ -23,61 +23,86 @@ public class CoreRenderer
         }
     }
 
-	public MouseAgent Agent { get; set; }
+	public MouseAgent? Agent { get; set; }
 	public int Width { get; set; }
     public int Height { get; set; }
 
-    public event CanvasEventHandler DrawingStart;
-    public event CanvasEventHandler DrawingComplete;
+    public event CanvasEventHandler? DrawingStart;
+    public event CanvasEventHandler? DrawingComplete;
 
-    public SKCanvas Canvas;
+    public SKCanvas? Canvas;
+    public IDrawable? CurrentDrawable { get; set; }
 
     public CorePens Pens { get; set; }
-    public SKBitmap Bitmap { get; set; }
+    public SKBitmap? Bitmap { get; set; }
     public bool ShowBitmap { get; set; }
 
     private CoreRenderer()
     {
-        GeneratePens();
+        Pens = GeneratePens();
     }
 
-    public virtual void BeginDraw()
+    public void DrawOnCanvas(SKCanvas canvas)
     {
-        Canvas.Save();
-        Canvas.SetMatrix(Matrix);
-        Canvas.Clear(Pens.BkgColor);
-        OnDrawingBegin();
+        Canvas = canvas;
+        BeginDraw();
+        Draw();
+        EndDraw();
     }
-    public virtual void Draw()
+    protected virtual void BeginDraw()
     {
-    }
-    public virtual void EndDraw()
-    {
-        Canvas.Restore();
-        if (ShowBitmap && Bitmap != null)
+        if (Canvas != null)
         {
-            DrawBitmap(Bitmap);
+            Canvas?.Save();
+            Canvas?.SetMatrix(Matrix);
+            Canvas?.Clear(Pens.BkgColor);
+            OnDrawingBegin();
         }
+    }
+    protected virtual void Draw()
+    {
+        if (Canvas != null)
+        {
+            CurrentDrawable?.Draw();
+            Agent?.Draw();
+        }
+    }
+    protected virtual void EndDraw()
+    {
+        if (Canvas != null)
+        {
+            Canvas?.Restore();
+            if (ShowBitmap && Bitmap != null)
+            {
+                DrawBitmap(Bitmap);
+            }
 
-        OnDrawingComplete();
+            OnDrawingComplete();
+        }
         Canvas = null;
     }
     protected void OnDrawingBegin()
     {
-        DrawingStart?.Invoke(this, new CanvasEventArgs(Canvas));
+        if (Canvas != null)
+        {
+            DrawingStart?.Invoke(this, new CanvasEventArgs(Canvas));
+        }
     }
     protected void OnDrawingComplete()
     {
-        DrawingComplete?.Invoke(this, new CanvasEventArgs(Canvas));
+        if (Canvas != null)
+        {
+            DrawingComplete?.Invoke(this, new CanvasEventArgs(Canvas));
+        }
     }
 
     public void DrawSegment(SKSegment seg, SKPaint paint)
     {
-        Canvas.DrawLine(seg.StartPoint, seg.EndPoint, paint);
+        Canvas?.DrawLine(seg.StartPoint, seg.EndPoint, paint);
     }
     public void DrawLine(SKPoint p0, SKPoint p1, SKPaint paint)
     {
-        Canvas.DrawLine(p0, p1, paint);
+        Canvas?.DrawLine(p0, p1, paint);
     }
     public void DrawGradientNumberLine(SKSegment segment, bool startToEnd, float width, bool isSelected = false)
     {
@@ -95,11 +120,11 @@ public class CoreRenderer
     {
         float round = radius / 3f;
         var box = new SKRect(point.X - radius, point.Y - radius, point.X + radius, point.Y + radius);
-        Canvas.DrawRoundRect(box, round, round, paint);
+        Canvas?.DrawRoundRect(box, round, round, paint);
     }
     public void DrawPolyline(SKPaint paint, params SKPoint[] polyline)
     {
-        Canvas.DrawPoints(SKPointMode.Polygon, polyline, paint);
+        Canvas?.DrawPoints(SKPointMode.Polygon, polyline, paint);
     }
     public void FillPolyline(SKPaint paint, params SKPoint[] polyline)
     {
@@ -109,7 +134,7 @@ public class CoreRenderer
         };
         path.MoveTo(polyline[0]);
         path.AddPoly(polyline, true);
-        Canvas.DrawPath(path, paint);
+        Canvas?.DrawPath(path, paint);
     }
     public void DrawLine(SKSegment segIn, SKPaint paint)
     {
@@ -127,26 +152,26 @@ public class CoreRenderer
     {
         var seg = segIn.Clone();
         DrawPolyline(paint, seg.Points);
-        Canvas.DrawCircle(segIn.StartPoint, 1.5f, paint);
+        Canvas?.DrawCircle(segIn.StartPoint, 1.5f, paint);
     }
     public void DrawStartCap(SKPoint center, SKPaint paint, SKPaint invertPaint)
     {
-        Canvas.DrawCircle(center, 3, paint);
-        Canvas.DrawCircle(center, 1.8f, invertPaint);
+        Canvas?.DrawCircle(center, 3, paint);
+        Canvas?.DrawCircle(center, 1.8f, invertPaint);
     }
     public void DrawStartCap(SKSegment segIn, SKPaint paint)
     {
-        Canvas.DrawCircle(segIn.EndPoint, 2f, paint);
-        Canvas.DrawCircle(segIn.EndPoint, 4, paint);
+        Canvas?.DrawCircle(segIn.EndPoint, 2f, paint);
+        Canvas?.DrawCircle(segIn.EndPoint, 4, paint);
     }
     public void DrawEndCap(SKSegment segIn, SKPaint paint)
     {
         var triPts = segIn.EndArrow(8);
-        Canvas.DrawPoints(SKPointMode.Polygon, triPts, paint);
+        Canvas?.DrawPoints(SKPointMode.Polygon, triPts, paint);
     }
     public void DrawTextAt(SKPoint point, string text, SKPaint paint)
     {
-        Canvas.DrawText(text, point.X, point.Y, paint);
+        Canvas?.DrawText(text, point.X, point.Y, paint);
     }
     public void DrawText(SKPoint center, string text, SKPaint paint, SKPaint background = null)
     {
@@ -156,7 +181,7 @@ public class CoreRenderer
             DrawTextBackground(rect, background);
             center = new SKPoint(rect.Left + 4, center.Y);
         }
-        Canvas.DrawText(text, center.X, center.Y, paint);
+        Canvas?.DrawText(text, center.X, center.Y, paint);
     }
     public void DrawTextOnPath(SKSegment baseline, string text, SKPaint paint, SKPaint background = null)
     {
@@ -168,22 +193,22 @@ public class CoreRenderer
             //var rect = GetTextBackgroundSize(center.X, center.Y, text, paint);
             //DrawTextBackground(rect, background);
         }
-        Canvas.DrawTextOnPath(text, path, SKPoint.Empty, paint);
+        Canvas?.DrawTextOnPath(text, path, SKPoint.Empty, paint);
     }
 
     public void DrawTextBackground(SKRect rect, SKPaint background)
     {
-        Canvas.DrawRoundRect(rect, 5, 5, background);
+        Canvas?.DrawRoundRect(rect, 5, 5, background);
     }
     public void DrawBitmap(SKBitmap bitmap)
     {
-        Canvas.DrawBitmap(bitmap, new SKRect(0, 0, Width, Height));
+        Canvas?.DrawBitmap(bitmap, new SKRect(0, 0, Width, Height));
     }
     public void DrawBitmap(SKBitmap bitmap, SKRect bounds)
     {
         using (SKPaint paint = new SKPaint { IsAntialias = true, FilterQuality = SKFilterQuality.High })
         {
-            Canvas.DrawBitmap(bitmap, bounds, paint);
+            Canvas?.DrawBitmap(bitmap, bounds, paint);
         }
     }
 
@@ -208,9 +233,9 @@ public class CoreRenderer
                       segment.EndPoint - ptDiff, segment.StartPoint - ptDiff], true);
         return path;
     }
-    public void GeneratePens(ColorTheme colorTheme = ColorTheme.Normal)
+    public CorePens GeneratePens(ColorTheme colorTheme = ColorTheme.Normal)
     {
-        Pens = new CorePens(1, colorTheme);
+        return new CorePens(1, colorTheme);
     }
     public SKRect GetTextBackgroundSize(float x, float y, string text, SKPaint paint)
     {
@@ -236,13 +261,6 @@ public class CoreRenderer
                 DrawOnCanvas(canvas);
             }
         }
-    }
-    public void DrawOnCanvas(SKCanvas canvas)
-    {
-        Canvas = canvas;
-        BeginDraw();
-        Draw();
-        EndDraw();
     }
     //public void DrawFraction((string, string) parts, SKPoint txtPoint, SKPaint txtPaint, SKPaint txtBkgPen)
     //{

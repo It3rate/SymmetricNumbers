@@ -5,9 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SkiaSharp;
 
-public abstract class DrawableBase
+public interface IDrawable
 {
-    protected CoreRenderer _renderer = CoreRenderer.Instance;
-    protected CorePens _pens => _renderer.Pens;
+    CoreRenderer Renderer { get; } 
+    CorePens Pens { get; }
+    SKCanvas? Canvas { get; }
+    void Draw();
+}
+
+public abstract class DrawableBase : IDrawable
+{
+    public CoreRenderer Renderer => CoreRenderer.Instance;
+    public CorePens Pens => Renderer.Pens;
+    public SKCanvas? Canvas => Renderer.Canvas;
+    public abstract void Draw();
 }

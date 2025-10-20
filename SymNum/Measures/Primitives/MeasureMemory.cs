@@ -70,7 +70,7 @@ public class MeasureMemory : MeasureBase
 		History.Dequeue();
 	}
 
-	public double MemoryAverage => History.Average();
+	public double MemoryAverage => History.Count > 0 ? History.Average() : 0;
 	public double MemorySum => History.Sum();
 	public double MemoryMin => History.Min();
 	public double MemoryMax => History.Max();

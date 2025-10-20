@@ -1,4 +1,4 @@
-﻿namespace Simulation.PondSim;
+﻿namespace Simulation.PondSim.Arena;
 
 using System;
 using System.Collections.Generic;
@@ -9,18 +9,17 @@ using System.Threading.Tasks;
 using Box2DSharp.Collision.Shapes;
 using Box2DSharp.Common;
 using Box2DSharp.Dynamics;
-using Simulation.PondSim.Arena;
 using Forces.Primitives.Steering.Simulation;
 using SkiaSharp;
 using Simulation.Render;
 
 public class CreatureBody : DrawableBase
 {
-    public Vector2 Position;
-    public float Rotation; // Facing direction
+    public Vector2 Position => PhysicsBody?.GetPosition() ?? Vector2.Zero;
+    public float Rotation => PhysicsBody?.GetAngle() ?? 0;
     public float LightSensorValue { get; private set; } // Output: 0 (dark) to 1 (bright)
 
-    public Body PhysicsBody { get; private set; }
+    public Body? PhysicsBody { get; private set; }
     private Creature _creature;
     private float _thrustForce = 50f; // Tune for sim scale
     private float _turnTorque = 10f;
@@ -62,9 +61,12 @@ public class CreatureBody : DrawableBase
     // Sync after sim step (for rendering/sensor)
     public void SyncFromPhysics()
     {
-        var pos = PhysicsBody.GetPosition();
-        Position = new Vector2(pos.X, pos.Y);
-        Rotation = PhysicsBody.GetAngle();
+        if (PhysicsBody != null)
+        {
+            //var pos = PhysicsBody.GetPosition();
+            //Position = new Vector2(pos.X, pos.Y);
+            //Rotation = PhysicsBody.GetAngle();
+        }
     }
 
     public void UpdateLightSensor(PondArena arena, List<LightSource> lights)
@@ -119,9 +121,12 @@ public class CreatureBody : DrawableBase
             throw new NotImplementedException();
         }
     }
-    public void Draw(SKCanvas canvas)
+    public override void Draw()
     {
-        var pos = PhysicsBody.GetPosition();
-        canvas.DrawCircle(pos.SKPoint(), _creatureRadius, _pens.DrawPen);
+        if (PhysicsBody != null)
+        {
+            var pos = PhysicsBody.GetPosition();
+            Canvas?.DrawCircle(pos.SKPoint(), _creatureRadius, Pens.DrawPen);
+        }
     }
 }

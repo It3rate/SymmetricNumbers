@@ -8,10 +8,10 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using SkiaSharp;
-using Simulation.PondSim;
 using Forces.Primitives.Steering.Simulation;
+using Simulation.Render;
 
-public class Simulator
+public class Simulator : DrawableBase
 {
     private PondArena _arena;
     private List<CreatureBody> _creatures = new();
@@ -19,9 +19,10 @@ public class Simulator
     private float _fixedDt = 1f / 60f;
     private float _accumulator = 0f;
 
-    public void Initialize()
+    public Simulator(PondArena arena)
     {
-        _arena = new PondArena();
+        _arena = arena;
+
         var creature1 = new Creature();
 
         var creature = new CreatureBody(creature1);
@@ -30,8 +31,10 @@ public class Simulator
 
         var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
         _lights.Add(light);
+
+        Renderer.CurrentDrawable = this;
     }
-    public void Initialize(PondArena arena, List<CreatureBody> creatures, List<LightSource> lights)
+    public Simulator(PondArena arena, List<CreatureBody> creatures, List<LightSource> lights)
     {
         _arena = arena;
         foreach(var light in lights)
@@ -67,19 +70,22 @@ public class Simulator
         }
     }
 
-    public void Draw(SKCanvas canvas)
+    public override void Draw()
     {
-        canvas.Clear(SKColors.DarkSlateBlue);
-        //todo: draw obstacles/lights
-
-        using var creaturePaint = new SKPaint { Color = SKColors.Blue, IsAntialias = true };
-        foreach (var creature in _creatures)
+        if (Canvas != null)
         {
-            canvas.Save();
-            canvas.Translate(creature.Position.X, creature.Position.Y);
-            canvas.RotateDegrees(creature.Rotation * 180f / MathF.PI);
-            canvas.DrawCircle(0, 0, 5f, creaturePaint);
-            canvas.Restore();
+            Canvas.Clear(SKColors.DarkSlateBlue);
+            //todo: draw obstacles/lights
+
+            using var creaturePaint = Pens.DrawPen;
+            foreach (var creature in _creatures)
+            {
+                Canvas.Save();
+                Canvas.Translate(creature.Position.X, creature.Position.Y);
+                Canvas.RotateDegrees(creature.Rotation * 180f / MathF.PI);
+                Canvas.DrawCircle(0, 0, 5f, creaturePaint);
+                Canvas.Restore();
+            }
         }
     }
 }

@@ -10,10 +10,16 @@ using Box2DSharp.Collision.Shapes;
 using Box2DSharp.Common;
 using Box2DSharp.Dynamics;
 
-public class PondArena
+public class PondArena : DemoBase
 {
+    public Simulator Sim { get; }
     public World PhysicsWorld { get; } = new World(new Vector2(0f, 0f)); // No gravity
     private List<Body> _obstacleBodies = new();
+
+    public PondArena()
+    {
+        Sim = new Simulator(this);
+    }
 
     public void AddObstacle(Vector2 start, Vector2 end)
     {

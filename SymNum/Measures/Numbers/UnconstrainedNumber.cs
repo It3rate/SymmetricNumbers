@@ -76,7 +76,7 @@ public class UnconstrainedNumber
     // but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
 
     // needs to be protected to allow subclasses to enforce their constraints.
-    private IMeasure[] _measures = new Measure[4];
+    private IMeasure[] _measures = new IMeasure[4];
     /// <summary>
     /// A positive right measured number of ticks.
     /// </summary>
