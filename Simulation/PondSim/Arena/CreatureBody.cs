@@ -16,11 +16,11 @@ using System.Diagnostics;
 
 public class CreatureBody : DrawableBase
 {
-    public Vector2 Position => PhysicsBody?.GetPosition() ?? Vector2.Zero;
-    public float Rotation => PhysicsBody?.GetAngle() ?? 0;
+    public Vector2 Position => Body?.GetPosition() ?? Vector2.Zero;
+    public float Rotation => Body?.GetAngle() ?? 0;
     public float LightSensorValue { get; private set; } // Output: 0 (dark) to 1 (bright)
 
-    public Body? PhysicsBody { 
+    public Body? Body { 
         get;
         private set; }
     private Creature _creature;
@@ -40,32 +40,30 @@ public class CreatureBody : DrawableBase
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
             linearDamping = 0.5f,
-            angularDamping = 2f,
+            angularDamping = 0.2f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
-        PhysicsBody = body;
+        Body = body;
         var circleShape = new CircleShape { Radius = _creatureRadius };
-        PhysicsBody.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
+        Body.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
     }
 
 	private float _thrustForce = 2000f; // Tune for sim scale
-	private float _turnTorque = 9000f;
+	private float _turnTorque = 2500f;
 	public void ApplyActions()
     {
         _creature.OnTick();
-        if(PhysicsBody != null)
+        if(Body != null)
         {
-            var turn = (float)_creature.SightRatio.Value - 0.8f;
+            var turn = (float)_creature.SightRatio.Value - 1.1f;
             var thrust = (float)_creature.Thrust.Value;
-            // Forward thrust in facing direction
-            var facing = new Vector2((float)Math.Cos(PhysicsBody.GetAngle()), (float)Math.Sin(PhysicsBody.GetAngle()));
-            PhysicsBody.ApplyForceToCenter(facing * thrust * _thrustForce, true);
+            var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
+            turn = (float)Math.Clamp(turn, -3f, 3f);
+            Body.ApplyForceToCenter(facing * thrust * _thrustForce, true);
 
-            // Rotation torque
-            PhysicsBody.ApplyTorque(turn * _turnTorque, true);
-            //_creature.LeftEye.SetPosition(_creature.LeftEye.Position + 200);
-            //Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
+            Body.ApplyTorque(turn * _turnTorque, true);
+            Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
         }
     }
 
@@ -129,7 +127,7 @@ public class CreatureBody : DrawableBase
     //}
     public override void Draw()
     {
-        if (PhysicsBody != null)
+        if (Body != null)
         {
             Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, Pens.DrawPen);
         }
