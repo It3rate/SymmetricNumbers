@@ -34,12 +34,12 @@ public class SplitNumber : UnconstrainedNumber
 	public RationalNumber ImaginaryPart => new RationalNumber(RealResolution, Real);
 
 
-    public SplitNumber(IMeasure real, IMeasure imaginary, IMeasure realResolution, IMeasure imaginaryResolution)
+    public SplitNumber(IMeasure real, IMeasure imaginaryResolution, IMeasure realResolution, IMeasure imaginary)
 	{
 		RightMeasure = real;
-		LeftUnit = imaginary;
+		LeftUnit = imaginaryResolution;
 		RightUnit = realResolution;
-		LeftMeasure = imaginaryResolution;
+		LeftMeasure = imaginary;
         Initialize();
 	}
 	public SplitNumber(long? real, long? imaginary, long? realResolution, long? imaginaryResolution)

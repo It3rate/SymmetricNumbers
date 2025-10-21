@@ -60,8 +60,8 @@ public class Creature : ConceptSpace
 
     public Creature()
 	{
-		LeftEyeMemory = new MeasureMemory(LeftEye,  MeasureMemory.MemoryKind.Average);
-		RightEyeMemory = new MeasureMemory(RightEye, MeasureMemory.MemoryKind.Average);
+		LeftEyeMemory = new MeasureMemory(LeftEye,  MeasureMemory.MemoryKind.Average, 1);
+		RightEyeMemory = new MeasureMemory(RightEye, MeasureMemory.MemoryKind.Average, 1);
 		Sight = new SplitNumber(RightEye, LeftEyeMemory, RightEyeMemory, LeftEye);
 
 		LeftValue = Sight.CreateValueRef(RefKind.ImaginaryValue);
@@ -88,21 +88,32 @@ public class Creature : ConceptSpace
 	}
 
     private Random _rnd = new Random();
-    public void OnTick()
+	private long _leftLight = 2000;
+	private long _rightLight = 2000;
+	private long _leftInc = 100;
+	public void OnTick()
     {
 
         // the resolution of a number will often not be set by the sensor itself. The light input is an eye thing, but the calibration 
         // is up to whatever uses that information. In this case, the leg thrust and the eye have to negotiate a resolution that powers the leg correctly.
         // The eye input value can be used by many other things, so there will be many numbers made with it, there is no single 'lumen' value everyone uses.
-        var rightLight = _rnd.Next(2000) + 4000; // get from environment
-		var leftLight = _rnd.Next(2000) + 4000; // get from environment
-
-        // read light input
-        RightEye.SetPosition(rightLight);
-		LeftEye.SetPosition(leftLight);
-
+  //      var rightLight = _rnd.Next(2000) + 4000; // get from environment
+		//var leftLight = _rnd.Next(2000) + 4000; // get from environment
+		_leftLight += _leftInc;
+		_rightLight += 20;
+		// read light input
+		RightEye.SetPosition(_rightLight);
+		LeftEye.SetPosition(_leftLight);
+		if(_leftLight > 5000)
+		{
+			_leftInc = -300;
+		}
+		else if(_leftLight < 600)
+		{
+			_leftInc = 300;
+		}
         // this can be done with equations eventually (avg, val-avg, res)
-        Sight.Reset(LeftEyeMemory.Position, leftLight, _leftThrustResolution, RightEyeMemory.Position, rightLight, _rightThrustResolution);
+        //Sight.Reset(LeftEyeMemory.Position, _leftLight, _leftThrustResolution, RightEyeMemory.Position, _rightLight, _rightThrustResolution);
 
 
 		// set thrust

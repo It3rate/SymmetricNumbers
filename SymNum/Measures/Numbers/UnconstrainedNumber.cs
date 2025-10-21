@@ -190,9 +190,15 @@ public class UnconstrainedNumber
     public static float GetValue(IMeasure numerator, IMeasure denominator)
     {
         var result = float.NaN;
-        if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
-        {
+        // todo: Need to apply the math of uncertaintly to generate a range or probability distribution.
+		//if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
+		if (denominator.Position != 0)
+		{
             result = numerator.Position / (float)denominator.Position;
+        }
+        else
+        {
+            result = numerator.Value > 0 ? float.MaxValue : (numerator.Value < 0 ? float.MinValue : 0f);
         }
         return result;
     }

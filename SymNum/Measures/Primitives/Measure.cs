@@ -5,7 +5,8 @@ namespace SymNum.Measures.Primitives;
 
 public class Measure : MeasureBase
 {
-	public Measure(long position, Direction direction, bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Set) :
+	public Measure(long position, Direction direction, 
+		bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Unknown) :
 				base(position, direction, inclusive, certainty)
 	{
 	}
@@ -115,9 +116,9 @@ public abstract class MeasureBase : IMeasure
 	public override string ToString()
 	{
 		string dirStr = Direction == Direction.FacesRight ? "→" : Direction == Direction.FacesLeft ? "←" : "?";
-		string inclStr = Inclusive ? "I" : "E";
+		string inclStr = Inclusive ? "In" : "Ex";
 		string posStr = IsMax ? "Max" : IsMin ? "Min" : Position.ToString();
-		return $"{posStr} {dirStr} {inclStr}";
+		return $"{posStr}  {dirStr} {inclStr}";
 	}
 }
 

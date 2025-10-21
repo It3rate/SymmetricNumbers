@@ -26,7 +26,8 @@ public class BinaryExpression : IValue, IConstraint
 	// Instead, it examines which inputs (First and Second) are fixed and which are variable,
 	// and adjusts them as needed. If both are variable, it creates a new constraint that
 	// the solution must follow (or perhaps this is that constraint already, need to try).
-	public double Value { get; protected set; }
+	public double Value { get => Calculate(); protected set => _value = value; }
+	private double _value;
 	public CertaintyLevel CertaintyLevel { get; set; }
     public virtual string Name { get; } = "";
 	public bool IsSet => CertaintyLevel.HasValue();
@@ -43,34 +44,37 @@ public class BinaryExpression : IValue, IConstraint
     }
     public void UpdateValue(double value)
 	{
-		Value = value;
+		_value = value;
 	}
 	public void Fix() => CertaintyLevel = CertaintyLevel.Fixed;
 	public void Set() => CertaintyLevel = CertaintyLevel.Set;
 	public void Unset() => CertaintyLevel = CertaintyLevel.Uncertain;
-	private void Calculate()
+	private double Calculate()
 	{
 		switch (Op)
 		{
 			case BinaryOp.Multiply:
-				Value = First.Value * Second.Value;
+				_value = First.Value * Second.Value;
 				break;
 			case BinaryOp.Divide:
-				Value = Second.Value == 0 ? 0 : First.Value / Second.Value;
+				_value = Second.Value == 0 ? 0 : First.Value / Second.Value;
 				break;
 			case BinaryOp.Add:
-				Value = First.Value + Second.Value;
+				_value = First.Value + Second.Value;
 				break;
 			case BinaryOp.Subtract:
-				Value = First.Value - Second.Value;
+				_value = First.Value - Second.Value;
 				break;
 			case BinaryOp.Pow:
-				Value = Math.Pow(First.Value, Second.Value);
+				_value = Math.Pow(First.Value, Second.Value);
 				break;
 			case BinaryOp.Mod:
-				Value = First.Value % Second.Value;
+				_value = First.Value % Second.Value;
+				break;
+			default:
 				break;
 		}
+		return _value;
 	}
 }
 

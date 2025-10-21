@@ -12,7 +12,7 @@ using Simulation.Render;
 using Box2D.NetStandard.Dynamics.Fixtures;
 using Box2D.NetStandard.Dynamics.Bodies;
 using Box2D.NetStandard.Collision.Shapes;
-
+using System.Diagnostics;
 
 public class CreatureBody : DrawableBase
 {
@@ -38,7 +38,8 @@ public class CreatureBody : DrawableBase
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
             linearDamping = 0.5f,
-            angularDamping = 2f
+            angularDamping = 2f,
+            bullet = false
         };
         PhysicsBody = arena.PhysicsWorld.CreateBody(bodyDef);
 
@@ -53,14 +54,16 @@ public class CreatureBody : DrawableBase
         _creature.OnTick();
         if(PhysicsBody != null)
         {
-            var turn = (float)_creature.TurnRatio.Value;
+            var turn = (float)_creature.SightRatio.Value - 0.8f;
             var thrust = (float)_creature.Thrust.Value;
             // Forward thrust in facing direction
             var facing = new Vector2((float)Math.Cos(PhysicsBody.GetAngle()), (float)Math.Sin(PhysicsBody.GetAngle()));
             PhysicsBody.ApplyForceToCenter(facing * thrust * _thrustForce, true);
 
             // Rotation torque
-            PhysicsBody.ApplyTorque(turn * _turnTorque, true);
+            //PhysicsBody.ApplyTorque(turn * _turnTorque, true);
+            //_creature.LeftEye.SetPosition(_creature.LeftEye.Position + 200);
+            //Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
         }
     }
 

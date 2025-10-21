@@ -16,11 +16,12 @@ public class MeasureMemory : MeasureBase
 
 	private bool _isFirst = true;
 
-	public MeasureMemory(IMeasure measure, MemoryKind kind, int maxHistory = 5)
+	public MeasureMemory(IMeasure measure, MemoryKind kind, long initialValue, int maxHistory = 5)
 	{
 		Measure = measure;
 		Kind = kind;
 		MaxHistory = maxHistory;
+		SetPosition(initialValue);
 		Measure.PositionChanged += (pos) => SetPosition(pos);
 	}
 	public long GetPostionByKind(MemoryKind kind)
