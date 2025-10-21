@@ -34,14 +34,16 @@ public class Creature : ConceptSpace
 	public BinaryExpression SightRightDif { get; }
 	public BinaryExpression BrightnessDirection { get; }
 
-	public IMeasure RightThrust { get; } = new Measure(0, Direction.FacesRight);
-	public IMeasure LeftThrust { get; } = new Measure(0, Direction.FacesLeft);
-	public IMeasure LeftThrustResolution { get; } = new Measure(_leftThrustResolution, Direction.FacesLeft);
-	public IMeasure RightThrustResolution { get; } = new Measure(_rightThrustResolution, Direction.FacesRight);
+	public IMeasure RightThrust { get; } = new Measure(10, Direction.FacesRight, true, CertaintyLevel.Unknown);
+	public IMeasure LeftThrust { get; } = new Measure(30, Direction.FacesLeft, true, CertaintyLevel.Unknown);
+	public IMeasure LeftThrustResolution { get; } = new Measure(_leftThrustResolution, Direction.FacesLeft, true, CertaintyLevel.Unknown);
+	public IMeasure RightThrustResolution { get; } = new Measure(_rightThrustResolution, Direction.FacesRight, true, CertaintyLevel.Unknown);
 	public SplitNumber Motion { get; }
 
-    public BinaryExpression Turn { get; }
-    public BinaryExpression TurnLeft { get; }
+	public BinaryExpression Thrust { get; }
+	public BinaryExpression TurnRatio { get; }
+	public BinaryExpression Turn { get; }
+	public BinaryExpression TurnLeft { get; }
     public BinaryExpression TurnRight { get; }
 
     public double Speed { get; set; } = 5;
@@ -76,10 +78,12 @@ public class Creature : ConceptSpace
 
         var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
         var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
-        Turn = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Subtract);
-        // map the brightness diff to the default thrust (maybe based on darkenss) plus the turn signal.
-        // the turn could just be the complex number diff, or multiply in each of the left and right ratios.
-        TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
+		Thrust = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Add);
+		Turn = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Subtract);
+		TurnRatio = new BinaryExpression(Turn, Thrust, BinaryOp.Divide);
+		// map the brightness diff to the default thrust (maybe based on darkenss) plus the turn signal.
+		// the turn could just be the complex number diff, or multiply in each of the left and right ratios.
+		TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
         TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, BinaryOp.Add);
 	}
 

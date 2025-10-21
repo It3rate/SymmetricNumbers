@@ -52,7 +52,7 @@ public class Runner
 	public bool HasUpdated { get; set; } = false;
 	public bool NeedsUpdate() => _needsUpdate = true;
 
-	private void Tick(object sender, ElapsedEventArgs e)
+	private void Tick(object sender, ElapsedEventArgs? e)
 	{
 		if (!_isPaused && !_isBusy) // && _needsUpdate)
 		{

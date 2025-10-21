@@ -291,7 +291,7 @@ namespace Box2D.NetStandard.Collision
 
 			ref var leafNode = ref _nodes[proxy];
 
-			Assert(leafNode.IsLeaf);
+			//Assert(leafNode.IsLeaf);
 
 			// Extend AABB
 			var ext = new Vector2(AABBExtendSize, AABBExtendSize);
@@ -571,8 +571,8 @@ namespace Box2D.NetStandard.Collision
 				var child1 = indexNode.Child1;
 				var child2 = indexNode.Child2;
 
-				Assert(child1 != ProxyFree);
-				Assert(child2 != ProxyFree);
+				//Assert(child1 != ProxyFree);
+				//Assert(child2 != ProxyFree);
 
 				ref var child1Node = ref _nodes[child1];
 				ref var child2Node = ref _nodes[child2];

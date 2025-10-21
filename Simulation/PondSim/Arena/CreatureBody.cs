@@ -22,8 +22,6 @@ public class CreatureBody : DrawableBase
 
     public Body? PhysicsBody { get; private set; }
     private Creature _creature;
-    private float _thrustForce = 50f; // Tune for sim scale
-    private float _turnTorque = 2f;
 
     private float _creatureRadius = 5f;
 
@@ -48,13 +46,15 @@ public class CreatureBody : DrawableBase
         PhysicsBody.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
     }
 
-    public void ApplyActions()
+	private float _thrustForce = 2f; // Tune for sim scale
+	private float _turnTorque = 5f;
+	public void ApplyActions()
     {
-        //_creature.OnTick();
+        _creature.OnTick();
         if(PhysicsBody != null)
         {
-            var turn = 3f;// (float)_creature.Turn.Value;
-            var thrust = .2f; // (float)Math.Abs(_creature.LeftThrust.Value - _creature.RightThrust.Value);
+            var turn = (float)_creature.TurnRatio.Value;
+            var thrust = (float)_creature.Thrust.Value;
             // Forward thrust in facing direction
             var facing = new Vector2((float)Math.Cos(PhysicsBody.GetAngle()), (float)Math.Sin(PhysicsBody.GetAngle()));
             PhysicsBody.ApplyForceToCenter(facing * thrust * _thrustForce, true);

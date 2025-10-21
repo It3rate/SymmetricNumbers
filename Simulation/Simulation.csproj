@@ -9,11 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Box2D.NetStandard" Version="2.4.7-alpha" />
     <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="3.119.2-preview.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\box2d-netstandard\src\box2dx\Box2D.NetStandard\Box2D.NetStandard.csproj" />
     <ProjectReference Include="..\Forces\Forces.csproj" />
     <ProjectReference Include="..\SymNum\SymNum.csproj" />
   </ItemGroup>
