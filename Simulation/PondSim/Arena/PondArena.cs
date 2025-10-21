@@ -16,10 +16,11 @@ using SkiaSharp.Views.Desktop;
 public class PondArena : DemoBase
 {
     public Simulator Sim { get; }
-    public World PhysicsWorld { get; } = new World(new Vector2(0f, 0f)); // No gravity
+    public World PhysicsWorld { get; }
     private List<Body> _obstacleBodies = new();
     public PondArena(SKControl control) : base(control)
     {
+        PhysicsWorld = new World(new Vector2(0f, 0f));
         Sim = new Simulator(this);
        // AddObstacle(new Vector2(10, 10), new Vector2(30, 15));
     }

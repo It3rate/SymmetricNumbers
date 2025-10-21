@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\box2d-netstandard\src\box2dx\Box2D.NetStandard\Box2D.NetStandard.csproj" />
     <ProjectReference Include="..\Forces\Forces.csproj" />
     <ProjectReference Include="..\SymNum\SymNum.csproj" />
   </ItemGroup>

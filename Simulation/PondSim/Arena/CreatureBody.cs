@@ -20,7 +20,9 @@ public class CreatureBody : DrawableBase
     public float Rotation => PhysicsBody?.GetAngle() ?? 0;
     public float LightSensorValue { get; private set; } // Output: 0 (dark) to 1 (bright)
 
-    public Body? PhysicsBody { get; private set; }
+    public Body? PhysicsBody { 
+        get;
+        private set; }
     private Creature _creature;
 
     private float _creatureRadius = 5f;
@@ -41,14 +43,14 @@ public class CreatureBody : DrawableBase
             angularDamping = 2f,
             bullet = false
         };
-        PhysicsBody = arena.PhysicsWorld.CreateBody(bodyDef);
-
+        var body = arena.PhysicsWorld.CreateBody(bodyDef);
+        PhysicsBody = body;
         var circleShape = new CircleShape { Radius = _creatureRadius };
         PhysicsBody.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
     }
 
-	private float _thrustForce = 2f; // Tune for sim scale
-	private float _turnTorque = 5f;
+	private float _thrustForce = 2000f; // Tune for sim scale
+	private float _turnTorque = 9000f;
 	public void ApplyActions()
     {
         _creature.OnTick();
@@ -61,7 +63,7 @@ public class CreatureBody : DrawableBase
             PhysicsBody.ApplyForceToCenter(facing * thrust * _thrustForce, true);
 
             // Rotation torque
-            //PhysicsBody.ApplyTorque(turn * _turnTorque, true);
+            PhysicsBody.ApplyTorque(turn * _turnTorque, true);
             //_creature.LeftEye.SetPosition(_creature.LeftEye.Position + 200);
             //Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
         }

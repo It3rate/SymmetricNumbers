@@ -47,18 +47,18 @@ public class Simulator : DrawableBase
     }
     public override void Update(float deltaTime)
     {
-        _accumulator += deltaTime;
-        while (_accumulator >= _fixedDt)
-        {
+        //_accumulator += deltaTime;
+        //while (_accumulator >= _fixedDt)
+        //{
             foreach (var creature in _creatures)
             {
                 creature.UpdateLightSensor(_arena, _lights);
                 creature.Update(deltaTime);
             }
-            _arena.PhysicsWorld.Step(_fixedDt, 2, 1);// 8, 3); // Vel/pos iterations
+            _arena.PhysicsWorld.Step(_fixedDt, 8, 3); // Vel/pos iterations
 
-            _accumulator -= _fixedDt;
-        }
+        //    _accumulator -= _fixedDt;
+        //}
     }
 
     public override void Draw()
