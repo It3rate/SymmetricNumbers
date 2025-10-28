@@ -20,7 +20,7 @@ namespace SymNum.Measures.Primitives;
 // So these Extents are not the primitive, but probably made of constraints, and can probably be expressed with bits.
 // We can express 40->50 with these Extent ranges, but need to also be able to express 'greater than 40' 
 // Even 'between' has a specified start and end, but a path of unspecified length between them, and an unspecified position on that path.
-// This needs to be expressible as a value in this system.Old versions used bool segments which works,
+// This needs to be expressible as a value in this system. Old versions used bool segments which works,
 //   but it is simpler that those (where each requires 8+ bits of info)
 // These segment values then are more like instances, samples using the constraints, that we are trying out in some 'general workspace'
 

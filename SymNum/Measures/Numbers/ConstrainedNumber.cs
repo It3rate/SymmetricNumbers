@@ -65,17 +65,17 @@ public class RectangleNumber : ConstrainedNumber
 		Area = new BinaryExpression(
 			Length,
 			Width,
-			BinaryOp.Multiply,
+			TwoNumberOp.Multiply,
 			CertaintyLevel.Derived);
 		AspectRatio = new BinaryExpression(
 			Length,
 			Width,
-			BinaryOp.Divide,
+			TwoNumberOp.Divide,
 			CertaintyLevel.Derived);
 		Perimeter = new BinaryExpression(
 			Length,
 			Width,
-			BinaryOp.Custom0,
+			TwoNumberOp.Custom0,
 			CertaintyLevel.Derived);
 		Calculate();
 	}

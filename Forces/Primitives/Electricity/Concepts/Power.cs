@@ -17,10 +17,10 @@ public class Power : BinaryExpression
     public IValue Current => Second;
     public override string Name => "Power";
     public Power(IValue voltage, IValue current) :
-        base(voltage, current, BinaryOp.Multiply, CertaintyLevel.Derived)
+        base(voltage, current, TwoNumberOp.Multiply, CertaintyLevel.Derived)
     { }
     public Power(SymmetricNumber voltageCurrent) : base(
         new ValueRef(voltageCurrent, RefKind.RealValue),
-        new ValueRef(voltageCurrent, RefKind.ImaginaryValue), BinaryOp.Multiply, CertaintyLevel.Derived)
+        new ValueRef(voltageCurrent, RefKind.ImaginaryValue), TwoNumberOp.Multiply, CertaintyLevel.Derived)
     { }
 }

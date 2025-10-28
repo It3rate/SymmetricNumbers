@@ -35,7 +35,35 @@ namespace SymNum.Measures.Numbers;
 // With thresholds you can get one sided ranges. If 0 is greater than zero and less than 1, then 3/0 is just greater than 3.
 // The issue with thresholds is it requires a +0 and -0. There are two edges between -1 and 1, but only one node.
 // This implies than resolution for numbers has to specify how it obtains it's resolution if you want to scale those values, which makes sense.
+public interface INumber
+{
+	/// <summary>
+	/// A positive right measured number of ticks.
+	/// </summary>
+	IMeasure RightMeasure { get; }
+	/// <summary>
+	/// A positive right resolution in ticks.
+	/// </summary>
+	IMeasure RightUnit { get; }
+	/// <summary>
+	/// A positive left measured number of ticks.
+	/// </summary>
+	IMeasure LeftMeasure { get; }
+	/// <summary>
+	/// A positive left resolution in ticks.
+	/// </summary>
+	IMeasure LeftUnit { get; }
+    /// <summary>
+    /// The Observer point, defaults to zero but by no means is required. Some numbers (ratios) do not need a zero point.
+    /// </summary>
+	IMeasure ZeroPoint { get; }
 
+	long RightMeasurePosition { get; }
+	long RightUnitPosition { get; }
+	long LeftMeasurePosition { get; }
+	long LeftUnitPosition { get; }
+	long ZeroPosition { get; }
+}
 /// <summary>
 /// There are many types of numbers, they just mean measures calibrated in some way. 
 /// Left units and measures are positive left, so do not negate them unless pointing right.
@@ -45,31 +73,8 @@ namespace SymNum.Measures.Numbers;
 /// Note that these can describe any non random pattern, but have no information about what the pattern represents.
 /// This requires some kind of unit tied to the number. Numbers themselves are pure patterns.
 /// </summary>
-public class UnconstrainedNumber
+public class UnconstrainedNumber : INumber
 {
-    //   public Extent RightExtent { get; protected set; }
-    //   public Extent LeftExtent { get; protected set; }
-    //   public long RightMeasure 
-    //{ 
-    //	get => RightExtent.StartPosition;
-    //	set => RightExtent.StartPosition = value; 
-    //}
-    //public long RightUnit
-    //{
-    //	get => RightExtent.EndPosition;
-    //	set => RightExtent.EndPosition = value;
-    //}
-    //public long LeftMeasure
-    //{
-    //	get => LeftExtent.EndPosition;
-    //	set => LeftExtent.EndPosition = value;
-    //}
-    //public long LeftUnit
-    //{
-    //	get => LeftExtent.StartPosition;
-    //	set => LeftExtent.StartPosition = value;
-    //
-
     // A number can be composed of multiple measures with different restrictions. 
     // A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
     // An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
@@ -77,26 +82,19 @@ public class UnconstrainedNumber
 
     // needs to be protected to allow subclasses to enforce their constraints.
     private IMeasure[] _measures = new IMeasure[4];
-    /// <summary>
-    /// A positive right measured number of ticks.
-    /// </summary>
-    protected IMeasure RightMeasure { get => _measures[0]; set => _measures[0] = value; }
-    /// <summary>
-    /// A positive right resolution in ticks.
-    /// </summary>
-    protected IMeasure RightUnit { get => _measures[1]; set => _measures[1] = value; }
-    /// <summary>
-    /// A positive left measured number of ticks.
-    /// </summary>
-    protected IMeasure LeftMeasure { get => _measures[2]; set => _measures[2] = value; }
-    /// <summary>
-    /// A positive left resolution in ticks.
-    /// </summary>
-    protected IMeasure LeftUnit { get => _measures[3]; set => _measures[3] = value; }
-    public long ZeroPoint => 0; // this may be adjustable eventually, as a shift can just shift zero.
+    public IMeasure RightMeasure { get => _measures[0]; protected set => _measures[0] = value; }
+	public IMeasure RightUnit { get => _measures[1]; protected set => _measures[1] = value; }
+	public IMeasure LeftMeasure { get => _measures[2]; protected set => _measures[2] = value; }
+	public IMeasure LeftUnit { get => _measures[3]; protected set => _measures[3] = value; }
+	public IMeasure ZeroPoint { get; set; } = new Measure(0, Direction.Unknown);
 
+	public long RightMeasurePosition => RightMeasure.Position;
+	public long RightUnitPosition => RightUnit.Position;
+	public long LeftMeasurePosition => LeftMeasure.Position;
+	public long LeftUnitPosition => LeftUnit.Position;
+    public long ZeroPosition => ZeroPoint.Position;
 
-    public virtual bool IsFullyDefined => _measures.All(m => m.IsFullDefined);
+	public virtual bool IsFullyDefined => _measures.All(m => m.IsFullDefined);
 
     protected UnconstrainedNumber()
     {
@@ -183,10 +181,7 @@ public class UnconstrainedNumber
 		}
 	}
 
-    // this might be best to use floats as external facing values - it can stil use internal resolution and polarities,
-    // but the outside world is floats (and ratios still need to be represented somehow).
-    // That said, all training and inference should be on these types of numbers.
-
+    public static bool GetBool(IMeasure a, IMeasure b,)
     public static float GetValue(IMeasure numerator, IMeasure denominator)
     {
         var result = float.NaN;
@@ -207,7 +202,7 @@ public class UnconstrainedNumber
         var result = false;
         if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
         {
-            denominator.SetPosition((long)(value * denominator.Position));
+            numerator.SetPosition((long)(value * denominator.Position));
             result = true;
         }
         return result;

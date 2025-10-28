@@ -8,14 +8,22 @@ using System.Threading.Tasks;
 
 namespace SymNum.Measures.Primitives;
 
+// Requirement: Groupings of 'IMeasure' need to be able to smoothly move between bools, enums, ints, floats, complex nums, symmetric numbs, equations, and probabilities.
+//    There are a lot of types on numbers amidst these, but that is the general trend.
+//    All of these can be represented by four Extents, a zero, and reptition (and primitive ops)
+
 public interface IMeasure : IValue
 {
 	public event Action<long> PositionChanged;
 	long Position { get; }
+	/// <summary>
+	/// Which line direction this measure is on. 
+	/// For example, a segment's start point is on the left positive line, the end point is on the right.
+	/// </summary>
 	Direction Direction { get; }
 	void SetPosition(long position);
 	bool Inclusive { get; }
-	public CertaintyLevel CertaintyLevel { get; }
+	//public CertaintyLevel CertaintyLevel { get; } // inherited
 	public bool IsCertain { get; }
 	bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;
 	bool IsMax => Position == long.MaxValue;

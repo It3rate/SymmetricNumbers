@@ -63,7 +63,7 @@ public class CreatureBody : DrawableBase
             Body.ApplyForceToCenter(facing * thrust * _thrustForce, true);
 
             Body.ApplyTorque(turn * _turnTorque, true);
-            Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
+            //Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
         }
     }
 

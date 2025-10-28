@@ -60,16 +60,16 @@ public class SplitNumber : UnconstrainedNumber
 		RealState = new BinaryExpression(
 			CreateValueRef(RefKind.TopRight),
 			CreateValueRef(RefKind.BottomRight),
-			BinaryOp.Divide, rstate);
+			TwoNumberOp.Divide, rstate);
 		var iState = ImaginaryIsCertain ? CertaintyLevel.Set : CertaintyLevel.Unknown;
 		ImaginaryState = new BinaryExpression(
 			CreateValueRef(RefKind.BottomLeft),
 			CreateValueRef(RefKind.TopLeft),
-			BinaryOp.Divide, rstate);
+			TwoNumberOp.Divide, rstate);
 		var realRef = new ValueRef(this, RefKind.RealValue);
 		var imagRef = new ValueRef(this, RefKind.ImaginaryValue);
-		RatioState = new BinaryExpression(realRef, imagRef, BinaryOp.Divide);
-		AreaState = new BinaryExpression(realRef, imagRef, BinaryOp.Multiply);
+		RatioState = new BinaryExpression(realRef, imagRef, TwoNumberOp.Divide);
+		AreaState = new BinaryExpression(realRef, imagRef, TwoNumberOp.Multiply);
 		Calculate();
 	}
     /// <summary>
