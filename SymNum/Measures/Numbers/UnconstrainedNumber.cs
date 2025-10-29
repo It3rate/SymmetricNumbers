@@ -262,18 +262,6 @@ public class UnconstrainedNumber : INumber
 
 }
 
-public enum RefKind
-{
-	TopRight,
-	TopLeft,
-	BottomRight,
-	BottomLeft,
-	RealValue,
-	ImaginaryValue,
-	UnitAverage,
-	ValueAverage,
-	// others...
-}
 public abstract class NumberValue
 {
     public UnconstrainedNumber NumberReference { get; }

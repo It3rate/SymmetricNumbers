@@ -9,17 +9,17 @@ namespace SymNum.Measures.Expressions;
 
 public class ValueRef : IValue
 {
-	private UnconstrainedNumber _number;
-	private RefKind _refKind;
+	public UnconstrainedNumber RefNumber;
+	public RefKind RefKind;
 	public CertaintyLevel CertaintyLevel { get; set; } = CertaintyLevel.Set;
 	public double Value
 	{
-		get => (double)_number.ValueFromRefKind(_refKind).Value;
-		set => _number.SetValueFromRefKind(_refKind, value);
+		get => (double)RefNumber.ValueFromRefKind(RefKind).Value;
+		set => RefNumber.SetValueFromRefKind(RefKind, value);
 	}
 	public ValueRef(UnconstrainedNumber number, RefKind refKind)
 	{
-		_number = number;
-		_refKind = refKind;
+		RefNumber = number;
+		RefKind = refKind;
 	}
 }

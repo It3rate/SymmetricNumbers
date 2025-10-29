@@ -66,8 +66,10 @@ public class Creature : ConceptSpace
 
 		LeftValue = Sight.CreateValueRef(RefKind.ImaginaryValue);
 		RightValue = Sight.CreateValueRef(RefKind.RealValue);
-		SightNeutral = Sight.CreateValueRef(RefKind.ValueAverage);
-		SightBrightness = Sight.CreateValueRef(RefKind.UnitAverage);
+		// average is an equation, but so is number. A number is two measures and a division,
+		// average is more measures and an avg, so the change is collection, not equation.
+		SightNeutral = Sight.CreateValueRef(RefKind.A);// ValueAverage); gtemp for compiling
+		SightBrightness = Sight.CreateValueRef(RefKind.A);// UnitAverage);
 
 		SightRatio = new BinaryExpression(LeftValue, RightValue, TwoNumberOp.Divide);
 		SightLeftDif = new BinaryExpression(LeftValue, SightNeutral, TwoNumberOp.Divide);
