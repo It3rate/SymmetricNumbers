@@ -15,7 +15,7 @@ public class ValueLong : IValue
 		get => (double)_longValue;
 		protected set => _longValue = (long)value;
 	}
-	public CertaintyLevel CertaintyLevel => CertaintyLevel.Fixed;
+	public CertaintyLevel Certainty => CertaintyLevel.Fixed;
 	public ValueLong(long value)
 	{
 		_longValue = value;

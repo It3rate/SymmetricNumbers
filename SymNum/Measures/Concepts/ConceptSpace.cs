@@ -47,7 +47,7 @@ public abstract class ConceptSpace
 
 
     public virtual string? Name { get; } = ""; // optional, if it matches a general category or concept.
-    public List<UnconstrainedNumber> ActiveInputs = new List<UnconstrainedNumber>(); // you may only see the head and color of a dog, this makes 'leg count' not an input, though it can be inferred in ExpectedContstraints.
+    public List<RawNumber> ActiveInputs = new List<RawNumber>(); // you may only see the head and color of a dog, this makes 'leg count' not an input, though it can be inferred in ExpectedContstraints.
     public List<IConstraint> ActiveConstraints = new List<IConstraint>(); // relations between inputs, or external values.
     public List<IValue> ActiveProperties = new List<IValue>(); // can be inputs or derived from constraint results;
 
@@ -70,5 +70,5 @@ public abstract class ConceptSpace
     // It seems all primitive input is measures (no meaning without calibration), and all change/diff involves complex/symmetric numbers with two states forming a segment?
     // It doesn't mean measures are the 'primitive', opposite actually - they are just samples of 'complex number things' happening in the real world.
 
-	public List<UnconstrainedNumber> Motions = new List<UnconstrainedNumber>();
+	public List<RawNumber> Motions = new List<RawNumber>();
 }

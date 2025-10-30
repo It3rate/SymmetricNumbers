@@ -11,7 +11,7 @@ namespace SymNum.Measures.Numbers;
 /// A rational number is made of two segments, where the denominator is a segment from zero to a positive number,
 /// and the numerator is a segment from zero to an arbitrary postion.
 /// </summary>
-public class RationalNumber : UnconstrainedNumber
+public class RationalNumber : RawNumber
 {
     // the only constraints are that left unit is always -UnitPosition, and left measure is always 0.
     // All operations on complex numbers should apply? (and imaginary part will always be zero)

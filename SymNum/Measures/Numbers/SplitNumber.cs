@@ -18,7 +18,7 @@ using SymNum.Measures.Primitives;
 /// A SplitNumber is a complex number where the two units do no need to be the same resolution.
 /// They still need to point in opposite directions, and the right side is still the real part.
 /// </summary>
-public class SplitNumber : UnconstrainedNumber
+public class SplitNumber : RawNumber
 {
     public long Real { get => RightMeasure.Position; private set => RightMeasure.SetPosition(value); } 
     public long RealResolution { get => RightUnit.Position; private set => RightUnit.SetPosition(value); }
@@ -45,23 +45,23 @@ public class SplitNumber : UnconstrainedNumber
 	public SplitNumber(long? real, long? imaginary, long? realResolution, long? imaginaryResolution)
     {
         RightMeasure = new Measure(real ?? 0, Direction.FacesRight, true,
-			(real == null) ? CertaintyLevel.Unknown : CertaintyLevel.Set );
+			(real == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set );
         LeftUnit = new Measure(imaginary ?? 0, Direction.FacesLeft, true,
-			(imaginary == null) ? CertaintyLevel.Unknown : CertaintyLevel.Set);
+			(imaginary == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
         RightUnit = new Measure(realResolution ?? 0, Direction.FacesRight, true,
-			(realResolution == null) ? CertaintyLevel.Unknown : CertaintyLevel.Set);
+			(realResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
         LeftMeasure = new Measure(imaginaryResolution ?? 0, Direction.FacesLeft, true,
-			(imaginaryResolution == null) ? CertaintyLevel.Unknown : CertaintyLevel.Set);
+			(imaginaryResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
         Initialize();
 	}
     private void Initialize()
 	{
-		var rstate = RealIsCertain ? CertaintyLevel.Set : CertaintyLevel.Unknown;
+		var rstate = RealIsCertain ? CertaintyLevel.Set : CertaintyLevel.Uncertain;
 		RealState = new BinaryExpression(
 			CreateValueRef(RefKind.TopRight),
 			CreateValueRef(RefKind.BottomRight),
 			TwoNumberOp.Divide, rstate);
-		var iState = ImaginaryIsCertain ? CertaintyLevel.Set : CertaintyLevel.Unknown;
+		var iState = ImaginaryIsCertain ? CertaintyLevel.Set : CertaintyLevel.Uncertain;
 		ImaginaryState = new BinaryExpression(
 			CreateValueRef(RefKind.BottomLeft),
 			CreateValueRef(RefKind.TopLeft),
@@ -118,10 +118,10 @@ public class SplitNumber : UnconstrainedNumber
 		base.IsFullyDefined &&
 		RealState.IsSet && ImaginaryState.IsSet && AreaState.IsSet && RatioState.IsSet;
 	public int SetSlotsValue =>
-		RealState.CertaintyLevel.SlotValue(MultiplicativeRelation.Real) +
-		RatioState.CertaintyLevel.SlotValue(MultiplicativeRelation.Ratio) +
-		ImaginaryState.CertaintyLevel.SlotValue(MultiplicativeRelation.Imaginary) +
-		AreaState.CertaintyLevel.SlotValue(MultiplicativeRelation.Area);
+		RealState.Certainty.SlotValue(MultiplicativeRelation.Real) +
+		RatioState.Certainty.SlotValue(MultiplicativeRelation.Ratio) +
+		ImaginaryState.Certainty.SlotValue(MultiplicativeRelation.Imaginary) +
+		AreaState.Certainty.SlotValue(MultiplicativeRelation.Area);
 
 	public BinaryExpression RealState { get; private set; }
 	public BinaryExpression ImaginaryState { get; private set; }
@@ -142,20 +142,20 @@ public class SplitNumber : UnconstrainedNumber
 	}
 	public CertaintyLevel GetState(MultiplicativeRelation kind)
     {
-        var result = CertaintyLevel.Unknown;
+        var result = CertaintyLevel.Uncertain;
         switch (kind)
         {
             case MultiplicativeRelation.Real:
-                result = RealState.CertaintyLevel;
+                result = RealState.Certainty;
                 break;
             case MultiplicativeRelation.Ratio:
-                result = RatioState.CertaintyLevel;
+                result = RatioState.Certainty;
                 break;
             case MultiplicativeRelation.Imaginary:
-                result = ImaginaryState.CertaintyLevel;
+                result = ImaginaryState.Certainty;
                 break;
             case MultiplicativeRelation.Area:
-                result = AreaState.CertaintyLevel;
+                result = AreaState.Certainty;
                 break;
         }
         return result;
@@ -375,11 +375,14 @@ public static class MultiplicativeRelationExtensions
 }
 public enum CertaintyLevel
 {
-    Unknown,
-	Uncertain,
-	Derived,
-	Set,
+    Uncertain,
+    UnderConstrained,
+    OverConstrained,
+    Partial,
+    Derived,
+    Set,
     Fixed,
+    Error,
 }
 
 public static class MeasureStateExtensions

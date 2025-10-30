@@ -6,7 +6,7 @@ namespace SymNum.Measures.Primitives;
 public class Measure : MeasureBase
 {
 	public Measure(long position, Direction direction, 
-		bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Unknown) :
+		bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Uncertain) :
 				base(position, direction, inclusive, certainty)
 	{
 	}
@@ -44,7 +44,7 @@ public abstract class MeasureBase : IMeasure
 		get => (double)Position;
 		protected set => Position = (long)value;
 	}
-	public CertaintyLevel CertaintyLevel { get; set; }
+	public CertaintyLevel Certainty { get; set; }
 
 	protected MeasureBase()
 	{
@@ -54,9 +54,9 @@ public abstract class MeasureBase : IMeasure
 		Position = position;
 		Direction = direction;
 		Inclusive = inclusive;
-		CertaintyLevel = certainty;
+		Certainty = certainty;
 	}
-	public bool IsCertain => CertaintyLevel.HasValue();
+	public bool IsCertain => Certainty.HasValue();
 	public virtual void SetPosition(long position)
 	{
 		Position = position;

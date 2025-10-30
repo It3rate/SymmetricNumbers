@@ -18,62 +18,73 @@ namespace SymNum.Measures.Expressions;
 /// </summary>
 public class BinaryExpression : IValue, IConstraint
 {
-	public IValue First { get; set; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
-    public IValue Second { get; set; }
+	public INumber First { get; set; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
+    public INumber Second { get; set; }
     public TwoNumberOp Op { get; set; }
+    public INumber Result { get; set; }
 
 	// This can not set its own value, as the value is calculated.
 	// Instead, it examines which inputs (First and Second) are fixed and which are variable,
 	// and adjusts them as needed. If both are variable, it creates a new constraint that
 	// the solution must follow (or perhaps this is that constraint already, need to try).
-	public double Value { get => Calculate(); protected set => _value = value; }
-	private double _value;
-	public CertaintyLevel CertaintyLevel { get; set; }
+	public INumber Value { get => Calculate(); protected set => _value = value; }
+	private INumber _value;
+	public CertaintyLevel Certainty { get; set; }
     public virtual string Name { get; } = "";
-	public bool IsSet => CertaintyLevel.HasValue();
-	public BinaryExpression(IValue first, IValue second, TwoNumberOp op, CertaintyLevel state = CertaintyLevel.Unknown)
+	public bool IsSet => Certainty.HasValue();
+	public BinaryExpression(INumber? first, INumber? second, TwoNumberOp op, INumber? result, CertaintyLevel state = CertaintyLevel.Uncertain)
 	{
-		First = first;
-		Second = second;
+		First = first ?? RawNumber.Unknown;
+		Second = second ?? RawNumber.Unknown;
 		Op = op;
-		CertaintyLevel = state;
-		Calculate();
+        Result = result ?? Calculate();
+        Certainty = state;
+		
     }
     protected BinaryExpression()
     {
     }
-    public void UpdateValue(double value)
+
+    public void SetCertaintyLevel(CertaintyLevel certaintyLevel)
+    {
+        Certainty = certaintyLevel;
+    }
+
+	public void Fix() => Certainty = CertaintyLevel.Fixed;
+	public void Set() => Certainty = CertaintyLevel.Set;
+	public void Unset() => Certainty = CertaintyLevel.Uncertain;
+	public INumber Calculate()
 	{
-		_value = value;
-	}
-	public void Fix() => CertaintyLevel = CertaintyLevel.Fixed;
-	public void Set() => CertaintyLevel = CertaintyLevel.Set;
-	public void Unset() => CertaintyLevel = CertaintyLevel.Uncertain;
-	public double Calculate()
-	{
-		switch (Op)
-		{
-			case TwoNumberOp.Multiply:
-				_value = First.Value * Second.Value;
-				break;
-			case TwoNumberOp.Divide:
-				_value = Second.Value == 0 ? 0 : First.Value / Second.Value;
-				break;
-			case TwoNumberOp.Add:
-				_value = First.Value + Second.Value;
-				break;
-			case TwoNumberOp.Subtract:
-				_value = First.Value - Second.Value;
-				break;
-			case TwoNumberOp.Pow:
-				_value = Math.Pow(First.Value, Second.Value);
-				break;
-			case TwoNumberOp.Mod:
-				_value = First.Value % Second.Value;
-				break;
-			default:
-				break;
-		}
-		return _value;
+        if (First.IsFullyDefined && Second.IsFullyDefined)
+        {
+            switch (Op)
+            {
+                case TwoNumberOp.Multiply:
+                    Result = First.Multiply(Second);
+                    break;
+                case TwoNumberOp.Divide:
+                    Result = First.Divide(Second);
+                    break;
+                case TwoNumberOp.Add:
+                    Result = First.Add(Second);
+                    break;
+                case TwoNumberOp.Subtract:
+                    Result = First.Subtract(Second);
+                    break;
+                //case TwoNumberOp.Pow:
+                //Result = First.Pow(Second);
+                //    break;
+                //case TwoNumberOp.Mod:
+                //Result = First.Mod(Second);
+                //    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            Result = RawNumber.Unknown;
+        }
+        return Result;
 	}
 }

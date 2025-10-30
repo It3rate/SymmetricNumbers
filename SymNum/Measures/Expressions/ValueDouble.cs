@@ -15,7 +15,7 @@ public class ValueDouble : IValue
 		get => _doubleValue;
 		protected set => _doubleValue = value;
 	}
-	public CertaintyLevel CertaintyLevel => CertaintyLevel.Fixed;
+	public CertaintyLevel Certainty => CertaintyLevel.Fixed;
 	public ValueDouble(double value)
 	{
 		_doubleValue = value;

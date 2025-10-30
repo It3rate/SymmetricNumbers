@@ -12,7 +12,7 @@ using SymNum.Measures.Primitives;
 /// A number out of three samples. This may not need to be a separate class, 
 /// or at least other number classes should be able to use it.
 /// </summary>
-public class RatioNumber : UnconstrainedNumber
+public class RatioNumber : RawNumber
 {
     public long StartPosition => LeftMeasure.Position;
     public long MidPosition => RightMeasure.Position;

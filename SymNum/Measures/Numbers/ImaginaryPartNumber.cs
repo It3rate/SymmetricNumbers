@@ -15,7 +15,7 @@ namespace SymNum.Measures.Numbers;
 /// When combining with a real part into a SplitNumber, the unit of the real part is used.
 /// When combining to a complex number (identical units) the min resolution is used
 /// </summary>
-public class ImaginaryPartNumber : UnconstrainedNumber
+public class ImaginaryPartNumber : RawNumber
 {
 	// the only constraints are that right unit is always UnitPosition pointing right, and right measure is always 0.
 	// All operations on complex numbers should apply? (and real value will always be zero)

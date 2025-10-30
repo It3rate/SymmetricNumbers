@@ -30,7 +30,9 @@ public enum RefKind
 	BottomRight = D,
 	BottomLeft = C,
 	RealValue = AD,
-	ImaginaryValue = CB,
+    ImaginaryValue = CB,
+    ComplexNumber = CBAD, // start -> end
+    SymmetricNumber = ABCD, // dynamic units and measures
 }
 public static class RefKindExtensions
 {

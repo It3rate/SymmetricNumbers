@@ -9,11 +9,11 @@ namespace SymNum.Measures.Expressions;
 
 public class Accumulator : IValue
 {
-	private UnconstrainedNumber _number;
+	private RawNumber _number;
 	public double Value => throw new NotImplementedException();
 
-	public CertaintyLevel CertaintyLevel => CertaintyLevel.Fixed;
-	public Accumulator(UnconstrainedNumber number)
+	public CertaintyLevel Certainty => CertaintyLevel.Fixed;
+	public Accumulator(RawNumber number)
 	{
 		_number = number;
 	}

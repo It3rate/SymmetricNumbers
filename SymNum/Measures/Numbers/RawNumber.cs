@@ -63,6 +63,24 @@ public interface INumber
 	long LeftMeasurePosition { get; }
 	long LeftUnitPosition { get; }
 	long ZeroPosition { get; }
+    bool IsFullyDefined { get; }
+
+    INumber Add(INumber other);
+    INumber Subtract(INumber other);
+    INumber Multiply(INumber other);
+    INumber Divide(INumber other);
+    // Add   
+    // Subtract   
+    // Multiply   
+    // Divide 
+    // Reciprocal 
+    // Power 
+    // DotProduct     
+    // CrossProduct
+    // Modulo
+    // Transform
+    // 16 bool ops
+    // adjust resolution
 }
 /// <summary>
 /// There are many types of numbers, they just mean measures calibrated in some way. 
@@ -73,20 +91,25 @@ public interface INumber
 /// Note that these can describe any non random pattern, but have no information about what the pattern represents.
 /// This requires some kind of unit tied to the number. Numbers themselves are pure patterns.
 /// </summary>
-public class UnconstrainedNumber : INumber
+public class RawNumber : INumber
 {
+    public static RawNumber Unknown => new RawNumber();
     // A number can be composed of multiple measures with different restrictions. 
     // A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
     // An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
     // but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
 
     // needs to be protected to allow subclasses to enforce their constraints.
-    private IMeasure[] _measures = new IMeasure[4];
+
+    // B | A   // A/D forms the real part, and C/B the imaginary part
+    // C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
+    // zero point is E
+    private IMeasure[] _measures = new IMeasure[5];
     public IMeasure RightMeasure { get => _measures[0]; protected set => _measures[0] = value; }
-	public IMeasure RightUnit { get => _measures[1]; protected set => _measures[1] = value; }
+	public IMeasure RightUnit { get => _measures[3]; protected set => _measures[3] = value; }
 	public IMeasure LeftMeasure { get => _measures[2]; protected set => _measures[2] = value; }
-	public IMeasure LeftUnit { get => _measures[3]; protected set => _measures[3] = value; }
-	public IMeasure ZeroPoint { get; set; } = new Measure(0, Direction.Unknown);
+	public IMeasure LeftUnit { get => _measures[1]; protected set => _measures[1] = value; }
+	public IMeasure ZeroPoint { get => _measures[4]; protected set => _measures[4] = value; }
 
 	public long RightMeasurePosition => RightMeasure.Position;
 	public long RightUnitPosition => RightUnit.Position;
@@ -96,26 +119,51 @@ public class UnconstrainedNumber : INumber
 
 	public virtual bool IsFullyDefined => _measures.All(m => m.IsFullDefined);
 
-    protected UnconstrainedNumber()
+    protected RawNumber()
     {
-	}
-    protected UnconstrainedNumber(long tr, long tl, long br, long bl)
+        RightMeasure = new Measure(0, Direction.FacesRight, true, CertaintyLevel.Uncertain);
+        LeftUnit = new Measure(0, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
+        RightUnit = new Measure(0, Direction.FacesRight, true, CertaintyLevel.Uncertain);
+        LeftMeasure = new Measure(0, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
+        ZeroPoint = new Measure(0, Direction.Unknown, true, CertaintyLevel.Uncertain);
+    }
+    protected RawNumber(long tr, long tl, long br, long bl, long zeroPoint = 0)
     {
 		RightMeasure = new Measure(tr, Direction.FacesRight, true);
 		LeftUnit = new Measure(tl, Direction.FacesLeft, true);
 		RightUnit = new Measure(br, Direction.FacesRight, true);
 		LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
-	}
-	/// <summary>
-	/// Left values are positive left, so do not negate them unless pointing right.
-	/// </summary>
-	public static UnconstrainedNumber Create(long tr, long tl, long br, long bl)
-	{
-		var result = new UnconstrainedNumber(tr, tl, br, bl);
-		return result;
-	}
+        ZeroPoint = new Measure(zeroPoint, Direction.Unknown);
+    }
+    /// <summary>
+    /// Cast internals of another number into this type.
+    /// eg complex to rational will ignore the i values and not allow setting them, but they will be preserved if cast back.
+    /// </summary>
+    public RawNumber(RawNumber number)
+    {
+        Array.Copy(number._measures, _measures, _measures.Length);
+    }
+    public INumber Add(INumber other)
+    {
+        throw new NotImplementedException();
+    }
 
-	public IMeasure MeasureFromIndex(int index)
+    public INumber Subtract(INumber other)
+    {
+        throw new NotImplementedException();
+    }
+
+    public INumber Multiply(INumber other)
+    {
+        throw new NotImplementedException();
+    }
+
+    public INumber Divide(INumber other)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IMeasure MeasureFromIndex(int index)
 	{
 		if (index < 0 || index >= _measures.Length)
 		{
@@ -147,12 +195,12 @@ public class UnconstrainedNumber : INumber
 			case RefKind.ImaginaryValue:
 				result = new ValueDouble(LeftValue);
 				break;
-			case RefKind.UnitAverage:
-				result = new ValueDouble((LeftUnit.Value + RightUnit.Value) / 2.0);
-				break;
-			case RefKind.ValueAverage:
-				result = new ValueDouble((LeftMeasure.Value + RightMeasure.Value) / (LeftUnit.Value + RightUnit.Value));
-				break;
+			//case RefKind.UnitAverage:
+			//	result = new ValueDouble((LeftUnit.Value + RightUnit.Value) / 2.0);
+			//	break;
+			//case RefKind.ValueAverage:
+			//	result = new ValueDouble((LeftMeasure.Value + RightMeasure.Value) / (LeftUnit.Value + RightUnit.Value));
+			//	break;
 		}
         return result;
 	}
@@ -181,7 +229,7 @@ public class UnconstrainedNumber : INumber
 		}
 	}
 
-    public static bool GetBool(IMeasure a, IMeasure b,)
+    //public static bool GetBool(IMeasure a, IMeasure b,)
     public static float GetValue(IMeasure numerator, IMeasure denominator)
     {
         var result = float.NaN;
@@ -207,6 +255,8 @@ public class UnconstrainedNumber : INumber
         }
         return result;
     }
+
+
 
     /// <summary>
     /// RightValue is the positive polarity value, up vs down, right vs left, large vs small etc.
@@ -264,11 +314,11 @@ public class UnconstrainedNumber : INumber
 
 public abstract class NumberValue
 {
-    public UnconstrainedNumber NumberReference { get; }
+    public RawNumber NumberReference { get; }
     public abstract long RightResolution { get; }
     public abstract long LeftResolution { get; }
 
-    public NumberValue(UnconstrainedNumber number)
+    public NumberValue(RawNumber number)
     {
         NumberReference = number;
     }

@@ -12,7 +12,7 @@ namespace SymNum.Measures.Numbers;
 /// A ComplexNumber is made of two extents, where the denominator is a -1 to 1 segment,
 /// and the numerator is a segment not fixed at zero.
 /// </summary>
-public class ComplexNumber : UnconstrainedNumber
+public class ComplexNumber : RawNumber
 {
     public RationalNumber RealPart { get; }
     public IMeasure ImaginaryMeasure => LeftMeasure;

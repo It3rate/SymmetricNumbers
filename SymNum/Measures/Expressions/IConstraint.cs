@@ -13,7 +13,7 @@ public interface IConstraint : IValue // Seems an IConstraint is nothing more th
 	//IValue First { get; }
 	//IValue Second { get; }
 	//TwoNumberOp Op { get; }
-	void SetCertaintyLevel(CertaintyLevel certaintyLevel);
-	IValue Calculate();
+	//void SetCertaintyLevel(CertaintyLevel certaintyLevel);
+	//IValue Calculate();
 	string? Name { get; }
 }

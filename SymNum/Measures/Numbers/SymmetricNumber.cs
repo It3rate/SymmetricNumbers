@@ -16,7 +16,7 @@ namespace SymNum.Measures.Numbers;
 /// a concept requiring the existance of some 'y' dimension, but fully describable in the 1D 'x' dimension.
 /// See: https://x.com/debreuil/status/1876646280451051933
 /// </summary>
-public class SymmetricNumber : UnconstrainedNumber
+public class SymmetricNumber : RawNumber
 {
     public long TopRight { get => RightMeasure.Position; protected set => RightMeasure.SetPosition(value); }
     public long TopLeft { get => LeftUnit.Position; protected set => LeftUnit.SetPosition(value); }
@@ -79,10 +79,10 @@ public class SymmetricNumber : UnconstrainedNumber
     public class SymmetricValue : NumberValue
     {
         public SymmetricNumber Reference { get; }
-        public float RightFloat => UnconstrainedNumber.GetValue(Reference.RightMeasure, Reference.RightUnit);
-        public float LeftFloat => UnconstrainedNumber.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
+        public float RightFloat => RawNumber.GetValue(Reference.RightMeasure, Reference.RightUnit);
+        public float LeftFloat => RawNumber.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
         public float GetFloat(Measure measure) => measure.IsFullDefined ? measure.Position : 0;
-        public float GetFloat(Measure numerator, Measure denominator) => UnconstrainedNumber.GetValue(numerator, denominator);
+        public float GetFloat(Measure numerator, Measure denominator) => RawNumber.GetValue(numerator, denominator);
         // todo: public float GetValue(Measure a, Measure b, Measure c) => ;
         // todo: public float GetValue(Measure a, Measure b, Measure c, Measure d) => ;
         public override long RightResolution => Reference.RightResolution;
