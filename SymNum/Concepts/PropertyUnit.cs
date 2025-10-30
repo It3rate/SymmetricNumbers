@@ -1,5 +1,5 @@
-﻿using SymNum.Measures.Numbers;
-using SymNum.Operators;
+﻿using SymNum.Measures.Equations;
+using SymNum.Measures.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,5 @@
 ﻿using SymNum.Measures.Numbers;
+using SymNum.Measures.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ public class BinaryExpression : IValue, IConstraint
 {
 	public INumber First { get; set; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
     public INumber Second { get; set; }
-    public TwoNumberOp Op { get; set; }
+    public BinaryOp Op { get; set; }
     public INumber Result { get; set; }
 
 	// This can not set its own value, as the value is calculated.
@@ -32,7 +33,7 @@ public class BinaryExpression : IValue, IConstraint
 	public CertaintyLevel Certainty { get; set; }
     public virtual string Name { get; } = "";
 	public bool IsSet => Certainty.HasValue();
-	public BinaryExpression(INumber? first, INumber? second, TwoNumberOp op, INumber? result, CertaintyLevel state = CertaintyLevel.Uncertain)
+	public BinaryExpression(INumber? first, INumber? second, BinaryOp op, INumber? result, CertaintyLevel state = CertaintyLevel.Uncertain)
 	{
 		First = first ?? RawNumber.Unknown;
 		Second = second ?? RawNumber.Unknown;
@@ -57,29 +58,7 @@ public class BinaryExpression : IValue, IConstraint
 	{
         if (First.IsFullyDefined && Second.IsFullyDefined)
         {
-            switch (Op)
-            {
-                case TwoNumberOp.Multiply:
-                    Result = First.Multiply(Second);
-                    break;
-                case TwoNumberOp.Divide:
-                    Result = First.Divide(Second);
-                    break;
-                case TwoNumberOp.Add:
-                    Result = First.Add(Second);
-                    break;
-                case TwoNumberOp.Subtract:
-                    Result = First.Subtract(Second);
-                    break;
-                //case TwoNumberOp.Pow:
-                //Result = First.Pow(Second);
-                //    break;
-                //case TwoNumberOp.Mod:
-                //Result = First.Mod(Second);
-                //    break;
-                default:
-                    break;
-            }
+			Result = Op.Invoke(First, Second);
         }
         else
         {

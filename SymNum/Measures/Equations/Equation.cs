@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Operators;
+namespace SymNum.Measures.Equations;
 
 // spatially, you have 'here' (0 point), a value relative to here (1 there), a value relative to something (2 on), or relative to 2 things (3 between), or more (amongst).
 // motion is similar, with a path defined.

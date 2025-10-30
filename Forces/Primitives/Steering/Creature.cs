@@ -71,22 +71,22 @@ public class Creature : ConceptSpace
 		SightNeutral = Sight.CreateValueRef(RefKind.A);// ValueAverage); gtemp for compiling
 		SightBrightness = Sight.CreateValueRef(RefKind.A);// UnitAverage);
 
-		SightRatio = new BinaryExpression(LeftValue, RightValue, TwoNumberOp.Divide); // probably create numbers from parts, or do number math. No values.
-		SightLeftDif = new BinaryExpression(LeftValue, SightNeutral, TwoNumberOp.Divide);
-		SightRightDif = new BinaryExpression(RightValue, SightNeutral, TwoNumberOp.Divide);
-		BrightnessDirection = new BinaryExpression(SightLeftDif, SightRightDif, TwoNumberOp.Subtract);
+		SightRatio = new BinaryExpression(LeftValue, RightValue, BinaryOp.Divide); // probably create numbers from parts, or do number math. No values.
+		SightLeftDif = new BinaryExpression(LeftValue, SightNeutral, BinaryOp.Divide);
+		SightRightDif = new BinaryExpression(RightValue, SightNeutral, BinaryOp.Divide);
+		BrightnessDirection = new BinaryExpression(SightLeftDif, SightRightDif, BinaryOp.Subtract);
 
 		Motion = new UnbalancedNumber(RightThrust, LeftThrustResolution, RightThrustResolution, LeftThrust);
 
 		var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
 		var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
-		Thrust = new BinaryExpression(leftThrustValue, rightThrustValue, TwoNumberOp.Add);
-		Turn = new BinaryExpression(leftThrustValue, rightThrustValue, TwoNumberOp.Subtract);
-		TurnRatio = new BinaryExpression(Turn, Thrust, TwoNumberOp.Divide);
+		Thrust = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Add);
+		Turn = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Subtract);
+		TurnRatio = new BinaryExpression(Turn, Thrust, BinaryOp.Divide);
 		// map the brightness diff to the default thrust (maybe based on darkenss) plus the turn signal.
 		// the turn could just be the complex number diff, or multiply in each of the left and right ratios.
-		TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, TwoNumberOp.Add);
-		TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, TwoNumberOp.Add);
+		TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
+		TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, BinaryOp.Add);
 	}
 
 	private Random _rnd = new Random();

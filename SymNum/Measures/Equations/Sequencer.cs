@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SymNum.Operators;
 
-namespace SymNum.Operators;
+namespace SymNum.Measures.Equations;
 /// <summary>
 /// A sequencer is really probably a type of number, which ultimately just describes some order and a range within it.
 /// It is a description of rules for how properties can interact, but not commiting to any version of interaction.
@@ -17,5 +18,5 @@ namespace SymNum.Operators;
 /// </summary>
 public class Sequencer
 {
-	public Dictionary<long, List<Operator>> Sequence { get; private set; } = new Dictionary<long, List<Operator>>();
+    public Dictionary<long, List<Operator>> Sequence { get; private set; } = new Dictionary<long, List<Operator>>();
 }

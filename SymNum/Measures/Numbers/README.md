@@ -1,5 +1,5 @@
 ﻿# Numbers for Concepts
-Any number has a calibrated start state and a calibrated end state. Calibrated means it is a measure with a unit reference. Therefore a number requires four measures.
+Any number has a calibrated start state and a calibrated end state. Calibrated state means it is a measure with a unit reference. Therefore a number requires four measures.
 
 ## Number Mechanics
 Our numbers always assume a start state of zero, with the start unit being a mirror of the regular unit in the opposite direction. The regular unit is always considered to be '1'. Therefore our numbers only require one measure to be specified.

@@ -15,8 +15,11 @@ namespace SymNum.Measures.Numbers;
 /// When combining with an imaginary part into a SplitNumber, the unit of the imaginary part is used.
 /// When combining to a complex number (identical units) the min resolution is used
 /// </summary>
-public class RationalNumber : RawNumber
+public class RationalNumber : RawNumber, IPartialNumber
 {
+	public bool IsRationalPart => true;
+	public bool IsImaginaryPart => false;
+
 	// the only constraints are that left unit is always UnitPosition pointing left, and left measure is always 0.
 	// All operations on complex numbers should apply? (and imaginary part will always be zero)
 	public long MeasurePosition

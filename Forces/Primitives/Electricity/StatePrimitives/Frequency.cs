@@ -12,8 +12,8 @@
     /// </summary>
     public class Frequency : ComplexNumber
     {
-        public Frequency(long resolution, long startPosition, long endPosition) : base(resolution, startPosition, endPosition)
-        {
+        public Frequency(long startPosition, long endPosition, long resolution) : base(startPosition, endPosition, resolution)
+		{
         }
     }
 }

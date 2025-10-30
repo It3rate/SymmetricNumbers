@@ -7,6 +7,8 @@ using SymNum.Measures.Expressions;
 using SymNum.Measures.Numbers;
 using SymNum.Measures.Primitives;
 
+// **** perhaps there is no unbalanced version of complex numbers as they may not share a zero point.
+
 // There needs to be interoporability between measures, Numbers, and Number equations.
 // Gradients are about the 0-1 part of interpolation, but interpolation has that AND two endpoints.
 // An UnbalancedNumber (or complex number) defines the two endpoints. The interpolation point can be the zero, or defined elsewhere.
@@ -34,7 +36,8 @@ public class UnbalancedNumber : RawNumber
 	public RationalNumber ImaginaryPart => new RationalNumber(RealResolution, Real);
 
 
-    public UnbalancedNumber(IMeasure real, IMeasure imaginaryResolution, IMeasure realResolution, IMeasure imaginary)
+	protected UnbalancedNumber() { }
+	public UnbalancedNumber(IMeasure real, IMeasure imaginaryResolution, IMeasure realResolution, IMeasure imaginary)
 	{
 		RightMeasure = real;
 		LeftUnit = imaginaryResolution;
@@ -60,16 +63,16 @@ public class UnbalancedNumber : RawNumber
 		RealState = new BinaryExpression(
 			CreateValueRef(RefKind.TopRight),
 			CreateValueRef(RefKind.BottomRight),
-			TwoNumberOp.Divide, rstate);
+			BinaryOp.Divide, rstate);
 		var iState = ImaginaryIsCertain ? CertaintyLevel.Set : CertaintyLevel.Uncertain;
 		ImaginaryState = new BinaryExpression(
 			CreateValueRef(RefKind.BottomLeft),
 			CreateValueRef(RefKind.TopLeft),
-			TwoNumberOp.Divide, rstate);
+			BinaryOp.Divide, rstate);
 		var realRef = new ValueRef(this, RefKind.RealValue);
 		var imagRef = new ValueRef(this, RefKind.ImaginaryValue);
-		RatioState = new BinaryExpression(realRef, imagRef, TwoNumberOp.Divide);
-		AreaState = new BinaryExpression(realRef, imagRef, TwoNumberOp.Multiply);
+		RatioState = new BinaryExpression(realRef, imagRef, BinaryOp.Divide);
+		AreaState = new BinaryExpression(realRef, imagRef, BinaryOp.Multiply);
 		Calculate();
 	}
     /// <summary>
@@ -84,12 +87,12 @@ public class UnbalancedNumber : RawNumber
         RightUnit.SetPosition(rightResolution);
     }
 
-    public ComplexNumber GetComplexNumber()
+    public override ComplexNumber GetComplex()
 	{
 		var res = MinResolution;
 		var real = (long)(RealValue * res);
 		var imag = (long)(ImaginaryValue * res);
-		return new ComplexNumber(res, imag, real);
+		return new ComplexNumber(imag, real, res);
 	}
 
     // Need to allow setting by area or ratio by fixing real or imaginary parts.
@@ -257,7 +260,7 @@ public class UnbalancedNumber : RawNumber
     /// Use set and fixed/unknown to calculate all values, and then set them to 'set' when done.
     /// If not calculable then things turn to ranges with unknowns.
     /// </summary>
-    private void Calculate()
+    protected void Calculate()
     {
         // Calculate values based on what is set/fixed, and what is unknown/uncertain
         var ssv = SetSlotsValue;
@@ -369,26 +372,6 @@ public enum MultiplicativeRelation
 public static class MultiplicativeRelationExtensions
 {
     public static int SlotValue(this MultiplicativeRelation kind, CertaintyLevel state)
-    {
-        return state.HasValue() ? (int)kind : 0;
-    }
-}
-public enum CertaintyLevel
-{
-    Uncertain,
-    UnderConstrained,
-    OverConstrained,
-    Partial,
-    Derived,
-    Set,
-    Fixed,
-    Error,
-}
-
-public static class MeasureStateExtensions
-{
-    public static bool HasValue(this CertaintyLevel state) => state == CertaintyLevel.Fixed || state == CertaintyLevel.Set;
-    public static int SlotValue(this CertaintyLevel state, MultiplicativeRelation kind)
     {
         return state.HasValue() ? (int)kind : 0;
     }

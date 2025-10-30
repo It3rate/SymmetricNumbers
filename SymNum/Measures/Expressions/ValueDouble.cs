@@ -1,4 +1,5 @@
 ﻿using SymNum.Measures.Numbers;
+using SymNum.Measures.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;

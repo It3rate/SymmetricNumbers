@@ -12,18 +12,19 @@ namespace SymNum.Measures.Numbers;
 /// A ComplexNumber is made of two extents, where the denominator is a -1 to 1 segment,
 /// and the numerator is a segment not fixed at zero.
 /// </summary>
-public class ComplexNumber : RawNumber
+public class ComplexNumber : UnbalancedNumber
 {
-    public RationalNumber RealPart { get; }
-    public IMeasure ImaginaryMeasure => LeftMeasure;
-    public ComplexNumber(long resolution, long startPosition, long endPosition)
+    //public RationalNumber RealPart { get; }
+    protected ComplexNumber() { }
+    public ComplexNumber(long startPosition, long endPosition, long resolution) : 
+        base(startPosition, endPosition, resolution, resolution)
     {
-        RightUnit = new Measure(resolution, Direction.FacesLeft, true);
-        RightMeasure = new Measure(endPosition, Direction.Unknown, true);
-        LeftUnit = new Measure(-resolution, Direction.FacesRight, true);
-        LeftMeasure = new Measure(startPosition, Direction.Unknown, true);
+        //RightUnit = new Measure(resolution, Direction.FacesLeft, true);
+        //RightMeasure = new Measure(endPosition, Direction.Unknown, true);
+        //LeftUnit = new Measure(-resolution, Direction.FacesRight, true);
+        //LeftMeasure = new Measure(startPosition, Direction.Unknown, true);
     }
-    public ComplexNumber(long resolution, float startPosition, float endPosition) :
+    public ComplexNumber(float startPosition, float endPosition, long resolution) :
         this(resolution, (long)(startPosition / resolution), (long)(endPosition / resolution))
     { }
     public ComplexValue Complex => new ComplexValue(this);

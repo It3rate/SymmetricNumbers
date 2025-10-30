@@ -13,14 +13,15 @@ using SymNum.Measures.Numbers;
 // 
 public class Power : BinaryExpression
 {
-    public IValue Voltage => First;
-    public IValue Current => Second;
+    public INumber Voltage => First;
+    public INumber Current => Second;
     public override string Name => "Power";
-    public Power(IValue voltage, IValue current) :
-        base(voltage, current, TwoNumberOp.Multiply, CertaintyLevel.Derived)
+    public Power(INumber voltage, INumber current) :
+        base(voltage, current, BinaryOp.Multiply, null, CertaintyLevel.Derived)
     { }
     public Power(SymmetricNumber voltageCurrent) : base(
-        new ValueRef(voltageCurrent, RefKind.RealValue),
-        new ValueRef(voltageCurrent, RefKind.ImaginaryValue), TwoNumberOp.Multiply, CertaintyLevel.Derived)
+
+        new ValueRef(voltageCurrent.GetRational(), RefKind.RealValue),
+        new ValueRef(voltageCurrent.GetImaginary(), RefKind.ImaginaryValue), BinaryOp.Multiply, CertaintyLevel.Derived)
     { }
 }

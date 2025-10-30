@@ -14,11 +14,11 @@ public class Resistance : BinaryExpression
     public IValue Current => Second;
     public override string Name => "Resistance";
     public Resistance(IValue voltage, IValue current) :
-        base(voltage, current, TwoNumberOp.Divide, CertaintyLevel.Derived)
+        base(voltage, current, BinaryOp.Divide, CertaintyLevel.Derived)
     { }
     public Resistance(SymmetricNumber voltageCurrent) : base(
         new ValueRef(voltageCurrent, RefKind.RealValue),
-        new ValueRef(voltageCurrent, RefKind.ImaginaryValue), TwoNumberOp.Divide, CertaintyLevel.Derived)
+        new ValueRef(voltageCurrent, RefKind.ImaginaryValue), BinaryOp.Divide, CertaintyLevel.Derived)
     { }
 }
 

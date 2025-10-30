@@ -9,7 +9,7 @@
 
     public class Current : ComplexNumber 
     {
-        public Current(long resolution, long startPosition, long endPosition) : base(resolution, startPosition, endPosition)
+        public Current(long startPosition, long endPosition, long resolution) : base(startPosition, endPosition, resolution)
         {
         }
     }

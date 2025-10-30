@@ -1,6 +1,6 @@
 ﻿
+using SymNum.Measures.Equations;
 using SymNum.Measures.Primitives;
-using SymNum.Operators;
 using System;
 using System.Collections.Generic;
 using System.Linq;

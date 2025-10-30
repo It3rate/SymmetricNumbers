@@ -1,4 +1,4 @@
-﻿using SymNum.Operators;
+﻿using SymNum.Measures.Equations;
 using System;
 using System.Collections.Generic;
 using System.Linq;

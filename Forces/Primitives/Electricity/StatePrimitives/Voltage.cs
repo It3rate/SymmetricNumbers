@@ -9,7 +9,7 @@
 
     public class Voltage : ComplexNumber
     {
-        public Voltage(long resolution, long startPosition, long endPosition) : base(resolution, startPosition, endPosition)
+        public Voltage(long startPosition, long endPosition, long resolution) : base(startPosition, endPosition, resolution)
         {
         }
     }
