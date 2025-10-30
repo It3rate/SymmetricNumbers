@@ -9,16 +9,16 @@ using SymNum.Measures.Primitives;
 
 // There needs to be interoporability between measures, Numbers, and Number equations.
 // Gradients are about the 0-1 part of interpolation, but interpolation has that AND two endpoints.
-// A SplitNumber (or complex number) defines the two endpoints. The interpolation point can be the zero, or defined elsewhere.
+// An UnbalancedNumber (or complex number) defines the two endpoints. The interpolation point can be the zero, or defined elsewhere.
 // When merging resolutions into a complex number, you don't always pick the minimum. For example:
 //  - if time is one component, you can move from seconds to miliseconds (you need to track the meaning of the resolution though)
 //  - if you have samples per minute over hours, your resolution per minute is higher through statistics.
 
 /// <summary>
-/// A SplitNumber is a complex number where the two units do no need to be the same resolution.
+/// An UnbalancedNumber is a complex number where the two units do no need to be the same resolution.
 /// They still need to point in opposite directions, and the right side is still the real part.
 /// </summary>
-public class SplitNumber : RawNumber
+public class UnbalancedNumber : RawNumber
 {
     public long Real { get => RightMeasure.Position; private set => RightMeasure.SetPosition(value); } 
     public long RealResolution { get => RightUnit.Position; private set => RightUnit.SetPosition(value); }
@@ -34,7 +34,7 @@ public class SplitNumber : RawNumber
 	public RationalNumber ImaginaryPart => new RationalNumber(RealResolution, Real);
 
 
-    public SplitNumber(IMeasure real, IMeasure imaginaryResolution, IMeasure realResolution, IMeasure imaginary)
+    public UnbalancedNumber(IMeasure real, IMeasure imaginaryResolution, IMeasure realResolution, IMeasure imaginary)
 	{
 		RightMeasure = real;
 		LeftUnit = imaginaryResolution;
@@ -42,7 +42,7 @@ public class SplitNumber : RawNumber
 		LeftMeasure = imaginary;
         Initialize();
 	}
-	public SplitNumber(long? real, long? imaginary, long? realResolution, long? imaginaryResolution)
+	public UnbalancedNumber(long? real, long? imaginary, long? realResolution, long? imaginaryResolution)
     {
         RightMeasure = new Measure(real ?? 0, Direction.FacesRight, true,
 			(real == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set );
@@ -104,17 +104,17 @@ public class SplitNumber : RawNumber
 
 
 
-    // the natural constraints of a split number are r=rm/ru and i=im/iu.
+    // the natural constraints of a UnbalancedNumber are r=rm/ru and i=im/iu.
     // Changing the real unit will either change the real value or the real measure, so one must be locked.
     // (locking the value changes the resolution, locking the measure changes the value and resolution.)
 
-	#region Fix and Transform
+    #region Fix and Transform
     // this is going to be its own class, where you can assert relations in a number
     // and then lock the number into certain behaviours and patterns with them.
 
     // the inputs here need to be 'equations' of some sort, which includes ValueSamples (numbers with ops).
 
-	public override bool IsFullyDefined =>
+    public override bool IsFullyDefined =>
 		base.IsFullyDefined &&
 		RealState.IsSet && ImaginaryState.IsSet && AreaState.IsSet && RatioState.IsSet;
 	public int SetSlotsValue =>

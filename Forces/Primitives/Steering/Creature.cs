@@ -23,7 +23,7 @@ public class Creature : ConceptSpace
 	public MeasureMemory LeftEyeMemory { get; } // memory is used as the zero point
 	public Measure LeftEye { get; } = new Measure(10000, Direction.FacesLeft);
 	public Measure LeftEyeResolution { get; }
-	public SplitNumber Sight { get; } // sight is constructed from the left and right eye, based around Sight zero according to above, regardless of the actual eye input values.
+	public UnbalancedNumber Sight { get; } // sight is constructed from the left and right eye, based around Sight zero according to above, regardless of the actual eye input values.
 
 	public IValue LeftValue { get; }
 	public IValue RightValue { get; }
@@ -38,7 +38,7 @@ public class Creature : ConceptSpace
 	public IMeasure LeftThrust { get; } = new Measure(30, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
 	public IMeasure LeftThrustResolution { get; } = new Measure(_leftThrustResolution, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
 	public IMeasure RightThrustResolution { get; } = new Measure(_rightThrustResolution, Direction.FacesRight, true, CertaintyLevel.Uncertain);
-	public SplitNumber Motion { get; }
+	public UnbalancedNumber Motion { get; }
 
 	public BinaryExpression Thrust { get; }
 	public BinaryExpression TurnRatio { get; }
@@ -62,7 +62,7 @@ public class Creature : ConceptSpace
 	{
 		LeftEyeMemory = new MeasureMemory(LeftEye, MeasureMemory.MemoryKind.Average, 1);
 		RightEyeMemory = new MeasureMemory(RightEye, MeasureMemory.MemoryKind.Average, 1);
-		Sight = new SplitNumber(RightEye, LeftEyeMemory, RightEyeMemory, LeftEye);
+		Sight = new UnbalancedNumber(RightEye, LeftEyeMemory, RightEyeMemory, LeftEye);
 
 		LeftValue = Sight.CreateValueRef(RefKind.ImaginaryValue);
 		RightValue = Sight.CreateValueRef(RefKind.RealValue);
@@ -71,12 +71,12 @@ public class Creature : ConceptSpace
 		SightNeutral = Sight.CreateValueRef(RefKind.A);// ValueAverage); gtemp for compiling
 		SightBrightness = Sight.CreateValueRef(RefKind.A);// UnitAverage);
 
-		SightRatio = new BinaryExpression(LeftValue, RightValue, TwoNumberOp.Divide);
+		SightRatio = new BinaryExpression(LeftValue, RightValue, TwoNumberOp.Divide); // probably create numbers from parts, or do number math. No values.
 		SightLeftDif = new BinaryExpression(LeftValue, SightNeutral, TwoNumberOp.Divide);
 		SightRightDif = new BinaryExpression(RightValue, SightNeutral, TwoNumberOp.Divide);
 		BrightnessDirection = new BinaryExpression(SightLeftDif, SightRightDif, TwoNumberOp.Subtract);
 
-		Motion = new SplitNumber(RightThrust, LeftThrustResolution, RightThrustResolution, LeftThrust);
+		Motion = new UnbalancedNumber(RightThrust, LeftThrustResolution, RightThrustResolution, LeftThrust);
 
 		var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
 		var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);

@@ -65,10 +65,17 @@ public interface INumber
 	long ZeroPosition { get; }
     bool IsFullyDefined { get; }
 
+    ComplexNumber GetComplex();
+    ComplexNumber GetSplit();
+    SymmetricNumber GetSymmetric();
+    RationalNumber GetReal();
+    ImaginaryNumber GetImaginary();
+
     INumber Add(INumber other);
     INumber Subtract(INumber other);
     INumber Multiply(INumber other);
     INumber Divide(INumber other);
+
     // Add   
     // Subtract   
     // Multiply   

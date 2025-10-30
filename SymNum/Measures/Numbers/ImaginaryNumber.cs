@@ -15,7 +15,7 @@ namespace SymNum.Measures.Numbers;
 /// When combining with a real part into a SplitNumber, the unit of the real part is used.
 /// When combining to a complex number (identical units) the min resolution is used
 /// </summary>
-public class ImaginaryPartNumber : RawNumber
+public class ImaginaryNumber : RawNumber
 {
 	// the only constraints are that right unit is always UnitPosition pointing right, and right measure is always 0.
 	// All operations on complex numbers should apply? (and real value will always be zero)
@@ -47,14 +47,14 @@ public class ImaginaryPartNumber : RawNumber
 	/// <summary>
 	/// A RationalNumber is a complex number with constraints on the left side.
 	/// </summary>
-	public ImaginaryPartNumber(long resolution, long value)
+	public ImaginaryNumber(long resolution, long value)
 	{
 		LeftMeasure = new Measure(value, Direction.FacesLeft, true);
 		LeftUnit = new Measure(resolution, Direction.FacesLeft, true);
 		RightUnit = new Measure(resolution, Direction.FacesRight, true);
 		RightMeasure = new Measure(0, Direction.FacesRight, true);
 	}
-	public ImaginaryPartNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
+	public ImaginaryNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
 
 	// ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
 	// Value - measure / unit, what we normally consider the number to be.

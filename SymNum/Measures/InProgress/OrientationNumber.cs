@@ -13,7 +13,7 @@ using SymNum.Measures.Primitives;
 /// This requires the orientation to be made of both directions, which can be combined into a 360 degree style orientation.
 /// If a line is grow to both the left and right, the direction of growth will be more than just a subtraction, it is akin to rotation.
 /// </summary>
-public class OrientationNumber : SplitNumber
+public class OrientationNumber : UnbalancedNumber
 {
     public OrientationNumber(IMeasure rightward, IMeasure leftward, IMeasure rightDegreeResolution, IMeasure leftDegreeResolution) 
         : base(rightward, leftward, rightDegreeResolution, leftDegreeResolution)
