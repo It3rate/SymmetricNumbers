@@ -7,18 +7,18 @@ using System.Text;
 using System.Threading.Tasks;
 using SymNum.Measures.Expressions;
 using SymNum.Measures.Numbers;
+using SymNum.Measures.Primitives;
 
 public class Resistance : BinaryExpression
 {
-    public IValue Voltage => First;
-    public IValue Current => Second;
+    public INumber Voltage => First;
+    public INumber Current => Second;
     public override string Name => "Resistance";
-    public Resistance(IValue voltage, IValue current) :
-        base(voltage, current, BinaryOp.Divide, CertaintyLevel.Derived)
+    public Resistance(INumber voltage, INumber current) :
+        base(voltage, current, Ops.Divide, null, CertaintyLevel.Derived)
     { }
-    public Resistance(SymmetricNumber voltageCurrent) : base(
-        new ValueRef(voltageCurrent, RefKind.RealValue),
-        new ValueRef(voltageCurrent, RefKind.ImaginaryValue), BinaryOp.Divide, CertaintyLevel.Derived)
+    public Resistance(SymmetricNumber voltageCurrent) :
+        base( voltageCurrent.GetRational(), voltageCurrent.GetImaginary(), Ops.Divide, null)
     { }
 }
 

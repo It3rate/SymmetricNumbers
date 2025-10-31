@@ -38,7 +38,6 @@ public class RectangleNumber : ComplexNumber
 			PerimeterOp,
 			null,
 			CertaintyLevel.Derived);
-		Calculate();
 	}
 	public static BinaryOp PerimeterOp = (left, right) => left.Add(right).Multiply(CreateRational(2f));
 }

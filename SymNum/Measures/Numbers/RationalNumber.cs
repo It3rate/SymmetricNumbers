@@ -50,14 +50,14 @@ public class RationalNumber : RawNumber, IPartialNumber
 	/// <summary>
 	/// A RationalNumber is a complex number with constraints on the left side.
 	/// </summary>
-	public RationalNumber(long resolution, long value)
+	public RationalNumber(long value, long resolution)
 	{
 		RightMeasure = new Measure(value, Direction.FacesRight, true);
 		RightUnit = new Measure(resolution, Direction.FacesRight, true);
 		LeftUnit = new Measure(resolution, Direction.FacesLeft, true);
 		LeftMeasure = new Measure(0, Direction.FacesLeft, true);
 	}
-	public RationalNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
+	public RationalNumber(float value, long resolution) : this((long)(value * resolution), resolution) { }
 
 	// ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
 	// Value - measure / unit, what we normally consider the number to be.

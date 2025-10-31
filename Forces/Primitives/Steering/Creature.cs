@@ -1,5 +1,5 @@
 ﻿using Forces.Primitives.Electricity.Concepts;
-using SymNum.Measures.Concepts;
+using SymNum.Concepts;
 using SymNum.Measures.Expressions;
 using SymNum.Measures.Numbers;
 using SymNum.Measures.Primitives;
@@ -71,22 +71,22 @@ public class Creature : ConceptSpace
 		SightNeutral = Sight.CreateValueRef(RefKind.A);// ValueAverage); gtemp for compiling
 		SightBrightness = Sight.CreateValueRef(RefKind.A);// UnitAverage);
 
-		SightRatio = new BinaryExpression(LeftValue, RightValue, BinaryOp.Divide); // probably create numbers from parts, or do number math. No values.
-		SightLeftDif = new BinaryExpression(LeftValue, SightNeutral, BinaryOp.Divide);
-		SightRightDif = new BinaryExpression(RightValue, SightNeutral, BinaryOp.Divide);
-		BrightnessDirection = new BinaryExpression(SightLeftDif, SightRightDif, BinaryOp.Subtract);
+		//SightRatio = new BinaryExpression(LeftValue, RightValue, BinaryOp.Divide); // probably create numbers from parts, or do number math. No values.
+		//SightLeftDif = new BinaryExpression(LeftValue, SightNeutral, BinaryOp.Divide);
+		//SightRightDif = new BinaryExpression(RightValue, SightNeutral, BinaryOp.Divide);
+		//BrightnessDirection = new BinaryExpression(SightLeftDif, SightRightDif, BinaryOp.Subtract);
 
-		Motion = new UnbalancedNumber(RightThrust, LeftThrustResolution, RightThrustResolution, LeftThrust);
+		//Motion = new UnbalancedNumber(RightThrust, LeftThrustResolution, RightThrustResolution, LeftThrust);
 
-		var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
-		var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
-		Thrust = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Add);
-		Turn = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Subtract);
-		TurnRatio = new BinaryExpression(Turn, Thrust, BinaryOp.Divide);
-		// map the brightness diff to the default thrust (maybe based on darkenss) plus the turn signal.
-		// the turn could just be the complex number diff, or multiply in each of the left and right ratios.
-		TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
-		TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, BinaryOp.Add);
+		//var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
+		//var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
+		//Thrust = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Add);
+		//Turn = new BinaryExpression(leftThrustValue, rightThrustValue, BinaryOp.Subtract);
+		//TurnRatio = new BinaryExpression(Turn, Thrust, BinaryOp.Divide);
+		//// map the brightness diff to the default thrust (maybe based on darkenss) plus the turn signal.
+		//// the turn could just be the complex number diff, or multiply in each of the left and right ratios.
+		//TurnLeft = new BinaryExpression(SightLeftDif, leftThrustValue, BinaryOp.Add);
+		//TurnRight = new BinaryExpression(SightRightDif, rightThrustValue, BinaryOp.Add);
 	}
 
 	private Random _rnd = new Random();
@@ -115,12 +115,12 @@ public class Creature : ConceptSpace
 
 
 		// set thrust
-		Motion.SetValueFromRefKind(RefKind.RealValue, TurnRight.Value);
-		Motion.SetValueFromRefKind(RefKind.ImaginaryValue, TurnLeft.Value);
+		//Motion.SetValueFromRefKind(RefKind.RealValue, TurnRight.Value);
+		//Motion.SetValueFromRefKind(RefKind.ImaginaryValue, TurnLeft.Value);
 
-		// move creature in environment based on thrust
-		var rot = (TurnLeft.Value - TurnRight.Value) * 30; // max 60 degrees
-		FacingDirection += rot;
+		//// move creature in environment based on thrust
+		//var rot = (TurnLeft.Value - TurnRight.Value) * 30; // max 60 degrees
+		//FacingDirection += rot;
         // add motion at constant speed in this Direction, wrap if at edge of image.
         // todo: motion and env read for creature.
         // This is probably the arena reading direction change and speed, creature doesn't know where it is.

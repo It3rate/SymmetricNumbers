@@ -5,17 +5,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SymNum.Measures.Concepts;
+using SymNum.Concepts;
 using SymNum.Measures.Expressions;
+using SymNum.Measures.Numbers;
 
 public class ElectricField : ConceptSpace
 {
     public override string Name => "Electric Field";
-    public IValue Voltage { get; }
-    public IValue Current { get; }
+    public INumber Voltage { get; }
+    public INumber Current { get; }
     public Power Power { get; }
     public Resistance Resistance { get; }
-    public ElectricField(IValue voltage, IValue current) 
+    public ElectricField(INumber voltage, INumber current) 
     {
         Voltage = voltage;
         Current = current;

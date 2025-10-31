@@ -1,4 +1,4 @@
-﻿namespace SymNum.Measures.Concepts;
+﻿namespace SymNum.Concepts;
 
 using System;
 using System.Collections.Generic;

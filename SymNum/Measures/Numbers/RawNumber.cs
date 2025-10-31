@@ -72,7 +72,7 @@ public class RawNumber : INumber
     }
 
     protected static long _resolution = 1000000;
-	protected static RationalNumber CreateRational(float value) => new RationalNumber(_resolution, value);
+	protected static RationalNumber CreateRational(float value) => new RationalNumber(value, _resolution);
 
 
 

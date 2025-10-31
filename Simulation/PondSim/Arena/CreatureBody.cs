@@ -56,13 +56,13 @@ public class CreatureBody : DrawableBase
         _creature.OnTick();
         if(Body != null)
         {
-            var turn = (float)_creature.SightRatio.Value - 1.1f;
-            var thrust = (float)_creature.Thrust.Value;
-            var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
-            turn = (float)Math.Clamp(turn, -3f, 3f);
-            Body.ApplyForceToCenter(facing * thrust * _thrustForce, true);
+            //var turn = (float)_creature.SightRatio.Value - 1.1f;
+            //var thrust = (float)_creature.Thrust.Value;
+            //var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
+            //turn = (float)Math.Clamp(turn, -3f, 3f);
+            //Body.ApplyForceToCenter(facing * thrust * _thrustForce, true);
 
-            Body.ApplyTorque(turn * _turnTorque, true);
+            //Body.ApplyTorque(turn * _turnTorque, true);
             //Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
         }
     }
