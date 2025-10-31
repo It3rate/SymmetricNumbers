@@ -21,6 +21,7 @@ public interface IMeasure : IValue
 	Direction Direction { get; }
 	void SetPosition(long position);
 	bool Inclusive { get; }
+    void Negate();
 	//public CertaintyLevel CertaintyLevel { get; } // inherited
 	public bool IsCertain { get; }
 	bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;

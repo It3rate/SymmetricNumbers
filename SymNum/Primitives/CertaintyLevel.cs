@@ -16,6 +16,7 @@ public enum CertaintyLevel
 	Partial,
 	Derived,
 	Set,
+    Perceived,
 	Fixed,
 	Error,
 }

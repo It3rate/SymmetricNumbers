@@ -1,6 +1,6 @@
 ﻿
 using SymNum.Expressions;
-using SymNum.Primitives;
+using SymNum.Scraps;
 using System;
 using System.Collections.Generic;
 using System.Linq;

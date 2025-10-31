@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.VisualBasic;
-using SymNum.Scraps;
-namespace SymNum.Primitives;
+using SymNum.Primitives;
+
+namespace SymNum.Scraps;
 
 // Question:
 // Looking at all the information you can get from 1,2,3,4, or 5 bits of information,
@@ -42,7 +43,7 @@ namespace SymNum.Primitives;
 	/// The ultimate primitive here is a long, but it comes with a lot of baggage that doesn't apply. 
 	/// You can have a single measure instead of a span, but then the startpoint is also the endpoint (both are true statements).
 /// </summary>
-public class Extent : IExtent // was Focal in previous versions
+public class Extent : IExtent // essentially a segment on an uncalibrated line
 {
     // The reason _positions is an array is there is gradient between an uncalibrated value and an equation.
     // A low res value is like a point, looking closer a range, closer yet might be a curve, later a repeating wave, 
@@ -138,20 +139,20 @@ public class Extent : IExtent // was Focal in previous versions
 
     public bool Touches(Extent q) => Touches(this, q);
 
-    public IMeasure MinMeasure => Measure.Min(StartMeasure, EndMeasure);
-    public IMeasure MaxMeasure => Measure.Max(StartMeasure, EndMeasure);
-    public long MinPosition => Measure.MinPosition(StartMeasure, EndMeasure);
-    public long MaxPosition => Measure.MaxPosition(StartMeasure, EndMeasure);
-    public static IMeasure MinStartMeasure(Extent p, Extent q) => Measure.Min(p.StartMeasure, q.StartMeasure);
-    public static IMeasure MaxStartMeasure(Extent p, Extent q) => Measure.Max(p.StartMeasure, q.StartMeasure);
-    public static IMeasure MinEndMeasure(Extent p, Extent q) => Measure.Min(p.EndMeasure, q.EndMeasure);
-    public static IMeasure MaxEndMeasure(Extent p, Extent q) => Measure.Max(p.EndMeasure, q.EndMeasure);
+    public IMeasure MinMeasure => MeasureBase.Min(StartMeasure, EndMeasure);
+    public IMeasure MaxMeasure => MeasureBase.Max(StartMeasure, EndMeasure);
+    public long MinPosition => MeasureBase.MinPosition(StartMeasure, EndMeasure);
+    public long MaxPosition => MeasureBase.MaxPosition(StartMeasure, EndMeasure);
+    public static IMeasure MinStartMeasure(Extent p, Extent q) => MeasureBase.Min(p.StartMeasure, q.StartMeasure);
+    public static IMeasure MaxStartMeasure(Extent p, Extent q) => MeasureBase.Max(p.StartMeasure, q.StartMeasure);
+    public static IMeasure MinEndMeasure(Extent p, Extent q) => MeasureBase.Min(p.EndMeasure, q.EndMeasure);
+    public static IMeasure MaxEndMeasure(Extent p, Extent q) => MeasureBase.Max(p.EndMeasure, q.EndMeasure);
     public static long MinExtentPosition(Extent p, Extent q) => Math.Min(p.MinPosition, q.MinPosition);
     public static long MaxExtentPosition(Extent p, Extent q) => Math.Max(p.MaxPosition, q.MaxPosition);
-    public static long MinStartPosition(Extent p, Extent q) => Measure.MinPosition(p.StartMeasure, q.StartMeasure);
-    public static long MaxStartPosition(Extent p, Extent q) => Measure.MaxPosition(p.StartMeasure, q.StartMeasure);
-    public static long MinEndPosition(Extent p, Extent q) => Measure.MinPosition(p.EndMeasure, q.EndMeasure);
-    public static long MaxEndPosition(Extent p, Extent q) => Measure.MaxPosition(p.EndMeasure, q.EndMeasure);
+    public static long MinStartPosition(Extent p, Extent q) => MeasureBase.MinPosition(p.StartMeasure, q.StartMeasure);
+    public static long MaxStartPosition(Extent p, Extent q) => MeasureBase.MaxPosition(p.StartMeasure, q.StartMeasure);
+    public static long MinEndPosition(Extent p, Extent q) => MeasureBase.MinPosition(p.EndMeasure, q.EndMeasure);
+    public static long MaxEndPosition(Extent p, Extent q) => MeasureBase.MaxPosition(p.EndMeasure, q.EndMeasure);
 
     // todo: Pretty sure these bool ops need updating with the partial measures. Just making compile for now.
 
@@ -172,14 +173,14 @@ public class Extent : IExtent // was Focal in previous versions
     }
     public static Extent Overlap(Extent p, Extent q)
     {
-        var start = Measure.Max(p.MinMeasure, q.MinMeasure);
-        var end = Measure.Min(p.MaxMeasure, q.MaxMeasure);
-        return start >= end ? new Extent(Measure.Unknown, Measure.Unknown) : new Extent(start, end);
+        var start = MeasureBase.Max(p.MinMeasure, q.MinMeasure);
+        var end = MeasureBase.Min(p.MaxMeasure, q.MaxMeasure);
+        return start >= end ? new Extent(MeasureBase.Unknown, MeasureBase.Unknown) : new Extent(start, end);
     }
     public static Extent Join(Extent p, Extent q)
     {
-        var start = Measure.Min(p.MinMeasure, q.MinMeasure);
-        var end = Measure.Max(p.MaxMeasure, q.MaxMeasure);
+        var start = MeasureBase.Min(p.MinMeasure, q.MinMeasure);
+        var end = MeasureBase.Max(p.MaxMeasure, q.MaxMeasure);
         return new Extent(start, end);
     }
 
@@ -199,19 +200,19 @@ public class Extent : IExtent // was Focal in previous versions
         // If p starts at the beginning of the time frame and ends before the end, the "not A" relationship consists of a single interval from p.EndTickPosition + 1 to the end of the time frame
         else if (p.StartMeasure.IsZero)
         {
-            return new Extent[] { new Extent(p.EndMeasure++, Measure.MaxDown()) };
+            return new Extent[] { new Extent(p.EndMeasure++, MeasureBase.MaxDown()) };
         }
         // If p starts after the beginning of the time frame and ends at the end, the "not A" relationship consists of a single interval from the beginning of the time frame to p.StartTickPosition - 1
         else if (p.EndMeasure.IsMax)
         {
-            return new Extent[] { new Extent(Measure.ZeroUp(), p.StartMeasure--) };
+            return new Extent[] { new Extent(MeasureBase.ZeroUp(), p.StartMeasure--) };
         }
         // If p starts and ends within the time frame, the "not A" relationship consists of two intervals: from the beginning of the time frame to p.StartTickPosition - 1, and from p.EndTickPosition + 1 to the end of the time frame
         else
         {
             return new Extent[] {
-                new Extent(Measure.ZeroUp(), p.StartMeasure--),
-                new Extent(p.EndMeasure++, Measure.MaxDown()) };
+                new Extent(MeasureBase.ZeroUp(), p.StartMeasure--),
+                new Extent(p.EndMeasure++, MeasureBase.MaxDown()) };
         }
     }
     public static Extent[] Transfer(Extent p)
@@ -391,8 +392,8 @@ public class Extent : IExtent // was Focal in previous versions
         {
             result = new Extent[]
             {
-            new Extent(Measure.MinUp(), overlap.StartMeasure),
-            new Extent(overlap.EndMeasure, Measure.MaxDown())
+            new Extent(MeasureBase.MinUp(), overlap.StartMeasure),
+            new Extent(overlap.EndMeasure, MeasureBase.MaxDown())
             };
         }
         return result;
@@ -444,7 +445,7 @@ public class Extent : IExtent // was Focal in previous versions
 
     //public static Extent CreateZeroExtent(long ticks) { return new Extent(0, ticks); }
     //public static Extent CreateBalancedExtent(long halfTicks) { return new Extent(-halfTicks, halfTicks); }
-    public static Extent MinMaxExtent => new Extent(Measure.MinUp(), Measure.MaxDown());
+    public static Extent MinMaxExtent => new Extent(MeasureBase.MinUp(), MeasureBase.MaxDown());
     //public static Extent OneExtent => new Extent(0, 1);
     //public static Extent UpMaxExtent => new Extent(0, long.MaxValue);
 

@@ -31,18 +31,19 @@ public abstract class MeasureBase : IMeasure
 	public event Action<long> PositionChanged;
 
 	public virtual long Position { get; protected set; }
-	public bool Inclusive { get; protected set; }
+	public virtual bool Inclusive { get; protected set; }
 	public Direction Direction { get; protected set; }
-	public bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;
-	public bool IsMax => Position == long.MaxValue;
-	public bool IsMin => Position == long.MinValue;
-	public bool IsZero => Position == 0 && IsFullDefined;
-	public double Value
+	public virtual bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;
+	public virtual bool IsMax => Position == long.MaxValue;
+	public virtual bool IsMin => Position == long.MinValue;
+	public virtual bool IsZero => Position == 0 && IsFullDefined;
+	public virtual bool IsCertain => Certainty.HasValue();
+	public virtual double Value
 	{
 		get => (double)Position;
 		protected set => Position = (long)value;
 	}
-	public CertaintyLevel Certainty { get; set; }
+    public virtual CertaintyLevel Certainty { get; set; }
 
 	protected MeasureBase()
 	{
@@ -54,13 +55,16 @@ public abstract class MeasureBase : IMeasure
 		Inclusive = inclusive;
 		Certainty = certainty;
 	}
-	public bool IsCertain => Certainty.HasValue();
 	public virtual void SetPosition(long position)
 	{
 		Position = position;
 		PositionChanged?.Invoke(position);
-	}
-	public static IMeasure MaxDown()
+    }
+    public virtual void Negate()
+    {
+        SetPosition(-Position);
+    }
+    public static IMeasure MaxDown()
 	{
 		return IMeasure.CreateExtreme(true, Direction.FacesLeft, true);
 	}
