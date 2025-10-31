@@ -49,20 +49,23 @@ public class RationalNumber : RawNumber, IPartialNumber
 	/// <summary>
 	/// A RationalNumber is a complex number with constraints on the left side.
 	/// </summary>
-	public RationalNumber(long value, long resolution)
-	{
-		RightMeasure = new Measure(value, Direction.FacesRight, true);
-		RightUnit = new Measure(resolution, Direction.FacesRight, true);
-		LeftUnit = new Measure(resolution, Direction.FacesLeft, true);
-		LeftMeasure = new Measure(0, Direction.FacesLeft, true);
-	}
+	public RationalNumber(long value, long resolution) :
+         this (new Measure(value, Direction.FacesRight, true),new Measure(resolution, Direction.FacesRight, true)){}
 	public RationalNumber(float value, long resolution) : this((long)(value * resolution), resolution) { }
+    public RationalNumber(IMeasure measure, IMeasure unit) 
+    {
+        RightMeasure = measure;
+        RightUnit = unit;
+        LeftUnit = new Measure(RightUnit.Position, Direction.FacesLeft, true);
+        LeftMeasure = new Measure(0, Direction.FacesLeft, true);
+    }
+    public static RationalNumber Zero => new RationalNumber(0, long.MaxValue);
 
-	// ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
-	// Value - measure / unit, what we normally consider the number to be.
-	// Reciprocal - unit/value.
-	// Shift - this is akin to add and subtract, but there is no added value. Essentially it is shifting the zero point. Add requires two things.
+    // ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
+    // Value - measure / unit, what we normally consider the number to be.
+    // Reciprocal - unit/value.
+    // Shift - this is akin to add and subtract, but there is no added value. Essentially it is shifting the zero point. Add requires two things.
 
-	// Add, multiply etc all require a second rational number.
+    // Add, multiply etc all require a second rational number.
 
 }

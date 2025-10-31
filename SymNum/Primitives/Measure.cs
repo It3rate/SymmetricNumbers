@@ -28,11 +28,11 @@ public abstract class MeasureBase : IMeasure
 {
 	public static readonly IMeasure Unknown = new Measure(0, Direction.Unknown, false);
 
-	public event Action<long> PositionChanged;
+	public event Action<IMeasure> PositionChanged;
 
 	public virtual long Position { get; protected set; }
 	public virtual bool Inclusive { get; protected set; }
-	public Direction Direction { get; protected set; }
+	public virtual Direction Direction { get; protected set; }
 	public virtual bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;
 	public virtual bool IsMax => Position == long.MaxValue;
 	public virtual bool IsMin => Position == long.MinValue;
@@ -55,10 +55,12 @@ public abstract class MeasureBase : IMeasure
 		Inclusive = inclusive;
 		Certainty = certainty;
 	}
-	public virtual void SetPosition(long position)
+
+
+    public virtual void SetPosition(long position)
 	{
 		Position = position;
-		PositionChanged?.Invoke(position);
+		PositionChanged?.Invoke(this);
     }
     public virtual void Negate()
     {

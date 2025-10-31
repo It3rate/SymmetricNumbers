@@ -29,24 +29,24 @@ public class UnbalancedNumber : RawNumber
     public long MaxResolution => Math.Max(LeftUnitPosition, RightUnitPosition);
 
     protected UnbalancedNumber() { }
-    public UnbalancedNumber(IMeasure real, IMeasure imaginaryResolution, IMeasure realResolution, IMeasure imaginary)
+    public UnbalancedNumber(long? rational, long? imaginaryResolution, long? rationalResolution, long? imaginary)
     {
-        RightMeasure = real;
-        LeftUnit = imaginaryResolution;
-        RightUnit = realResolution;
-        LeftMeasure = imaginary;
-        Initialize();
-    }
-    public UnbalancedNumber(long? real, long? imaginary, long? realResolution, long? imaginaryResolution)
-    {
-        RightMeasure = new Measure(real ?? 0, Direction.FacesRight, true,
-            (real == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
+        RightMeasure = new Measure(rational ?? 0, Direction.FacesRight, true,
+            (rational == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
         LeftUnit = new Measure(imaginary ?? 0, Direction.FacesLeft, true,
             (imaginary == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
-        RightUnit = new Measure(realResolution ?? 0, Direction.FacesRight, true,
-            (realResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
+        RightUnit = new Measure(rationalResolution ?? 0, Direction.FacesRight, true,
+            (rationalResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
         LeftMeasure = new Measure(imaginaryResolution ?? 0, Direction.FacesLeft, true,
             (imaginaryResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
+        Initialize();
+    }
+    public UnbalancedNumber(IMeasure rational, IMeasure imaginary, IMeasure rationalResolution, IMeasure imaginaryResolution)
+    {
+        RightMeasure = rational;
+        LeftUnit = imaginaryResolution;
+        RightUnit = rationalResolution;
+        LeftMeasure = imaginary;
         Initialize();
     }
     private void Initialize()

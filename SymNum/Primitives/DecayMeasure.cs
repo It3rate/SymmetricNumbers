@@ -11,14 +11,27 @@ public class DecayMeasure : MeasureBase, IVolatile
     public IMeasure DecayRate { get; set; }
     public IMeasure Minimum { get; set; }
     public IMeasure Maximum { get; set; }
-    public IMeasure? Boost { get; set; }
-    public override CertaintyLevel Certainty => CertaintyLevel.Perceived;
+
+    public override Direction Direction => DecayRate.Direction;
 
     public override bool Inclusive => true;
     public override bool IsCertain => true;
     public override bool IsMax => Position >= Maximum.Position;
     public override bool IsMin => Position <= Minimum.Position;
 
+    private long _position;
+    public override long Position
+    {
+        get => _position;
+        protected set => _position = long.Clamp(value, Minimum.Position, Maximum.Position);
+    }
+
+    public DecayMeasure(long decayRate, long minimum, long maximum, Direction direction)
+    {
+        DecayRate = new Measure(decayRate, direction, true, CertaintyLevel.Set);
+        Minimum = new Measure(minimum, direction, true, CertaintyLevel.Set);
+        Maximum = new Measure(maximum, direction, true, CertaintyLevel.Set);
+    }
     public DecayMeasure(IMeasure decayRate, IMeasure minimum, IMeasure maximum)
     {
         DecayRate = decayRate;
@@ -29,24 +42,9 @@ public class DecayMeasure : MeasureBase, IVolatile
     {
         DecayRate.Negate();
     }
-    public void Update(float deltaTime)
+    public void OnTargetChange(IMeasure trackingTarget)
     {
-        var change = DecayRate.Position + (Boost == null ? 0 : Boost.Position);
+        var change = trackingTarget.Position >= 0 ? DecayRate.Position : -DecayRate.Position;
         SetPosition(Position - change);
-    }
-    public override void SetPosition(long position)
-    {
-        if (Position <= Minimum.Position)
-        {
-            Position = Minimum.Position;
-        }
-        else if (Position >= Maximum.Position)
-        {
-            Position = Maximum.Position;
-        }
-        else
-        {
-            Position = position;
-        }
     }
 }

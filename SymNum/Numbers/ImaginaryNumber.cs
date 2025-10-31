@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SymNum.Expressions;
 using SymNum.Primitives;
 namespace SymNum.Numbers;
 
@@ -49,20 +50,22 @@ public class ImaginaryNumber : RawNumber, IPartialNumber
 	/// <summary>
 	/// A RationalNumber is a complex number with constraints on the left side.
 	/// </summary>
-	public ImaginaryNumber(long resolution, long value)
-	{
-		LeftMeasure = new Measure(value, Direction.FacesLeft, true);
-		LeftUnit = new Measure(resolution, Direction.FacesLeft, true);
-		RightUnit = new Measure(resolution, Direction.FacesRight, true);
-		RightMeasure = new Measure(0, Direction.FacesRight, true);
-	}
+	public ImaginaryNumber(long resolution, long value):
+         this (new Measure(value, Direction.FacesLeft, true),new Measure(resolution, Direction.FacesLeft, true)){}
 	public ImaginaryNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
 
-	// ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
-	// Value - measure / unit, what we normally consider the number to be.
-	// Reciprocal - unit/value.
-	// Shift - this is akin to add and subtract, but there is no added value. Essentially it is shifting the zero point. Add requires two things.
+    public ImaginaryNumber(IMeasure measure, IMeasure unit)
+    {
+        LeftMeasure = measure;
+        LeftUnit = unit;
+		RightUnit = new Measure(LeftUnit.Position, Direction.FacesRight, true);
+		RightMeasure = new Measure(0, Direction.FacesRight, true);
+    }
+    // ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
+    // Value - measure / unit, what we normally consider the number to be.
+    // Reciprocal - unit/value.
+    // Shift - this is akin to add and subtract, but there is no added value. Essentially it is shifting the zero point. Add requires two things.
 
-	// Add, multiply etc all require a second rational number.
+    // Add, multiply etc all require a second rational number.
 
 }

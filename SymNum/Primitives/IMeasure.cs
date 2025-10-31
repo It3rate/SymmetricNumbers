@@ -12,7 +12,7 @@ namespace SymNum.Primitives;
 
 public interface IMeasure : IValue
 {
-	public event Action<long> PositionChanged;
+	public event Action<IMeasure> PositionChanged;
 	long Position { get; }
 	/// <summary>
 	/// Which line direction this measure is on. 
@@ -22,8 +22,8 @@ public interface IMeasure : IValue
 	void SetPosition(long position);
 	bool Inclusive { get; }
     void Negate();
-	//public CertaintyLevel CertaintyLevel { get; } // inherited
-	public bool IsCertain { get; }
+    //public CertaintyLevel CertaintyLevel { get; } // inherited
+    public bool IsCertain { get; }
 	bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;
 	bool IsMax => Position == long.MaxValue;
 	bool IsMin => Position == long.MinValue;

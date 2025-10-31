@@ -71,8 +71,9 @@ public interface INumber
 	ComplexNumber GetComplex();
 	UnbalancedNumber GetUnbalanced();
 	SymmetricNumber GetSymmetric();
+    void Mirror();
 
-	INumber Add(INumber other);
+    INumber Add(INumber other);
 	INumber Subtract(INumber other);
 	INumber Multiply(INumber other);
 	INumber Divide(INumber other);

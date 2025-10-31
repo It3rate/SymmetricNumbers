@@ -75,13 +75,23 @@ public class RawNumber : INumber
 
 
 
-	public virtual RationalNumber GetRational() { throw new NotImplementedException(); }
-	public virtual ImaginaryNumber GetImaginary() { throw new NotImplementedException(); }
-	public virtual ComplexNumber GetComplex() { throw new NotImplementedException(); }
-	public virtual UnbalancedNumber GetUnbalanced() { throw new NotImplementedException(); }
-	public virtual SymmetricNumber GetSymmetric() { throw new NotImplementedException(); }
-
-	public INumber Add(INumber other)
+	public virtual RationalNumber GetRational() => new RationalNumber(RightMeasure, RightUnit);
+    public virtual ImaginaryNumber GetImaginary() => new ImaginaryNumber(LeftMeasure, LeftUnit);
+    public virtual RationalNumber GetImaginaryAsRational() => new RationalNumber(LeftMeasure, LeftUnit);
+    public virtual ImaginaryNumber GetRationalAsImaginary() => new ImaginaryNumber(RightMeasure, RightUnit);
+    public virtual ComplexNumber GetComplex() => new ComplexNumber(LeftMeasure, RightMeasure, RightUnit);
+	public virtual UnbalancedNumber GetUnbalanced() => new UnbalancedNumber(RightMeasure, RightUnit, LeftUnit, LeftMeasure);
+    public virtual SymmetricNumber GetSymmetric() { throw new NotImplementedException(); }
+    public void Mirror()
+    {
+        var temprm = RightMeasure;
+        var tempru = RightUnit;
+        RightMeasure = LeftMeasure;
+        RightUnit = LeftUnit;
+        LeftUnit = tempru;
+        LeftMeasure = temprm;
+    }
+    public INumber Add(INumber other)
     {
         throw new NotImplementedException();
     }

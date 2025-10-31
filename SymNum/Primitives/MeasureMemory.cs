@@ -5,11 +5,34 @@ using System.Text;
 using System.Threading.Tasks;
 namespace SymNum.Primitives;
 
-public class MeasureMemory : MeasureBase
+public class MeasureMemory : MeasureBase, IVolatile
 {
 	public MemoryKind Kind { get; set; }
 	public IMeasure Measure { get; }
-	public override long Position => GetPostionByKind(Kind);
+	public override long Position
+    {
+        get
+        {
+            return GetPostionByKind(Kind);
+        }
+        protected set
+        {
+            lock (_historyLock)
+            {
+                if (_isFirst)
+                {
+                    for (int i = 0; i < MaxHistory; i++)
+                    {
+                        History.Enqueue(value);
+                    }
+                    _isFirst = false;
+                }
+
+                History.Enqueue(value);
+                History.Dequeue();
+            }
+        }
+    }
 	public Queue<long> History { get; } = new Queue<long>();
 	public int MaxHistory { get; }
 
@@ -21,9 +44,13 @@ public class MeasureMemory : MeasureBase
 		Kind = kind;
 		MaxHistory = maxHistory;
 		SetPosition(initialValue);
-		Measure.PositionChanged += (pos) => SetPosition(pos);
-	}
-	public long GetPostionByKind(MemoryKind kind)
+		Measure.PositionChanged += OnTargetChange;
+    }
+    public void OnTargetChange(IMeasure trackingTarget)
+    { 
+        SetPosition(trackingTarget.Position);
+    }
+    public long GetPostionByKind(MemoryKind kind)
 	{
 		long result;
 		switch (Kind)
@@ -56,24 +83,6 @@ public class MeasureMemory : MeasureBase
 		return result;
 	}
 	private readonly object _historyLock = new object();
-
-	public override void SetPosition(long value)
-	{
-		lock (_historyLock)
-		{
-			if (_isFirst)
-			{
-				for (int i = 0; i < MaxHistory; i++)
-				{
-					History.Enqueue(value);
-				}
-				_isFirst = false;
-			}
-
-			History.Enqueue(value);
-			History.Dequeue();
-		}
-	}
 
 	public double MemoryAverage
 	{
