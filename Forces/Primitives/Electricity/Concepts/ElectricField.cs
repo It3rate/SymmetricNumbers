@@ -6,8 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SymNum.Concepts;
-using SymNum.Measures.Expressions;
-using SymNum.Measures.Numbers;
+using SymNum.Numbers;
 
 public class ElectricField : ConceptSpace
 {

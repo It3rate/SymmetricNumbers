@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SymNum.Measures.Expressions;
-using SymNum.Measures.Numbers;
+using SymNum.Expressions;
+using SymNum.Numbers;
 
 // A concept describes any entity, real or abstract.
 // A common concept gets a word or category to name it, but most concepts are very specific and constructed on the fly by combining and constraining existing concepts or primitive input.

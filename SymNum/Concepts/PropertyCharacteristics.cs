@@ -1,12 +1,11 @@
 ﻿
-using SymNum.Measures.Equations;
-using SymNum.Measures.Primitives;
+using SymNum.Expressions;
+using SymNum.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace SymNum.Concepts;
 
 /// <summary>

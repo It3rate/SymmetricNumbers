@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace SymNum.Mind;
 
 // There exists a long list of 'equation shapes' that are gradually more specific,

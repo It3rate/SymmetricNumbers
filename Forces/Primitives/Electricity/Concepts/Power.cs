@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Forces.Primitives.Electricity.Momentum;
-using SymNum.Measures.Expressions;
-using SymNum.Measures.Numbers;
-using SymNum.Measures.Primitives;
+using SymNum.Expressions;
+using SymNum.Numbers;
+using SymNum.Primitives;
 
 // Power is voltage * current, akin to area in length * width.
 // 

@@ -1,8 +1,8 @@
 ﻿using Forces.Primitives.Electricity.Concepts;
 using SymNum.Concepts;
-using SymNum.Measures.Expressions;
-using SymNum.Measures.Numbers;
-using SymNum.Measures.Primitives;
+using SymNum.Expressions;
+using SymNum.Numbers;
+using SymNum.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,7 +63,7 @@ public class Creature : ConceptSpace
 		LeftEyeMemory = new MeasureMemory(LeftEye, MeasureMemory.MemoryKind.Average, 1);
 		RightEyeMemory = new MeasureMemory(RightEye, MeasureMemory.MemoryKind.Average, 1);
 		Sight = new UnbalancedNumber(RightEye, LeftEyeMemory, RightEyeMemory, LeftEye);
-
+        
 		LeftValue = Sight.CreateValueRef(RefKind.ImaginaryValue);
 		RightValue = Sight.CreateValueRef(RefKind.RealValue);
 		// average is an equation, but so is number. A number is two measures and a division,

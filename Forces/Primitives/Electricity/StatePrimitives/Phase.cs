@@ -1,6 +1,5 @@
 ﻿namespace Forces.Primitives.Electricity.StatePrimitives;
 
-using SymNum.Measures.Numbers;
 
 public class Phase : ComplexNumber
 {

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SymNum.Measures.Expressions;
-using SymNum.Measures.Numbers;
-using SymNum.Measures.Primitives;
+using SymNum.Expressions;
+using SymNum.Numbers;
+using SymNum.Primitives;
 
 public class Resistance : BinaryExpression
 {

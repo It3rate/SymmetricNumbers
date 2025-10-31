@@ -1,11 +1,10 @@
-﻿using SymNum.Measures.Equations;
-using SymNum.Measures.Numbers;
+﻿using SymNum.Expressions;
+using SymNum.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace SymNum.Concepts;
 /// <summary>
 /// This is a single aspect of a concept, which can be collected into a full concept or separated from a concept.

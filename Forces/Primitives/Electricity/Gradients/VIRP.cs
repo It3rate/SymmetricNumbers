@@ -1,5 +1,4 @@
 ﻿using Forces.Primitives.Sound.StatePrimitives;
-using SymNum.Measures.Numbers;
 
 namespace Forces.Primitives.Electricity.Gradients;
 
