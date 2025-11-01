@@ -19,9 +19,11 @@ public class Simulator : DrawableBase
     private float _fixedDt = 1f / 60f;
     private float _accumulator = 0f;
 
+    private SKBitmap _bitmap;
     public Simulator(PondArena arena)
     {
         _arena = arena;
+        _bitmap = new SKBitmap();
 
         var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
         _lights.Add(light);
