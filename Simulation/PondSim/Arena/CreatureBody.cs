@@ -25,12 +25,16 @@ public class CreatureBody : DrawableBase
         private set; }
     private Creature _creature;
 
-    private float _creatureRadius = 5f;
+    public SKPoint LeftEye { get; }
+    public SKPoint RightEye { get; }
 
     public CreatureBody(Creature creature)
     {
         _creature = creature;
-    }
+		var offset = _creatureRadius * -0.7f;
+		LeftEye = new(-offset, offset);
+		RightEye = new(-offset, -offset);
+	}
 
     public void InitPhysics(PondArena arena, Vector2 startPos, float startRot)
     {
@@ -104,33 +108,43 @@ public class CreatureBody : DrawableBase
         LightSensorValue = (float)Math.Clamp(totalIntensity / lights.Count, 0f, 1f);
     }
 
-    //private class RayCastCallback : IRayCastCallback
-    //{
-    //    public float? ClosestHitDist { get; private set; }
-    //    private float _distance;
+	//private class RayCastCallback : IRayCastCallback
+	//{
+	//    public float? ClosestHitDist { get; private set; }
+	//    private float _distance;
 
-    //    public RayCastCallback(float distance)
-    //    {
-    //        _distance = distance;
-    //        ClosestHitDist = null;
-    //    }
+	//    public RayCastCallback(float distance)
+	//    {
+	//        _distance = distance;
+	//        ClosestHitDist = null;
+	//    }
 
-    //    public float ReportFixture(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
-    //    {
-    //        ClosestHitDist ??= fraction * _distance;
-    //        return -1f; // Continue to find closest
-    //    }
+	//    public float ReportFixture(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
+	//    {
+	//        ClosestHitDist ??= fraction * _distance;
+	//        return -1f; // Continue to find closest
+	//    }
 
-    //    float IRayCastCallback.RayCastCallback(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
-    //    {
-    //        return 0; //throw new NotImplementedException();
-    //    }
-    //}
-    public override void Draw()
+	//    float IRayCastCallback.RayCastCallback(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
+	//    {
+	//        return 0; //throw new NotImplementedException();
+	//    }
+	//}
+	private static float _creatureRadius = 8f;
+	private SKPaint Fill = CorePens.GetBrush(SKColor.Parse("#F0F000"));
+	private SKPaint White = CorePens.GetBrush(SKColor.Parse("#FFFFFF"));
+	private SKPaint Outline = CorePens.GetPen(SKColor.Parse("#F01000"), 2);
+	public override void Draw()
     {
-        if (Body != null)
-        {
-            Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, Pens.DrawPen);
-        }
+        var offset = _creatureRadius * -0.7f;
+
+		if (Body != null)
+		{
+			Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, Fill);
+			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, White);
+			Canvas?.DrawCircle(RightEye, _creatureRadius / 2.5f, White);
+			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, Outline);
+			Canvas?.DrawCircle(RightEye, _creatureRadius / 2.5f, Outline);
+		}
     }
 }

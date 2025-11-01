@@ -40,6 +40,7 @@ public class SKImageMapper : DrawableBase
             Bounds = new SKRect(x, y, w * ratio + x, h * ratio + y);
         }
     }
+    public Bitmap WinBmp => new Bitmap(_path);
 
     public override void Draw()
     {

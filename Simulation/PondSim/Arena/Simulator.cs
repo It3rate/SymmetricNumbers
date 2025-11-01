@@ -11,6 +11,7 @@ using SkiaSharp;
 using Forces.Primitives.Steering.Simulation;
 using Simulation.Render;
 using NumbersSkia.Mappers;
+using System.Diagnostics;
 
 public class Simulator : DrawableBase
 {
@@ -21,13 +22,15 @@ public class Simulator : DrawableBase
     private float _accumulator = 0f;
 
     private SKImageMapper? _image;
+    private FastBitmap _fastBmp;
     public Simulator(PondArena arena)
     {
         _arena = arena;
         //var min = MathF.Min(_arena.Control.Width, _arena.Control.Height); //436;// 
         _image = new SKImageMapper("map1.png", new SKSegment(new(0,0), new(_arena.Control.Width, 0)));
+        _fastBmp = new FastBitmap(_image.WinBmp);
 
-        var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
+		var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
         _lights.Add(light);
 
         var creature1 = new Creature();
@@ -77,9 +80,17 @@ public class Simulator : DrawableBase
                 Canvas.Save();
                 Canvas.Translate(creature.Position.X, creature.Position.Y);
                 Canvas.RotateDegrees(creature.Rotation * 180f / MathF.PI);
-                creature.Draw();
+
+				var matrix = Canvas.TotalMatrix;
+				var left = matrix.MapPoint(creature.LeftEye);
+				var right = matrix.MapPoint(creature.RightEye);
+				var cLeft = _fastBmp.GetPixel((int)left.X, (int)left.Y).R;
+				var cRight = _fastBmp.GetPixel((int)right.X, (int)right.Y).R;
+				Trace.WriteLine($"({cLeft}, {cRight})");
+
+				creature.Draw();
                 Canvas.Restore();
-            }
+			}
         }
     }
 }
