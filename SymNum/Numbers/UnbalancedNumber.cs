@@ -41,7 +41,7 @@ public class UnbalancedNumber : RawNumber
             (imaginaryResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
         Initialize();
     }
-    public UnbalancedNumber(IMeasure rational, IMeasure imaginary, IMeasure rationalResolution, IMeasure imaginaryResolution)
+    public UnbalancedNumber(IMeasure rational, IMeasure imaginaryResolution, IMeasure rationalResolution, IMeasure imaginary)
     {
         RightMeasure = rational;
         LeftUnit = imaginaryResolution;

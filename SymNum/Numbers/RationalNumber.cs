@@ -68,4 +68,9 @@ public class RationalNumber : RawNumber, IPartialNumber
 
     // Add, multiply etc all require a second rational number.
 
+    public override string ToString()
+    {
+        return RightMeasurePosition + "/" + RightUnitPosition + ":" + RightValue.ToString("0.##");
+    }
+
 }

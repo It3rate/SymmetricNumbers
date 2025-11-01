@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ public class DecayMeasure : MeasureBase, IVolatile
     public IMeasure Maximum { get; set; }
 
     public override Direction Direction => DecayRate.Direction;
+    public override bool IsFullDefined => true;
 
     public override bool Inclusive => true;
     public override bool IsCertain => true;
@@ -42,9 +44,18 @@ public class DecayMeasure : MeasureBase, IVolatile
     {
         DecayRate.Negate();
     }
+    private bool _isFirst = true;
     public void OnTargetChange(IMeasure trackingTarget)
     {
-        var change = trackingTarget.Position >= 0 ? DecayRate.Position : -DecayRate.Position;
-        SetPosition(Position - change);
+        if (_isFirst)
+        {
+            SetPosition(trackingTarget.Position);
+            _isFirst = false;
+        }
+        else
+        {
+            var change = trackingTarget.Position >= Position ? 1.1f : -1.1f;// DecayRate.Position : -DecayRate.Position;
+            SetPosition((long)((trackingTarget.Position - Position)* 1.01f));
+        }
     }
 }

@@ -128,8 +128,9 @@ public abstract class MeasureBase : IMeasure
 
 public enum Direction
 {
-	Unknown, // direction is determined by a second measure
-	FacesLeft,
+    Unknown, // direction is determined by a second measure
+    Zero,
+    FacesLeft,
 	FacesRight,
 }
 public static class DirectionExtensions

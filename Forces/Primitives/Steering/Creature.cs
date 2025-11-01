@@ -5,6 +5,7 @@ using SymNum.Numbers;
 using SymNum.Primitives;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,10 +18,10 @@ public class Creature : ConceptSpace
 	// For now it is all manual to get the feel of it.
 	// The whole creature is a concept space, but light is also a concept space, as is brightness.
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
-    public Measure RightEyeInput { get; } = new Measure(10000, Direction.FacesRight);
-    public DecayMeasure RightEyeResolution { get; } = new DecayMeasure(1, 1, 255, Direction.FacesRight);
-    public Measure LeftEyeInput { get; } = new Measure(10000, Direction.FacesLeft);
-    public DecayMeasure LeftEyeResolution { get; } = new DecayMeasure(1, 1, 255, Direction.FacesLeft);
+    public Measure RightEyeInput { get; } = new Measure(50, Direction.FacesRight);
+    public DecayMeasure RightEyeResolution { get; } = new DecayMeasure(4, 10, 200, Direction.FacesRight);
+    public Measure LeftEyeInput { get; } = new Measure(50, Direction.FacesLeft);
+    public DecayMeasure LeftEyeResolution { get; } = new DecayMeasure(4, 10, 200, Direction.FacesLeft);
     public UnbalancedNumber Sight { get; } // sight is constructed from the left and right eye, based around Sight zero according to above, regardless of the actual eye input values.
 	public BinaryExpression BrightnessDirection { get; }
 
@@ -63,13 +64,13 @@ public class Creature : ConceptSpace
 		//var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
 		Thrust = new BinaryExpression(Motion.GetImaginary(), Motion.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
         // expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
-        TurnRatio = new BinaryExpression(Motion.GetImaginaryAsRational(), Motion.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
+        TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
     }
 
 	private Random _rnd = new Random();
-	private long _leftLight = 2000;
-	private long _rightLight = 2000;
-	private long _leftInc = 10;
+	private long _leftLight = 0;
+	private long _rightLight = 0;
+	private long _leftInc = 4;
 	public void OnTick()
 	{
 
@@ -83,10 +84,11 @@ public class Creature : ConceptSpace
         // read light input
         SetSight(_leftLight, _rightLight);
 
-		if (_leftLight > 2000 || _leftLight < -2000)
+		if (_leftLight > 200 || _leftLight < -200)
 		{
 			_leftInc = -_leftInc;
 		}
+        var s = Sight;
         // this can be done with equations eventually (avg, val-avg, res)
         //Sight.Reset(LeftEyeMemory.Position, _leftLight, _leftThrustResolution, RightEyeMemory.Position, _rightLight, _rightThrustResolution);
 

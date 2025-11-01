@@ -5,7 +5,8 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    
+    using SymNum.Numbers;
+
     public class Current : ComplexNumber 
     {
         public Current(long startPosition, long endPosition, long resolution) : base(startPosition, endPosition, resolution)

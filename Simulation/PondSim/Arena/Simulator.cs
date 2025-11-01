@@ -29,7 +29,7 @@ public class Simulator : DrawableBase
         var creature1 = new Creature();
 
         var creature = new CreatureBody(creature1);
-        creature.InitPhysics(_arena, new Vector2(400, 200), 10f);
+        creature.InitPhysics(_arena, new Vector2(500, 500), 10f);
         _creatures.Add(creature);
 
         Renderer.CurrentDrawable = this;

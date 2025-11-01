@@ -51,7 +51,7 @@ public class RawNumber : INumber
         LeftUnit = new Measure(0, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
         RightUnit = new Measure(0, Direction.FacesRight, true, CertaintyLevel.Uncertain);
         LeftMeasure = new Measure(0, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
-        ZeroPoint = new Measure(0, Direction.Unknown, true, CertaintyLevel.Uncertain);
+        ZeroPoint = new Measure(0, Direction.Zero, true, CertaintyLevel.Uncertain);
     }
     protected RawNumber(long tr, long tl, long br, long bl, long zeroPoint = 0)
     {
@@ -59,7 +59,7 @@ public class RawNumber : INumber
 		LeftUnit = new Measure(tl, Direction.FacesLeft, true);
 		RightUnit = new Measure(br, Direction.FacesRight, true);
 		LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
-        ZeroPoint = new Measure(zeroPoint, Direction.Unknown);
+        ZeroPoint = new Measure(zeroPoint, Direction.Zero);
     }
     /// <summary>
     /// Cast internals of another number into this type.
@@ -93,12 +93,16 @@ public class RawNumber : INumber
     }
     public INumber Add(INumber other)
     {
-        throw new NotImplementedException();
+        RightMeasure.SetPosition(RightMeasure.Position + other.RightMeasure.Position);
+        LeftMeasure.SetPosition(LeftMeasure.Position + other.LeftMeasure.Position);
+        return this;
     }
 
     public INumber Subtract(INumber other)
     {
-        throw new NotImplementedException();
+        RightMeasure.SetPosition(RightMeasure.Position - other.RightMeasure.Position);
+        LeftMeasure.SetPosition(LeftMeasure.Position - other.LeftMeasure.Position);
+        return this;
     }
 
     public INumber Multiply(INumber other)
