@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using SkiaSharp;
 using Forces.Primitives.Steering.Simulation;
 using Simulation.Render;
+using NumbersSkia.Mappers;
 
 public class Simulator : DrawableBase
 {
@@ -19,11 +20,12 @@ public class Simulator : DrawableBase
     private float _fixedDt = 1f / 60f;
     private float _accumulator = 0f;
 
-    private SKBitmap _bitmap;
+    private SKImageMapper? _image;
     public Simulator(PondArena arena)
     {
         _arena = arena;
-        _bitmap = new SKBitmap();
+        //var min = MathF.Min(_arena.Control.Width, _arena.Control.Height); //436;// 
+        _image = new SKImageMapper("map1.png", new SKSegment(new(0,0), new(_arena.Control.Width, 0)));
 
         var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
         _lights.Add(light);
@@ -68,6 +70,7 @@ public class Simulator : DrawableBase
         if (Canvas != null)
         {
             Canvas.Clear(SKColors.DarkSlateBlue);
+            _image?.Draw();
             //todo: draw obstacles/lights
             foreach (var creature in _creatures)
             {

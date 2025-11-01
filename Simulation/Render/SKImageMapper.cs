@@ -9,14 +9,16 @@ using SkiaSharp;
 public class SKImageMapper : DrawableBase
 {
     public SKRect Bounds { get; set; }
-    public SKSegment AspectRatio { get; set; }
+    public SKSegment AspectRatio { get; set; } = new SKSegment(SKPoint.Empty, SKPoint.Empty);
     public SKBitmap Bitmap { get; set; }
     public SKPaint BorderPen { get; set; }
     public SKSegment Guideline { get; set; }
     private string _path { get; set; }
 
-    public SKImageMapper(MouseAgent agent, string path, SKSegment guideline) 
+
+	public SKImageMapper(string path, SKSegment guideline) 
     {
+        Guideline = guideline;
         SetBitmap(path);
     }
 

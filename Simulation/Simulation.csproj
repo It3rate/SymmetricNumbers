@@ -18,4 +18,13 @@
     <ProjectReference Include="..\SymNum\SymNum.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Images\map0.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Images\map1.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
