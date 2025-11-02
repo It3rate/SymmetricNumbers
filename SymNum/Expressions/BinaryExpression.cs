@@ -24,6 +24,9 @@ public class BinaryExpression : IValue, IConstraint
     public INumber Second { get; set; }
     public BinaryOp Op { get; set; }
     public INumber Result { get; set; }
+    // Calculations and predictions are expected results, the actual result is measured.
+    // The diff is error/information and can be used in if/else etc.
+    public INumber ExpectedResult { get; set; } 
 
 	// This can not set its own value, as the value is calculated.
 	// Instead, it examines which inputs (First and Second) are fixed and which are variable,

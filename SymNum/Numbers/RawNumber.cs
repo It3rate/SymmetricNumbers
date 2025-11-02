@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using SymNum.Expressions;
 using SymNum.Primitives;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SymNum.Numbers;
 
 
@@ -261,6 +263,323 @@ public class RawNumber : INumber
     //public long DirectionalMin => IsPositiveDirection ? Min : Max;
     //public long DirectionalMax => IsPositiveDirection ? Max : Min;
     //public bool CanHaveDirection => HasTwoValues;
+
+
+    #region Bool Ops
+    //public bool FullyContains(Number toTest, bool includeEndpoints = true) => toTest != null ? Value.FullyContains(toTest.Value, includeEndpoints) : false;
+
+    //// segment comparison considers unot numbers to also have positive segments in the negative space, and
+    //// unit numbers to be unot in its negative space. So two unit numbers that have a point on both ends of a range,
+    //// can be considered an ordinary unot number. eg: [+++>....++>] == [....<---...]
+    //// This should also handle things like gt lt div0 etc
+
+    ////  0000	Never			0			FALSE
+    ////  0001	Both            A ^ B       AND
+    ////  0010	Only A          A ^ !B      A AND NOT B
+    ////  0011	A Maybe B       A           A
+    ////  0100	Only B			!A ^ B      NOT A AND B
+    ////  0101	B Maybe A       B           B
+    ////  0110	One of          A xor B     XOR
+    ////  0111	At least one    A v B       OR
+    ////  1000	No one          A nor B     NOR
+    ////  1001	Both or no one  A XNOR B    XNOR
+    ////  1010	A or no one		!B          NOT B
+    ////  1011	Not B alone     A v !B      A OR NOT B
+    ////  1100	B or no one		!A          NOT A
+    ////  1101	Not A alone		!A v B      NOT A OR B
+    ////  1110	Not both        A nand B    NAND
+    ////  1111	Always			1			TRUE
+
+    ///*
+    //function BooleanOperations()
+    //{
+    //  this.Never = function(a, b) { return 0; };
+    //  this.And = function(a, b) { return a & b; };
+    //  this.LeftandNotRight = function(a, b) { return a & ~b; };
+    //  this.Left = function(a, b) { return a; };
+    //  this.NotLeftAndRight = function(a, b) { return ~a & b; };
+    //  this.Right = function(a, b) { return b; };
+    //  this.Xor = function(a, b) { return a ^ b; };
+    //  this.Or = function(a, b) { return a | b; };
+    //  this.Nor = function(a, b) { return ~(a | b); };
+    //  this.Xnor = function(a, b) { return ~(a ^ b); };
+    //  this.NotRight = function(a, b) { return ~b; };
+    //  this.LeftOrNotRight = function(a, b) { return a | ~b; };// implies
+    //  this.NotLeft = function(a, b) { return ~a; };
+    //  this.RightOrNotLeft = function(a, b) { return ~a | b; }; // implies
+    //  this.Nand = function(a, b) { return ~(a & b); };
+    //  this.Always = function(a, b) { return 1; };
+    //}
+
+    //*/
+    //#endregion
+    //#region Interpolation
+    //public void InterpolateFromZero(Number t, Number result) => InterpolateFromZero(this, t, result);
+    //public void InterpolateFrom(Number source, Number t, Number result) => Interpolate(source, this, t, result);
+    //public void InterpolateTo(Number target, Number t, Number result) => Interpolate(this, target, t, result);
+    //public static void InterpolateFromZero(Number target, Number t, Number result)
+    //{
+    //    var targetValue = target.Value;
+    //    var tValue = t.Value;
+    //    result.StartValue = targetValue.Start * tValue.Start;
+    //    result.EndValue = targetValue.End * tValue.End;
+    //}
+    //public static void InterpolateFromOne(Number target, Number t, Number result)
+    //{
+    //    var targetValue = target.Value;
+    //    var tValue = t.Value;
+    //    result.StartValue = targetValue.Start * tValue.Start;
+    //    result.EndValue = (targetValue.End - 1.0) * tValue.End + 1.0;
+    //}
+    //public void InterpolateFromOne(Number target, double t)
+    //{
+    //    if (target != null)
+    //    {
+    //        var targetValue = target.Value;
+    //        StartValue = targetValue.Start * t;
+    //        EndValue = (targetValue.End - 1.0) * t + 1.0;
+    //    }
+    //}
+    //public void InterpolateFromOne(PRange range, double t)
+    //{
+    //    if (range != null)
+    //    {
+    //        StartValue = range.Start * t;
+    //        EndValue = (range.End - 1.0) * t + 1.0;
+    //    }
+    //}
+    //public static void Interpolate(Number source, Number target, Number t, Number result)
+    //{
+    //    var sourceValue = source.Value;
+    //    var targetValue = target.Value;
+    //    var tValue = t.Value;
+    //    result.StartValue = (targetValue.Start - sourceValue.Start) * tValue.Start + sourceValue.Start;
+    //    result.EndValue = (targetValue.End - sourceValue.End) * tValue.End + sourceValue.End;
+    //}
+    //#endregion
+    //#region Internal Segments
+    //// todo: public segments should be a class added with composition
+    ///// <summary>
+    ///// The number of subnumbers, will always be 1 for normal numbers, can be 0->n for masked or groups numbers.
+    ///// </summary>
+    //public virtual int Count => 1;
+    //public virtual long[] GetPositions()
+    //{
+    //    return new long[] { StartTickPosition, EndTickPosition };
+    //}
+    //public virtual void ClearInternalPositions() { }
+    //public virtual void AddPosition(long start, long end)
+    //{
+    //    StartTickPosition = start;
+    //    EndTickPosition = end;
+    //}
+    //public virtual void AddPosition(Focal focal)
+    //{
+    //    AddPosition(focal.StartPosition, focal.EndPosition);
+    //}
+    //public virtual void AddPosition(Number num)
+    //{
+    //    AddPosition(num.Focal.StartPosition, num.Focal.EndPosition);
+    //}
+    //public virtual void AddPosition(PRange range)
+    //{
+    //    var focal = Domain.CreateFocalFromRange(range);
+    //    AddPosition(focal.StartPosition, focal.EndPosition);
+    //}
+    //public virtual IEnumerable<Number> InternalNumbers()
+    //{
+    //    if (IsValid)
+    //    {
+    //        yield return this;
+    //    }
+    //}
+    //// probably need a ratio type, where first digit is ticks, and second ticks per unit.
+    ///// <summary>
+    ///// NumberGroups can have overlapping numbers, so this segmented version returns all partial ranges for each possible segment.
+    ///// Assumes aligned domains.
+    ///// </summary>
+    //public static (long[], List<Number[]>) SegmentedTable(Domain domain, bool allowOverlap, params Number[] numbers)
+    //{
+    //    var result = new List<Number[]>();
+    //    var internalNumberSets = new List<Number[]>();
+    //    var sPositions = new SortedSet<long>();
+    //    foreach (var number in numbers)
+    //    {
+    //        if (number.IsValid)
+    //        {
+    //            internalNumberSets.Add(number.InternalNumbers().ToArray());
+    //            sPositions.UnionWith(number.GetPositions());
+    //        }
+    //        else
+    //        {
+    //            internalNumberSets.Add([]);
+    //        }
+    //    }
+    //    var positions = sPositions.ToArray();
+
+    //    for (int i = 1; i < positions.Length; i++)
+    //    {
+    //        var focal = new Focal(positions[i - 1], positions[i]);
+    //        var matches = new List<Number>();
+    //        foreach (var numSet in internalNumberSets)
+    //        {
+    //            if (numSet.Length == 0)
+    //            {
+    //                matches.Add(CreateSubsegment(domain, focal, Polarity.None));
+    //            }
+    //            else
+    //            {
+    //                foreach (var number in numSet)
+    //                {
+    //                    var intersection = Focal.Intersection(number.Focal, focal);
+    //                    if (intersection != null)
+    //                    {
+    //                        matches.Add(CreateSubsegment(domain, intersection, number.Polarity));
+    //                    }
+    //                    else if (allowOverlap)
+    //                    {
+    //                        matches.Add(CreateSubsegment(domain, focal, Polarity.None)); // False is polarity none
+    //                    }
+    //                }
+    //            }
+    //        }
+    //        result.Add(matches.ToArray());
+    //    }
+    //    return (positions, result);
+    //}
+    //protected static Number CreateSubsegment(Domain domain, Focal focal, Polarity polairty = Polarity.None)
+    //{
+    //    var result = new Number(focal.Clone(), polairty); // false
+    //    result.Domain = domain;
+    //    return result;
+    //}
+    //protected static (Focal[], Polarity[], bool) ApplyOpToSegmentedTable(List<Number[]> data, OperationKind operation)
+    //{
+    //    var focals = new List<Focal>();
+    //    var polarities = new List<Polarity>();
+    //    var dirResult = false;
+    //    Focal? lastFocal = null;
+    //    Polarity lastPolarity = Polarity.Unknown;
+
+    //    foreach (var seg in data)
+    //    {
+    //        if (seg.Length == 0)
+    //        {
+    //        }
+    //        else
+    //        {
+    //            var first = seg[0];
+    //            var opResult = false;
+    //            var polResult = false;
+    //            var hasUndefSeg = false;
+    //            var segDir = false;
+    //            for (int i = 0; i < seg.Length; i++)
+    //            {
+    //                var curNum = seg[i];
+    //                if (!curNum.Polarity.HasPolarity())
+    //                {
+    //                    hasUndefSeg = true; // undefined polarity is not considered for direction
+    //                }
+    //                var func = BoolOperation.GetFunc(operation);
+    //                if (i == 0)
+    //                {
+    //                    polResult = curNum.IsAligned;
+    //                    segDir = curNum.IsUnitPositivePointing;
+    //                    opResult = curNum.HasPolairty;
+    //                }
+    //                else
+    //                {
+    //                    polResult = func(polResult, curNum.IsAligned); ;
+    //                    segDir = func(segDir, curNum.IsUnitPositivePointing);
+    //                    opResult = func(opResult, curNum.HasPolairty);
+    //                }
+    //            }
+    //            if (!hasUndefSeg)
+    //            {
+    //                dirResult = segDir;
+    //            }
+
+    //            if (opResult)
+    //            {
+    //                var focal = new Focal(first.MinTickPosition, first.MaxTickPosition);// dirResult ? new Focal(first.MinTickPosition, first.MaxTickPosition) : new Focal(first.MaxTickPosition, first.MinTickPosition);
+    //                var polarity = polResult ? Polarity.Aligned : Polarity.Inverted;
+    //                if (lastFocal != null)// && lastPolarity == polarity && lastFocal.IsPositiveDirection == focal.IsPositiveDirection) // merge continuous segments
+    //                {
+    //                    lastFocal.EndPosition = focal.EndPosition;
+    //                    //if (lastFocal.IsPositiveDirection)
+    //                    //{
+    //                    //    lastFocal.EndPosition = focal.EndPosition;
+    //                    //}
+    //                    //else
+    //                    //{
+    //                    //    lastFocal.StartPosition = focal.StartPosition;
+    //                    //}
+    //                }
+    //                else
+    //                {
+    //                    focals.Add(focal);
+    //                    polarities.Add(polarity);
+    //                    lastFocal = focal;
+    //                    lastPolarity = polarity;
+    //                }
+    //            }
+    //            else
+    //            {
+    //                lastFocal = null;
+    //            }
+    //        }
+    //    }
+
+    //    return (focals.ToArray(), polarities.ToArray(), dirResult);
+
+    //}
+    //#endregion
+
+    //#region Equality
+    //public Number Clone(bool addToStore = true)
+    //{
+    //    var result = new Number(Focal.Clone(), Polarity);
+    //    return Domain.AddNumber(result, addToStore);
+    //}
+    //public static bool operator ==(Number? a, Number? b)
+    //{
+    //    if (a is null && b is null)
+    //    {
+    //        return true;
+    //    }
+    //    if (a is null || b is null)
+    //    {
+    //        return false;
+    //    }
+    //    return a.Equals(b);
+    //}
+    //public static bool operator !=(Number? a, Number? b)
+    //{
+    //    return !(a == b);
+    //}
+    //public override bool Equals(object? obj)
+    //{
+    //    return obj is Number other && Equals(other);
+    //}
+    //public bool Equals(Number? value)
+    //{
+    //    if (value is null) { return false; }
+    //    return ReferenceEquals(this, value) ||
+    //            (
+    //            //IsValid && value.IsValid &&
+    //            Polarity == value.Polarity &&
+    //            Focal.Equals(this.Focal, value.Focal)
+    //            );
+    //}
+    //public override int GetHashCode()
+    //{
+    //    unchecked
+    //    {
+    //        var hashCode = Focal.GetHashCode() * 17 ^ ((int)Polarity + 27) * 397;// + (IsValid ? 77 : 33);
+    //        return hashCode;
+    //    }
+    //}
+    #endregion
 
 }
 
