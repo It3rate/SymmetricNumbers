@@ -71,33 +71,10 @@ public class Creature : ConceptSpace
 	private long _leftInc = 4;
 	public void OnTick()
 	{
-
-		// the resolution of a number will often not be set by the sensor itself. The light input is an eye thing, but the calibration 
-		// is up to whatever uses that information. In this case, the leg thrust and the eye have to negotiate a resolution that powers the leg correctly.
-		// The eye input value can be used by many other things, so there will be many numbers made with it, there is no single 'lumen' value everyone uses.
-		//      var rightLight = _rnd.Next(2000) + 4000; // get from environment
-		//var leftLight = _rnd.Next(2000) + 4000; // get from environment
-		//_leftLight += _leftInc;
-		//_rightLight -= _leftInc;
-  //      // read light input
-  //      SetSight(_leftLight, _rightLight);
-
-		//if (_leftLight > 200 || _leftLight < -200)
-		//{
-		//	_leftInc = -_leftInc;
-		//}
-  //      var s = Sight;
-        // this can be done with equations eventually (avg, val-avg, res)
-        //Sight.Reset(LeftEyeMemory.Position, _leftLight, _leftThrustResolution, RightEyeMemory.Position, _rightLight, _rightThrustResolution);
-
-
-		// set thrust
-		//Motion.RightMeasure.SetPosition(TurnRatio);
-		//Motion.SetValueFromRefKind(RefKind.ImaginaryValue, TurnLeft.Value);
-
-		//// move creature in environment based on thrust
+		TurnRatio.Calculate();
 		var rot = (TurnRatio.Result.GetImaginary().FloatValue - TurnRatio.Result.GetRational().FloatValue) * 30; // max 60 degrees
 		FacingDirection += rot;
+		Trace.WriteLine(rot);
         // add motion at constant speed in this Direction, wrap if at edge of image.
         // todo: motion and env read for creature.
         // This is probably the arena reading direction change and speed, creature doesn't know where it is.

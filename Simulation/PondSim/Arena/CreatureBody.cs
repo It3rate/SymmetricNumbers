@@ -56,7 +56,7 @@ public class CreatureBody : DrawableBase
         Body.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
     }
 
-	private float _thrustForce = 6000f; // Tune for sim scale
+	private float _thrustForce = 600f; // Tune for sim scale
 	private float _turnTorque = 1000f;
 	public override void Update(float deltaTime)
 	{
@@ -64,9 +64,11 @@ public class CreatureBody : DrawableBase
         _creature.OnTick();
         if(Body != null)
         {
-            var turn = _creature.TurnRatio.Calculate().GetRational().FloatValue/100f + 0.01f;
-            //var turn = (float)_creature.SightRatio.Value - 1.1f;
-            var thrust = 4f;// (float)_creature.Thrust.Value;
+			_creature.TurnRatio.Calculate();
+			var turn = //_creature.TurnRatio.Calculate().GetRational().FloatValue/100f + 0.01f;//
+					   (float)_creature.FacingDirection;//
+																					//var turn = (float)_creature.SightRatio.Value - 1.1f;
+			var thrust = 4f;// (float)_creature.Thrust.Value;
             var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
             turn = (float)Math.Clamp(turn, -3f, 3f);
             Body.ApplyForceToCenter(facing * thrust * _thrustForce, true);
