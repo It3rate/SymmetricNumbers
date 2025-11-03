@@ -46,8 +46,8 @@ public class CreatureBody : DrawableBase
             type = BodyType.Dynamic,
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
-            linearDamping = 0.5f,
-            angularDamping = 0.2f,
+            linearDamping = 1.3f,
+            angularDamping = 1.5f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
@@ -56,8 +56,8 @@ public class CreatureBody : DrawableBase
         Body.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
     }
 
-	private float _thrustForce = 600f; // Tune for sim scale
-	private float _turnTorque = 1000f;
+	private float _thrustForce = 1000f; // Tune for sim scale
+	private float _turnTorque = 6000f;
 	public override void Update(float deltaTime)
 	{
 		UpdateLightSensor();
@@ -67,14 +67,16 @@ public class CreatureBody : DrawableBase
 			_creature.TurnRatio.Calculate();
 			var turn = //_creature.TurnRatio.Calculate().GetRational().FloatValue/100f + 0.01f;//
 					   (float)_creature.FacingDirection;//
-																					//var turn = (float)_creature.SightRatio.Value - 1.1f;
-			var thrust = 4f;// (float)_creature.Thrust.Value;
+														//var turn = (float)_creature.SightRatio.Value - 1.1f;
+			var thrust = turn == 0 ? 2f: Math.Abs(1f / turn) + 2f;// 4f;// (float)_creature.Thrust.Value;
             var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
-            turn = (float)Math.Clamp(turn, -3f, 3f);
-            Body.ApplyForceToCenter(facing * thrust * _thrustForce, true);
 
+			var thrustMultiplier = Math.Abs(Body.GetLinearVelocity().Length()) < 6 ? 8000 : _thrustForce;
+            Body.ApplyForceToCenter(facing * thrust * thrustMultiplier, true);
+			
             Body.ApplyTorque(turn * _turnTorque, true);
-            //Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
+			//Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
+			//_thrustForce = 300;
         }
     }
 

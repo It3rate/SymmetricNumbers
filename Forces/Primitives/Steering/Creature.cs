@@ -19,9 +19,9 @@ public class Creature : ConceptSpace
 	// The whole creature is a concept space, but light is also a concept space, as is brightness.
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
     public Measure RightEyeInput { get; } = new Measure(50, Direction.FacesRight);
-    public DecayMeasure RightEyeResolution { get; } = new DecayMeasure(4, 10, 200, Direction.FacesRight);
+    public DecayMeasure RightEyeResolution { get; } = new DecayMeasure(4, 64, 200, Direction.FacesRight);
     public Measure LeftEyeInput { get; } = new Measure(50, Direction.FacesLeft);
-    public DecayMeasure LeftEyeResolution { get; } = new DecayMeasure(4, 10, 200, Direction.FacesLeft);
+    public DecayMeasure LeftEyeResolution { get; } = new DecayMeasure(4, 64, 200, Direction.FacesLeft);
     public UnbalancedNumber Sight { get; } // sight is constructed from the left and right eye, based around Sight zero according to above, regardless of the actual eye input values.
 	public BinaryExpression BrightnessDirection { get; }
 
@@ -72,8 +72,8 @@ public class Creature : ConceptSpace
 	public void OnTick()
 	{
 		TurnRatio.Calculate();
-		var rot = (TurnRatio.Result.GetImaginary().FloatValue - TurnRatio.Result.GetRational().FloatValue) * 30; // max 60 degrees
-		FacingDirection += rot;
+		var rot = (TurnRatio.Result.GetImaginary().FloatValue - TurnRatio.Result.GetRational().FloatValue); // max 60 degrees
+		FacingDirection = (float)Math.Clamp(rot, -3f, 3f); 
 		Trace.WriteLine(rot);
         // add motion at constant speed in this Direction, wrap if at edge of image.
         // todo: motion and env read for creature.
