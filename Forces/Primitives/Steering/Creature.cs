@@ -49,9 +49,7 @@ public class Creature : ConceptSpace
 	private static long _leftThrustResolution = 10;
 	private static long _rightThrustResolution = 10;
 
-
-
-    public Creature()
+	public Creature()
     {
         RightEyeInput.PositionChanged += RightEyeResolution.OnTargetChange;
         LeftEyeInput.PositionChanged += LeftEyeResolution.OnTargetChange;
@@ -79,16 +77,16 @@ public class Creature : ConceptSpace
 		// The eye input value can be used by many other things, so there will be many numbers made with it, there is no single 'lumen' value everyone uses.
 		//      var rightLight = _rnd.Next(2000) + 4000; // get from environment
 		//var leftLight = _rnd.Next(2000) + 4000; // get from environment
-		_leftLight += _leftInc;
-		_rightLight -= _leftInc;
-        // read light input
-        SetSight(_leftLight, _rightLight);
+		//_leftLight += _leftInc;
+		//_rightLight -= _leftInc;
+  //      // read light input
+  //      SetSight(_leftLight, _rightLight);
 
-		if (_leftLight > 200 || _leftLight < -200)
-		{
-			_leftInc = -_leftInc;
-		}
-        var s = Sight;
+		//if (_leftLight > 200 || _leftLight < -200)
+		//{
+		//	_leftInc = -_leftInc;
+		//}
+  //      var s = Sight;
         // this can be done with equations eventually (avg, val-avg, res)
         //Sight.Reset(LeftEyeMemory.Position, _leftLight, _leftThrustResolution, RightEyeMemory.Position, _rightLight, _rightThrustResolution);
 
@@ -104,7 +102,7 @@ public class Creature : ConceptSpace
         // todo: motion and env read for creature.
         // This is probably the arena reading direction change and speed, creature doesn't know where it is.
     }
-    private void SetSight(long leftLight, long rightLight)
+    public void SetSight(long leftLight, long rightLight)
     {
         LeftEyeInput.SetPosition(leftLight);
         RightEyeInput.SetPosition(rightLight);

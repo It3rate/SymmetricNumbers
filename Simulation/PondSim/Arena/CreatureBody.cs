@@ -27,10 +27,13 @@ public class CreatureBody : DrawableBase
 
     public SKPoint LeftEye { get; }
     public SKPoint RightEye { get; }
+	public Simulator _sim { get; }
 
-    public CreatureBody(Creature creature)
+    public CreatureBody(Simulator sim, Creature creature)
     {
+		_sim = sim;
         _creature = creature;
+
 		var offset = _creatureRadius * -0.7f;
 		LeftEye = new(-offset, offset);
 		RightEye = new(-offset, -offset);
@@ -53,10 +56,11 @@ public class CreatureBody : DrawableBase
         Body.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
     }
 
-	private float _thrustForce = 600f; // Tune for sim scale
+	private float _thrustForce = 6000f; // Tune for sim scale
 	private float _turnTorque = 1000f;
-	public void ApplyActions()
-    {
+	public override void Update(float deltaTime)
+	{
+		UpdateLightSensor();
         _creature.OnTick();
         if(Body != null)
         {
@@ -72,41 +76,40 @@ public class CreatureBody : DrawableBase
         }
     }
 
-    // Sync after sim step (for rendering/sensor)
-    public override void Update(float deltaTime)
-    {
-        ApplyActions();
-    }
+    public void UpdateLightSensor()
+	{
+		var cLeft = _sim.GetLightAt(LeftEye + Position.SKPoint());
+		var cRight = _sim.GetLightAt(RightEye + Position.SKPoint());
+		_creature.SetSight(cLeft, cRight);
+		//Trace.WriteLine($"({cLeft}, {cRight})");
 
-    public void UpdateLightSensor(PondArena arena, List<LightSource> lights)
-    {
-        float totalIntensity = 0f;
-        foreach (var light in lights)
-        {
-            Vector2 toLight = new Vector2(light.Position.X - Position.X, light.Position.Y - Position.Y);
-            float distance = toLight.Length();
-            //toLight.Normalize();
+		//float totalIntensity = 0f;
+		//foreach (var light in lights)
+		//{
+		//    Vector2 toLight = new Vector2(light.Position.X - Position.X, light.Position.Y - Position.Y);
+		//    float distance = toLight.Length();
+		//    //toLight.Normalize();
 
-            // Raycast callback collector
-            //var rayCastCallback = new RayCastCallback(distance);
-            //arena.PhysicsWorld.RayCast(rayCastCallback,
-            //    new Vector2(Position.X, Position.Y),
-            //    new Vector2(Position.X, Position.Y) + toLight * distance);
+		//    // Raycast callback collector
+		//    //var rayCastCallback = new RayCastCallback(distance);
+		//    //arena.PhysicsWorld.RayCast(rayCastCallback,
+		//    //    new Vector2(Position.X, Position.Y),
+		//    //    new Vector2(Position.X, Position.Y) + toLight * distance);
 
-            //bool visible = !rayCastCallback.ClosestHitDist.HasValue || rayCastCallback.ClosestHitDist >= distance;
-            //if (visible)
-            //{
-            //    float angleDiff = MathF.Acos(Vector2.Dot(new Vector2(toLight.X, toLight.Y),
-            //        new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))));
-            //    if (angleDiff < MathF.PI / 2)
-            //    {
-            //        float intensity = light.Brightness / (distance * distance + 1f);
-            //        totalIntensity += (float)Math.Clamp(intensity, 0f, 1f);
-            //    }
-            //}
-        }
-        LightSensorValue = (float)Math.Clamp(totalIntensity / lights.Count, 0f, 1f);
-    }
+		//    //bool visible = !rayCastCallback.ClosestHitDist.HasValue || rayCastCallback.ClosestHitDist >= distance;
+		//    //if (visible)
+		//    //{
+		//    //    float angleDiff = MathF.Acos(Vector2.Dot(new Vector2(toLight.X, toLight.Y),
+		//    //        new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))));
+		//    //    if (angleDiff < MathF.PI / 2)
+		//    //    {
+		//    //        float intensity = light.Brightness / (distance * distance + 1f);
+		//    //        totalIntensity += (float)Math.Clamp(intensity, 0f, 1f);
+		//    //    }
+		//    //}
+		//}
+		//LightSensorValue = (float)Math.Clamp(totalIntensity / lights.Count, 0f, 1f);
+	}
 
 	//private class RayCastCallback : IRayCastCallback
 	//{
