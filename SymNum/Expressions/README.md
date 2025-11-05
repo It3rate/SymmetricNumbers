@@ -24,7 +24,25 @@
 ## The Algorithm
 - light, muscle and hunger are three properties hooked to each other by straps
 - light is input, so one direction, but it still can predict.
-- hunger is internal state, so it is input that is controllable (with food)
-- muscle is output.
-- prediction is set by what has focus (can be shared). muscle can predict next light,etc
-- predict, act, measure, diff
+- hunger is internal state, so it is input that is casued (by lack of food over time) and controllable (with food)
+- muscle is output, it can be self controlled or controlled by other states, and its actions directly affect input (light).
+- predict, act, measure, diff -> error correct by making new prediction
+- e.g. predict next light level, move muscles, measure light, diff.
+
+## Predictions
+- the advantage of predict->measure rather than measure->measure->find pattern, is the first requires no memory
+- prediction isn't just expectation or estimation, it is how goals are set. You can predict motion and that will cause you to move.
+- prediction is set by what has focus (can be shared). muscle, eyes and hunger can all predict/expect/desire next light value
+- The gradients that have focus collectivley predict/set desire for the next light. 
+    - If hungry, desire light
+    - if scared desire darkness quickly
+    - if neutral predict next light based on previous samples
+- There are many aspects of a concept, but we only use a few at once. It is these subsets that determine the prediction.
+- a prediction can have agency. The leg can predict speed because it knows it will push.
+
+## Measuring the result
+- Sometimes you just need true or false (light will get brighter)
+- Somemtimes you want quantification or ranges (light will get 10% to 20% brighter)
+- Sometimes you want relative information (light will be outside, touching, near current range)
+- Sometimes you want 16 bool options (prediction and actual have no overlap)
+- A number can represent all of these, and subtracting (or other op) the prediction from the actual gives you this number.
