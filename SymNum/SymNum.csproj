@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="Expressions\README.md" />
-  </ItemGroup>
-
 </Project>

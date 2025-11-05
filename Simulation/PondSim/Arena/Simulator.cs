@@ -33,11 +33,26 @@ public class Simulator : DrawableBase
 		var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
         _lights.Add(light);
 
-        var creature1 = new Creature();
+        //var w = 700;// _arena.Control.Width;
+        //var h = 800;// _arena.Control.Height;
+        //var rnd = new Random();
+        //for (var i = 0; i < 3; i++)
+        //{
+        //    var creature = new Creature();
+        //    var creatureBody = new CreatureBody(this, creature);
+        //    creatureBody.InitPhysics(_arena, new Vector2(rnd.Next(w), rnd.Next(h)), rnd.Next(10));
+        //    _creatureBodies.Add(creatureBody);
+        //}
 
+        var creature1 = new Creature();
         var creatureBody = new CreatureBody(this, creature1);
         creatureBody.InitPhysics(_arena, new Vector2(500, 500), 10f);
         _creatureBodies.Add(creatureBody);
+
+        var creature2 = new Creature();
+        var creatureBody2 = new CreatureBody(this, creature2);
+        creatureBody2.InitPhysics(_arena, new Vector2(200, 600), 4f);
+        _creatureBodies.Add(creatureBody2);
 
         Renderer.CurrentDrawable = this;
     }
@@ -69,7 +84,7 @@ public class Simulator : DrawableBase
             {
                 creatureBody.Update(deltaTime);
             }
-            _arena.PhysicsWorld.Step(_fixedDt, 8, 3); // Vel/pos iterations
+            _arena.PhysicsWorld.Step(_fixedDt, 18, 3); // Vel/pos iterations
 
         //    _accumulator -= _fixedDt;
         //}
