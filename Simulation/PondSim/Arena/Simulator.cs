@@ -33,20 +33,20 @@ public class Simulator : DrawableBase
 		var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
         _lights.Add(light);
 
-        var w = 700;// _arena.Control.Width;
-        var h = 800;// _arena.Control.Height;
+        var w = 620;// _arena.Control.Width;
+        var h = 620;// _arena.Control.Height;
         var rnd = new Random();
-        for (var i = 0; i < 80; i++)
+        for (var i = 0; i < 111; i++)
         {
             var creature = new Creature();
             var creatureBody = new CreatureBody(this, creature);
-            creatureBody.InitPhysics(_arena, new Vector2(rnd.NextSingle()*w, rnd.NextSingle()*h), rnd.NextSingle()*MathF.PI*2f);
+            creatureBody.InitPhysics(_arena, new Vector2(rnd.NextSingle() * w, rnd.NextSingle() * h), rnd.NextSingle() * MathF.PI * 2f);
             _creatureBodies.Add(creatureBody);
         }
 
         //var creature1 = new Creature();
         //var creatureBody = new CreatureBody(this, creature1);
-        //creatureBody.InitPhysics(_arena, new Vector2(500, 500), 10f);
+        //creatureBody.InitPhysics(_arena, new Vector2(400, 400), MathF.PI);
         //_creatureBodies.Add(creatureBody);
 
         //var creature2 = new Creature();

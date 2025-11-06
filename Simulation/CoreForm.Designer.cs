@@ -100,6 +100,9 @@
 			// corePanel
 			// 
 			corePanel.Location = new Point(122, 7);
+			corePanel.Margin = new Padding(0);
+			corePanel.MaximumSize = new Size(620, 620);
+			corePanel.MinimumSize = new Size(620, 620);
 			corePanel.Name = "corePanel";
 			corePanel.Size = new Size(620, 620);
 			corePanel.TabIndex = 4;

@@ -34,8 +34,8 @@ public class RawNumber : INumber
     // zero point is E
     public virtual IMeasure[] Measures { get; } = new IMeasure[5];
     public virtual IMeasure RightMeasure { get => Measures[0]; protected set => Measures[0] = value; }
-	public virtual IMeasure RightUnit { get => Measures[3]; protected set => Measures[3] = value; }
-	public virtual IMeasure LeftMeasure { get => Measures[2]; protected set => Measures[2] = value; }
+	public virtual IMeasure RightUnit { get => Measures[2]; protected set => Measures[2] = value; }
+	public virtual IMeasure LeftMeasure { get => Measures[3]; protected set => Measures[3] = value; }
 	public virtual IMeasure LeftUnit { get => Measures[1]; protected set => Measures[1] = value; }
 	public virtual IMeasure ZeroPoint { get => Measures[4]; protected set => Measures[4] = value; }
 

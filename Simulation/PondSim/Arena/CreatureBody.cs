@@ -46,8 +46,8 @@ public class CreatureBody : DrawableBase
             type = BodyType.Dynamic,
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
-            linearDamping = 0.9f,
-            angularDamping = 1.5f,
+            linearDamping = 1.9f,
+            angularDamping = 0.5f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
@@ -57,12 +57,12 @@ public class CreatureBody : DrawableBase
     }
 
 	private float _thrustForce = 2000f; // Tune for sim scale
-	private float _turnTorque = 1000f;
+	private float _turnTorque = 2000f;
 	public override void Update(float deltaTime)
 	{
 		var cLeft = _sim.GetLightAt(LeftEye + Position.SKPoint());
 		var cRight = _sim.GetLightAt(RightEye + Position.SKPoint());
-		//_creature.SetSight(cLeft, cRight);
+		_creature.SetSight(cLeft, cRight);
 		//Trace.WriteLine($"({cLeft}, {cRight})");
 		//UpdateLightSensor();
 
@@ -70,16 +70,17 @@ public class CreatureBody : DrawableBase
 
         if(Body != null)
         {
-			var turn =  (float)_creature.FacingDirection;
+			var turn =  (_creature.FacingDirection > 0) ? -1f : (_creature.FacingDirection < 0) ? 1f : 0;
 			var thrust = turn == 0 ? 2f: Math.Abs(1f / turn) + 2f;// 4f;// (float)_creature.Thrust.Value;
             var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
 
 			var thrustMultiplier = Math.Abs(Body.GetLinearVelocity().Length()) < 6 ? 8000 : _thrustForce;
 			Body.ApplyForceToCenter(facing * thrust * thrustMultiplier, true);
 
-            var turnTotal = float.Clamp(turn * _turnTorque, -5000f, 5000f);
+			var t = turn * _turnTorque;
+            var turnTotal = float.Clamp(t, -5000f, 5000f);
             Body.ApplyTorque(turnTotal, true);
-			//Trace.WriteLine(thrust + " : " + turn + " : " + turn*_turnTorque);
+			Trace.WriteLine(_creature.Sight.LeftMeasure.Position + ":"+ _creature.Sight.RightMeasure.Position + " : " + t);
 			//_thrustForce = 300;
         }
     }
@@ -138,7 +139,8 @@ public class CreatureBody : DrawableBase
 	//    }
 	//}
 	private static float _creatureRadius = 8f;
-	private SKPaint Fill = CorePens.GetBrush(SKColor.Parse("#F0F000"));
+	private SKPaint FillL = CorePens.GetBrush(SKColor.Parse("#00F0F0"));
+	private SKPaint FillR = CorePens.GetBrush(SKColor.Parse("#F0F000"));
 	private SKPaint White = CorePens.GetBrush(SKColor.Parse("#FFFFFF"));
 	private SKPaint Outline = CorePens.GetPen(SKColor.Parse("#F01000"), 2);
 	public override void Draw()
@@ -147,7 +149,8 @@ public class CreatureBody : DrawableBase
 
 		if (Body != null)
 		{
-			Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, Fill);
+			var f = _creature.FacingDirection > 0 ? FillR : FillL;
+			Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, f);
 			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, White);
 			Canvas?.DrawCircle(RightEye, _creatureRadius / 2.5f, White);
 			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, Outline);
