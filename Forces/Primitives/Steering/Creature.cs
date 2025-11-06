@@ -19,9 +19,9 @@ public class Creature : ConceptSpace
 	// The whole creature is a concept space, but light is also a concept space, as is brightness.
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
     public Measure RightEyeInput { get; } = new Measure(10, Direction.FacesRight);
-	public DecayMeasure RightEyeResolution { get; } = new DecayMeasure(2, 1, 255, Direction.FacesRight);// new DecayMeasure(4, 64, 200, Direction.FacesRight);
+	public DecayMeasure RightEyeResolution { get; } = new DecayMeasure(1, 1, 255, Direction.FacesRight);// new DecayMeasure(4, 64, 200, Direction.FacesRight);
     public Measure LeftEyeInput { get; } = new Measure(50, Direction.FacesLeft);
-    public DecayMeasure LeftEyeResolution { get; } = new DecayMeasure(2, 1, 255, Direction.FacesLeft);// new DecayMeasure(4, 64, 200, Direction.FacesLeft);
+    public DecayMeasure LeftEyeResolution { get; } = new DecayMeasure(1, 1, 255, Direction.FacesLeft);// new DecayMeasure(4, 64, 200, Direction.FacesLeft);
 	public UnbalancedNumber Sight { get; } // sight is constructed from the left and right eye, based around Sight zero according to above, regardless of the actual eye input values.
 	
 	public IMeasure RightThrust { get; } = new Measure(10, Direction.FacesRight, true, CertaintyLevel.Uncertain);
@@ -40,7 +40,7 @@ public class Creature : ConceptSpace
 	// this will be held in arena
 	public double XLocation { get; set; }
 	public double YLocation { get; set; }
-	public double FacingDirection { get; set; }
+	public double BrighterDirection { get; set; }
 
 	// these will be tuned values for sight and motion sensitivity
 	private static long _leftSightResolution = 1000;
@@ -75,16 +75,15 @@ public class Creature : ConceptSpace
 	public void OnTick()
 	{
 		Thrust.Calculate();
-		//TurnRatio.Calculate();
-		var left = Sight.LeftValue;// TurnRatio.Result.LeftMeasure;
-		var right = Sight.RightValue; // TurnRatio.Result.RightMeasure;
-									  //var rot = (TurnRatio.Result.GetImaginary().FloatValue - TurnRatio.Result.GetRational().FloatValue); // max 60 degrees
-		var rot = (left > right) ? (left / right + 1) : (right > left) ? -(right / left + 1) : 0; 
-		FacingDirection = (float)rot * 13f;// Math.Clamp(rot, -5f, 5f); 
-		//Trace.WriteLine(rot);
-        // add motion at constant speed in this Direction, wrap if at edge of image.
-        // todo: motion and env read for creature.
-        // This is probably the arena reading direction change and speed, creature doesn't know where it is.
+		var left = Sight.LeftValue;
+		var right = Sight.RightValue;
+		var rot = 0f;
+		if (left != 0 && right != 0) 
+		{
+			rot = (left > right) ? -(left / right + .1f) : (right > left) ? (right / left + .1f) : 0;
+		}
+		BrighterDirection = (float)rot;
+		Trace.WriteLine(rot.ToString("0.###"));
     }
     public void SetSight(long leftLight, long rightLight)
     {

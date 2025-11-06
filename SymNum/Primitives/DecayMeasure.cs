@@ -51,13 +51,13 @@ public class DecayMeasure : MeasureBase, IVolatile
         if (_isFirst)
         {
             _isFirst = false;
-            Trace.WriteLine("****************");
-            SetPosition(128);// trackingTarget.Position);
+            SetPosition(12);// trackingTarget.Position);
         }
         else
         {
-            //var change = trackingTarget.Position >= Position ? 1.01f : -1.01f;// DecayRate.Position : -DecayRate.Position;
-            SetPosition((long)((trackingTarget.Position - Position)* 0.06f + Position));
-        }
+            var change = trackingTarget.Position >= Position ? DecayRate.Position : -DecayRate.Position;
+            //SetPosition((long)((trackingTarget.Position - Position)* 0.07f + Position));
+			SetPosition((long)(change + Position));
+		}
     }
 }

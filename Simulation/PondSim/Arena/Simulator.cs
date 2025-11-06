@@ -39,10 +39,10 @@ public class Simulator : DrawableBase
 
         CreateWalls();
 
-        var margin = 0.8f;
+        var margin = 0.9f;
         var offset = (1f - margin) / 2f;
         var rnd = new Random();
-        var bodyCount = Debugger.IsAttached ? 1 : 100;
+        var bodyCount = Debugger.IsAttached ? 1 : 80;
 
 		for (var i = 0; i < bodyCount; i++)
         {

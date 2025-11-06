@@ -18,7 +18,6 @@ public class CreatureBody : DrawableBase
 {
     public Vector2 Position => Body?.GetPosition() ?? Vector2.Zero;
     public float Rotation => Body?.GetAngle() ?? 0;
-    public float LightSensorValue { get; private set; } // Output: 0 (dark) to 1 (bright)
 
     public Body? Body { 
         get;
@@ -47,7 +46,7 @@ public class CreatureBody : DrawableBase
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
             linearDamping = 3f,
-            angularDamping = 1.5f,
+            angularDamping = 1.3f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
@@ -58,114 +57,80 @@ public class CreatureBody : DrawableBase
 			density = 1f, 
 			friction = 0.01f,
 			restitution = 0.8f,
-			filter = new Filter
-			{
-				categoryBits = 0x0002,  // Creature category
-				maskBits = 0x0001       // Only collide with wall category
-			}
+			//filter = new Filter
+			//{
+			//	categoryBits = 0x0002,  // Creature category
+			//	maskBits = 0x0001       // Only collide with wall category
+			//}
 		});
     }
 
 	private float _thrustForce = 6000f; // Tune for sim scale
 	private float _turnTorque = 4000f;
 	private Random _rnd = new Random();
+	private float _turnTotal = 0f;
 	public override void Update(float deltaTime)
 	{
-		var cLeft = _sim.GetLightAt(LeftEye + Position.SKPoint());
-		var cRight = _sim.GetLightAt(RightEye + Position.SKPoint());
-		_creature.SetSight(cLeft, cRight);
-		//Trace.WriteLine($"({cLeft}, {cRight})");
-		//UpdateLightSensor();
-
+		SampleEyes();
         _creature.OnTick();
 
         if(Body != null)
-        {
-			var turn = Body.GetAngle() +  (float)_creature.FacingDirection;// > 0) ? -1f : (_creature.FacingDirection < 0) ? 1f : 0;
-			var thrust = 1.2f;
-			if(_creature.Brightness.SumValue < 20) // dark
-			{
-				thrust = 4f;
-				turn = 0;
-			}
-
-            var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
-
-			var thrustMultiplier = _thrustForce;// Math.Abs(Body.GetLinearVelocity().Length()) < 6 ? 8000 : _thrustForce;
-			var t = turn * _turnTorque;
+		{
 			var speed = Body.GetLinearVelocity().Length();
-			var turnTotal = float.Clamp(t, -15000f, 15000f);
+			var angle = Body.GetAngle();
 
+			var turnOffset = (float)_creature.BrighterDirection;
+			var thrustSclalar = 1.2f;
+			if(_creature.Brightness.SumValue < 4) // dark
+			{
+				turnOffset = 0;
+				thrustSclalar = 4f;
+			}
+			_turnTotal = float.Clamp(turnOffset * _turnTorque, -15000f, 15000f);
+
+            var turnVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 			if (speed < 1)
 			{
-				thrust = 5000;
-				facing = new Vector2(
-					_rnd.NextSingle() * MathF.PI*2f - MathF.PI, 
-					_rnd.NextSingle() * MathF.PI * 2f - MathF.PI);
-				turnTotal = (_rnd.NextSingle() - 0.5f) * 4000000;
+				thrustSclalar = 1000;
+				_turnTotal = (_rnd.NextSingle() - 0.5f) * 4000000f;
 			}
 
-			Body.ApplyForceToCenter(facing * thrust * thrustMultiplier, true);
-            Body.ApplyTorque(turnTotal, true);
-			Trace.WriteLine(thrust);
-			//Trace.WriteLine(_creature.Sight.LeftMeasure.Position + ":"+ _creature.Sight.RightMeasure.Position + " : " + thrust);
-			//_thrustForce = 300;
-        }
-    }
-
-    public void UpdateLightSensor()
+			Body.ApplyTorque(_turnTotal, true);
+			Body.ApplyForceToCenter(turnVec * thrustSclalar * _thrustForce, true);
+			//Trace.WriteLine("tt: "+ _turnTotal);
+			 
+		}
+	}
+	private void SampleEyes()
 	{
+		//var xform = Body.GetTransform();
+		//var angle = Body.GetAngle();
+		//var cosA = (float)Math.Cos(angle);
+		//var sinA = (float)Math.Sin(angle);
+		//var leftWorldOffset = new Vector2(
+		//	LeftEye.X * cosA - LeftEye.Y * sinA,
+		//	LeftEye.X * sinA + LeftEye.Y * cosA);
+		//var rightWorldOffset = new Vector2(
+		//	RightEye.X * cosA - RightEye.Y * sinA,
+		//	RightEye.X * sinA + RightEye.Y * cosA);
+		//var leftWorldPos = Position + leftWorldOffset;
+		//var rightWorldPos = Position + rightWorldOffset;
 
-		//float totalIntensity = 0f;
-		//foreach (var light in lights)
-		//{
-		//    Vector2 toLight = new Vector2(light.Position.X - Position.X, light.Position.Y - Position.Y);
-		//    float distance = toLight.Length();
-		//    //toLight.Normalize();
+		//Trace.WriteLine(_leftEyePos?.X + "," + _leftEyePos?.Y + " - " + leftWorldPos.X + "," + leftWorldPos.Y);
 
-		//    // Raycast callback collector
-		//    //var rayCastCallback = new RayCastCallback(distance);
-		//    //arena.PhysicsWorld.RayCast(rayCastCallback,
-		//    //    new Vector2(Position.X, Position.Y),
-		//    //    new Vector2(Position.X, Position.Y) + toLight * distance);
+		//var cLeft = _sim.GetLightAt(leftWorldPos.SKPoint());
+		//var cRight = _sim.GetLightAt(rightWorldPos.SKPoint());
+		if(_leftEyePos != null && _rightEyePos != null)
+		{
+			var cLeft = _sim.GetLightAt((SKPoint)_leftEyePos);
+			var cRight = _sim.GetLightAt((SKPoint)_rightEyePos!);
+			_creature.SetSight(cLeft, cRight);
 
-		//    //bool visible = !rayCastCallback.ClosestHitDist.HasValue || rayCastCallback.ClosestHitDist >= distance;
-		//    //if (visible)
-		//    //{
-		//    //    float angleDiff = MathF.Acos(Vector2.Dot(new Vector2(toLight.X, toLight.Y),
-		//    //        new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation))));
-		//    //    if (angleDiff < MathF.PI / 2)
-		//    //    {
-		//    //        float intensity = light.Brightness / (distance * distance + 1f);
-		//    //        totalIntensity += (float)Math.Clamp(intensity, 0f, 1f);
-		//    //    }
-		//    //}
-		//}
-		//LightSensorValue = (float)Math.Clamp(totalIntensity / lights.Count, 0f, 1f);
+		}
 	}
 
-	//private class RayCastCallback : IRayCastCallback
-	//{
-	//    public float? ClosestHitDist { get; private set; }
-	//    private float _distance;
-
-	//    public RayCastCallback(float distance)
-	//    {
-	//        _distance = distance;
-	//        ClosestHitDist = null;
-	//    }
-
-	//    public float ReportFixture(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
-	//    {
-	//        ClosestHitDist ??= fraction * _distance;
-	//        return -1f; // Continue to find closest
-	//    }
-
-	//    float IRayCastCallback.RayCastCallback(Fixture fixture, in Vector2 point, in Vector2 normal, float fraction)
-	//    {
-	//        return 0; //throw new NotImplementedException();
-	//    }
-	//}
+	private SKPoint? _leftEyePos;
+	private SKPoint? _rightEyePos;
 	private static float _creatureRadius = 8f;
 	private SKPaint FillL = CorePens.GetBrush(SKColor.Parse("#00F0F0"));
 	private SKPaint FillR = CorePens.GetBrush(SKColor.Parse("#F0F000"));
@@ -177,12 +142,15 @@ public class CreatureBody : DrawableBase
 
 		if (Body != null)
 		{
-			var f = _creature.FacingDirection > 0 ? FillR : FillL;
+			var f = _turnTotal > 0 ? FillR : FillL;
 			Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, f);
 			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, White);
 			Canvas?.DrawCircle(RightEye, _creatureRadius / 2.5f, White);
 			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, Outline);
 			Canvas?.DrawCircle(RightEye, _creatureRadius / 2.5f, Outline);
+
+			_leftEyePos = Canvas?.TotalMatrix.MapPoint(LeftEye);
+			_rightEyePos = Canvas?.TotalMatrix.MapPoint(RightEye);
 		}
     }
 }
