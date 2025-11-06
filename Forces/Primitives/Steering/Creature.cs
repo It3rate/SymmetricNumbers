@@ -60,7 +60,7 @@ public class Creature : ConceptSpace
 
 		//var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
 		//var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
-		//Thrust = new BinaryExpression(Motion.GetImaginary(), Motion.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
+		Thrust = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
         // expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
         //TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
     }
@@ -71,6 +71,7 @@ public class Creature : ConceptSpace
 	private long _leftInc = 4;
 	public void OnTick()
 	{
+		Thrust.Calculate();
 		//TurnRatio.Calculate();
 		var left = LeftEyeInput.Position;// TurnRatio.Result.LeftMeasure;
 		var right = RightEyeInput.Position; // TurnRatio.Result.RightMeasure;

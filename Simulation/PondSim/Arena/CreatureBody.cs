@@ -47,7 +47,7 @@ public class CreatureBody : DrawableBase
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
             linearDamping = 1.9f,
-            angularDamping = 0.5f,
+            angularDamping = 1.5f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
@@ -56,8 +56,8 @@ public class CreatureBody : DrawableBase
         Body.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.01f, restitution = 0.8f });
     }
 
-	private float _thrustForce = 2000f; // Tune for sim scale
-	private float _turnTorque = 2000f;
+	private float _thrustForce = 4000f; // Tune for sim scale
+	private float _turnTorque = 9000f;
 	public override void Update(float deltaTime)
 	{
 		var cLeft = _sim.GetLightAt(LeftEye + Position.SKPoint());
@@ -71,7 +71,7 @@ public class CreatureBody : DrawableBase
         if(Body != null)
         {
 			var turn =  (_creature.FacingDirection > 0) ? -1f : (_creature.FacingDirection < 0) ? 1f : 0;
-			var thrust = turn == 0 ? 2f: Math.Abs(1f / turn) + 2f;// 4f;// (float)_creature.Thrust.Value;
+			var thrust = _creature.Thrust.Result.GetRational().FloatValue > 20 ? 1 : 4;
             var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
 
 			var thrustMultiplier = Math.Abs(Body.GetLinearVelocity().Length()) < 6 ? 8000 : _thrustForce;
@@ -80,7 +80,7 @@ public class CreatureBody : DrawableBase
 			var t = turn * _turnTorque;
             var turnTotal = float.Clamp(t, -5000f, 5000f);
             Body.ApplyTorque(turnTotal, true);
-			Trace.WriteLine(_creature.Sight.LeftMeasure.Position + ":"+ _creature.Sight.RightMeasure.Position + " : " + t);
+			Trace.WriteLine(_creature.Sight.LeftMeasure.Position + ":"+ _creature.Sight.RightMeasure.Position + " : " + thrust);
 			//_thrustForce = 300;
         }
     }

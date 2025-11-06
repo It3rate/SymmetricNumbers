@@ -42,7 +42,8 @@ public class BinaryExpression : IValue, IConstraint
 		First = first ?? RawNumber.Unknown;
 		Second = second ?? RawNumber.Unknown;
 		Op = op;
-        Result = result ?? Calculate();
+        Result = result ?? new UnbalancedNumber(0,0,0,0);
+        Calculate();
         Certainty = state;
 		
     }
@@ -62,7 +63,7 @@ public class BinaryExpression : IValue, IConstraint
 	{
         if (First.IsFullyDefined && Second.IsFullyDefined)
         {
-			Result = Op.Invoke(First, Second);
+			Result.SetWith(Op.Invoke(First, Second));
         }
         else
         {

@@ -71,6 +71,10 @@ public class RawNumber : INumber
     {
         Array.Copy(number.Measures, Measures, Measures.Length);
     }
+    public void SetWith(INumber number)
+	{
+		Array.Copy(number.Measures, Measures, Measures.Length);
+	}
 
     protected static long _resolution = 1000000;
 	protected static RationalNumber CreateRational(float value) => new RationalNumber(value, _resolution);
@@ -92,27 +96,41 @@ public class RawNumber : INumber
         RightUnit = LeftUnit;
         LeftUnit = tempru;
         LeftMeasure = temprm;
-    }
-    public INumber Add(INumber other)
-    {
-        RightMeasure.SetPosition(RightMeasure.Position + other.RightMeasure.Position);
-        LeftMeasure.SetPosition(LeftMeasure.Position + other.LeftMeasure.Position);
-        return this;
-    }
+	}
+	public INumber AddTo(INumber other)
+	{
+		RightMeasure.SetPosition(RightMeasure.Position + other.RightMeasure.Position);
+		LeftMeasure.SetPosition(LeftMeasure.Position + other.LeftMeasure.Position);
+		return this;
+	}
 
-    public INumber Subtract(INumber other)
-    {
-        RightMeasure.SetPosition(RightMeasure.Position - other.RightMeasure.Position);
-        LeftMeasure.SetPosition(LeftMeasure.Position - other.LeftMeasure.Position);
-        return this;
-    }
+	public INumber SubtractTo(INumber other)
+	{
+		RightMeasure.SetPosition(RightMeasure.Position - other.RightMeasure.Position);
+		LeftMeasure.SetPosition(LeftMeasure.Position - other.LeftMeasure.Position);
+		return this;
+	}
+	public INumber Add(INumber other)
+	{
+		var r = RightMeasure.Position + other.RightMeasure.Position;
+		var l = LeftMeasure.Position + other.LeftMeasure.Position;
+        return new UnbalancedNumber(r, LeftUnit.Position, RightUnit.Position, l);
 
-    public INumber Multiply(INumber other)
+	}
+
+	public INumber Subtract(INumber other)
+	{
+		var r = RightMeasure.Position - other.RightMeasure.Position;
+		var l = LeftMeasure.Position - other.LeftMeasure.Position;
+		return new UnbalancedNumber(r, LeftUnit.Position, RightUnit.Position, l);
+	}
+
+	public INumber MultiplyTo(INumber other)
     {
         throw new NotImplementedException();
     }
 
-    public INumber Divide(INumber other)
+    public INumber DivideTo(INumber other)
     {
         throw new NotImplementedException();
     }

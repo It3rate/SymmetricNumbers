@@ -18,9 +18,9 @@ public class Power : BinaryExpression
     public INumber Current => Second;
     public override string Name => "Power";
     public Power(INumber voltage, INumber current) :
-        base(voltage, current, Ops.Multiply, null, CertaintyLevel.Derived)
+        base(voltage, current, Ops.MultiplyTo, null, CertaintyLevel.Derived)
     { }
     public Power(SymmetricNumber voltageCurrent) :
-        base(voltageCurrent.GetRational(), voltageCurrent.GetImaginary(), Ops.Multiply, null)
+        base(voltageCurrent.GetRational(), voltageCurrent.GetImaginary(), Ops.MultiplyTo, null)
     { }
 }

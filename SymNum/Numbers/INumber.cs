@@ -58,7 +58,7 @@ public interface INumber
 	/// The Observer point, defaults to zero but by no means is required. Some numbers (ratios) do not need a zero point.
 	/// </summary>
 	IMeasure ZeroPoint { get; }
-
+	void SetWith(INumber number);
 	long RightMeasurePosition { get; }
 	long RightUnitPosition { get; }
 	long LeftMeasurePosition { get; }
@@ -73,10 +73,12 @@ public interface INumber
 	SymmetricNumber GetSymmetric();
     void Mirror();
 
-    INumber Add(INumber other);
+    INumber AddTo(INumber other);
+	INumber SubtractTo(INumber other);
+	INumber MultiplyTo(INumber other);
+	INumber DivideTo(INumber other);
+	INumber Add(INumber other);
 	INumber Subtract(INumber other);
-	INumber Multiply(INumber other);
-	INumber Divide(INumber other);
 
 	// Add   
 	// Subtract   

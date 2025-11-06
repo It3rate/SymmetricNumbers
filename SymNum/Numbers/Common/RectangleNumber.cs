@@ -22,13 +22,13 @@ public class RectangleNumber : ComplexNumber
 		Area = new BinaryExpression(
 			Length,
 			Width,
-			Ops.Multiply,
+			Ops.MultiplyTo,
 			null,
 			CertaintyLevel.Derived);
 		AspectRatio = new BinaryExpression(
 			Length,
 			Width,
-			Ops.Divide,
+			Ops.DivideTo,
 			null,
 			CertaintyLevel.Derived);
 		Perimeter = new BinaryExpression(
@@ -38,5 +38,5 @@ public class RectangleNumber : ComplexNumber
 			null,
 			CertaintyLevel.Derived);
 	}
-	public static BinaryOp PerimeterOp = (left, right) => left.Add(right).Multiply(CreateRational(2f));
+	public static BinaryOp PerimeterOp = (left, right) => left.AddTo(right).MultiplyTo(CreateRational(2f));
 }

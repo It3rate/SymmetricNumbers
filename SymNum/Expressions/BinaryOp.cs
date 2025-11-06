@@ -12,10 +12,14 @@ namespace SymNum.Expressions;
 public delegate INumber BinaryOp(INumber left, INumber right);
 public static class Ops
 {
-	public static BinaryOp Add = (left, right) => left.Add(right);
+	public static BinaryOp AddTo = (left, right) => left.AddTo(right);
+	public static BinaryOp SubtractTo = (left, right) => left.SubtractTo(right);
+	public static BinaryOp MultiplyTo = (left, right) => left.MultiplyTo(right);
+	public static BinaryOp DivideTo = (left, right) => left.DivideTo(right);
+
+
+	public static BinaryOp Add = (left, right) => left.Add( right);
 	public static BinaryOp Subtract = (left, right) => left.Subtract(right);
-	public static BinaryOp Multiply = (left, right) => left.Multiply(right);
-	public static BinaryOp Divide = (left, right) => left.Divide(right);
 }
 public enum TwoMeasureOp
 {
