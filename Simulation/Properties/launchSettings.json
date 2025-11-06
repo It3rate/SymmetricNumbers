@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Simulation": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "hotReloadEnabled": false
+    }
+  }
+}

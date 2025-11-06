@@ -297,7 +297,7 @@ public class FastBitmap : IDisposable
 	public Color GetPixel(int x, int y)
 	{
 		int index = x + y * Width;
-		int col = Bits[index];
+		int col = index < Bits.Length ? Bits[index] : 0;
 		Color result = Color.FromArgb(col);
 
 		return result;

@@ -46,22 +46,28 @@ public class CreatureBody : DrawableBase
             type = BodyType.Dynamic,
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
-            linearDamping = 1.3f,
+            linearDamping = 0.9f,
             angularDamping = 1.5f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
         Body = body;
         var circleShape = new CircleShape { Radius = _creatureRadius };
-        Body.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.3f, restitution = 0.1f });
+        Body.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.01f, restitution = 0.8f });
     }
 
-	private float _thrustForce = 1500f; // Tune for sim scale
-	private float _turnTorque = 12000f;
+	private float _thrustForce = 2000f; // Tune for sim scale
+	private float _turnTorque = 1000f;
 	public override void Update(float deltaTime)
 	{
-		UpdateLightSensor();
+		var cLeft = _sim.GetLightAt(LeftEye + Position.SKPoint());
+		var cRight = _sim.GetLightAt(RightEye + Position.SKPoint());
+		//_creature.SetSight(cLeft, cRight);
+		//Trace.WriteLine($"({cLeft}, {cRight})");
+		//UpdateLightSensor();
+
         _creature.OnTick();
+
         if(Body != null)
         {
 			var turn =  (float)_creature.FacingDirection;
@@ -69,7 +75,7 @@ public class CreatureBody : DrawableBase
             var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
 
 			var thrustMultiplier = Math.Abs(Body.GetLinearVelocity().Length()) < 6 ? 8000 : _thrustForce;
-            Body.ApplyForceToCenter(facing * thrust * thrustMultiplier, true);
+			Body.ApplyForceToCenter(facing * thrust * thrustMultiplier, true);
 
             var turnTotal = float.Clamp(turn * _turnTorque, -5000f, 5000f);
             Body.ApplyTorque(turnTotal, true);
@@ -80,10 +86,6 @@ public class CreatureBody : DrawableBase
 
     public void UpdateLightSensor()
 	{
-		var cLeft = _sim.GetLightAt(LeftEye + Position.SKPoint());
-		var cRight = _sim.GetLightAt(RightEye + Position.SKPoint());
-		_creature.SetSight(cLeft, cRight);
-		//Trace.WriteLine($"({cLeft}, {cRight})");
 
 		//float totalIntensity = 0f;
 		//foreach (var light in lights)

@@ -74,7 +74,7 @@ public class Creature : ConceptSpace
 		TurnRatio.Calculate();
 		var rot = (TurnRatio.Result.GetImaginary().FloatValue - TurnRatio.Result.GetRational().FloatValue); // max 60 degrees
 		FacingDirection = (float)Math.Clamp(rot, -3f, 3f); 
-		Trace.WriteLine(rot);
+		//Trace.WriteLine(rot);
         // add motion at constant speed in this Direction, wrap if at edge of image.
         // todo: motion and env read for creature.
         // This is probably the arena reading direction change and speed, creature doesn't know where it is.
