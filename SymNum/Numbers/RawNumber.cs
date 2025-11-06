@@ -248,6 +248,7 @@ public class RawNumber : INumber
         get => GetValue(LeftMeasure, LeftUnit);
         set => SetValue(LeftMeasure, LeftUnit, value);
     }
+    public float SumValue => LeftValue + RightValue;
 
     // there is a general question with operations, what happens to the original value? Three possibilities:
     // 1) It can be modified in place, like 'gaining' in the additive sense, stretching, or exponentially growing (repeated stretching)

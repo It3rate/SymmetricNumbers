@@ -46,18 +46,29 @@ public class CreatureBody : DrawableBase
             type = BodyType.Dynamic,
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
-            linearDamping = 1.9f,
+            linearDamping = 3f,
             angularDamping = 1.5f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
         Body = body;
         var circleShape = new CircleShape { Radius = _creatureRadius };
-        Body.CreateFixture(new FixtureDef { shape = circleShape, density = 1f, friction = 0.01f, restitution = 0.8f });
+        Body.CreateFixture(new FixtureDef { 
+			shape = circleShape, 
+			density = 1f, 
+			friction = 0.01f,
+			restitution = 0.8f,
+			filter = new Filter
+			{
+				categoryBits = 0x0002,  // Creature category
+				maskBits = 0x0001       // Only collide with wall category
+			}
+		});
     }
 
-	private float _thrustForce = 4000f; // Tune for sim scale
-	private float _turnTorque = 9000f;
+	private float _thrustForce = 6000f; // Tune for sim scale
+	private float _turnTorque = 4000f;
+	private Random _rnd = new Random();
 	public override void Update(float deltaTime)
 	{
 		var cLeft = _sim.GetLightAt(LeftEye + Position.SKPoint());
@@ -70,17 +81,34 @@ public class CreatureBody : DrawableBase
 
         if(Body != null)
         {
-			var turn =  (_creature.FacingDirection > 0) ? -1f : (_creature.FacingDirection < 0) ? 1f : 0;
-			var thrust = _creature.Thrust.Result.GetRational().FloatValue > 20 ? 1 : 4;
+			var turn = Body.GetAngle() +  (float)_creature.FacingDirection;// > 0) ? -1f : (_creature.FacingDirection < 0) ? 1f : 0;
+			var thrust = 1.2f;
+			if(_creature.Brightness.SumValue < 20) // dark
+			{
+				thrust = 4f;
+				turn = 0;
+			}
+
             var facing = new Vector2((float)Math.Cos(Body.GetAngle()), (float)Math.Sin(Body.GetAngle()));
 
-			var thrustMultiplier = Math.Abs(Body.GetLinearVelocity().Length()) < 6 ? 8000 : _thrustForce;
-			Body.ApplyForceToCenter(facing * thrust * thrustMultiplier, true);
-
+			var thrustMultiplier = _thrustForce;// Math.Abs(Body.GetLinearVelocity().Length()) < 6 ? 8000 : _thrustForce;
 			var t = turn * _turnTorque;
-            var turnTotal = float.Clamp(t, -5000f, 5000f);
+			var speed = Body.GetLinearVelocity().Length();
+			var turnTotal = float.Clamp(t, -15000f, 15000f);
+
+			if (speed < 1)
+			{
+				thrust = 5000;
+				facing = new Vector2(
+					_rnd.NextSingle() * MathF.PI*2f - MathF.PI, 
+					_rnd.NextSingle() * MathF.PI * 2f - MathF.PI);
+				turnTotal = (_rnd.NextSingle() - 0.5f) * 4000000;
+			}
+
+			Body.ApplyForceToCenter(facing * thrust * thrustMultiplier, true);
             Body.ApplyTorque(turnTotal, true);
-			Trace.WriteLine(_creature.Sight.LeftMeasure.Position + ":"+ _creature.Sight.RightMeasure.Position + " : " + thrust);
+			Trace.WriteLine(thrust);
+			//Trace.WriteLine(_creature.Sight.LeftMeasure.Position + ":"+ _creature.Sight.RightMeasure.Position + " : " + thrust);
 			//_thrustForce = 300;
         }
     }

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -49,13 +50,14 @@ public class DecayMeasure : MeasureBase, IVolatile
     {
         if (_isFirst)
         {
-            SetPosition(trackingTarget.Position);
             _isFirst = false;
+            Trace.WriteLine("****************");
+            SetPosition(128);// trackingTarget.Position);
         }
         else
         {
-            var change = trackingTarget.Position >= Position ? 1.1f : -1.1f;// DecayRate.Position : -DecayRate.Position;
-            SetPosition((long)((trackingTarget.Position - Position)* 1.01f));
+            //var change = trackingTarget.Position >= Position ? 1.01f : -1.01f;// DecayRate.Position : -DecayRate.Position;
+            SetPosition((long)((trackingTarget.Position - Position)* 0.06f + Position));
         }
     }
 }
