@@ -66,6 +66,9 @@ public interface INumber
 	long ZeroPosition { get; }
 	bool IsFullyDefined { get; }
 
+	float LeftValue { get; }
+	float RightValue { get; }
+
 	RationalNumber GetRational();
 	ImaginaryNumber GetImaginary();
 	ComplexNumber GetComplex();
@@ -77,6 +80,7 @@ public interface INumber
 	INumber SubtractTo(INumber other);
 	INumber MultiplyTo(INumber other);
 	INumber DivideTo(INumber other);
+	INumber AlignTo(INumber other);
 	INumber Add(INumber other);
 	INumber Subtract(INumber other);
 
