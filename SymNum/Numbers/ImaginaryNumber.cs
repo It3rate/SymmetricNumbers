@@ -50,16 +50,16 @@ public class ImaginaryNumber : RawNumber, IPartialNumber
 	/// <summary>
 	/// A RationalNumber is a complex number with constraints on the left side.
 	/// </summary>
-	public ImaginaryNumber(long resolution, long value):
-         this (new Measure(value, Direction.FacesLeft, true),new Measure(resolution, Direction.FacesLeft, true)){}
-	public ImaginaryNumber(long resolution, float value) : this(resolution, (long)(value * resolution)) { }
+	public ImaginaryNumber(long value, long resolution):
+         this (new Measure(value, true), new Measure(value, true)){}
+	public ImaginaryNumber(float value, long resolution) : this((long)(value * resolution), resolution) { }
 
-    public ImaginaryNumber(IMeasure measure, IMeasure unit)
+	public ImaginaryNumber(IMeasure measure, IMeasure unit)
     {
         LeftMeasure = measure;
         LeftUnit = unit;
-		RightUnit = new Measure(LeftUnit.Position, Direction.FacesRight, true);
-		RightMeasure = new Measure(0, Direction.FacesRight, true);
+		RightUnit = unit;
+		RightMeasure = new Measure(0, true);
     }
     // ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
     // Value - measure / unit, what we normally consider the number to be.

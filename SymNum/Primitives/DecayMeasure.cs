@@ -14,7 +14,6 @@ public class DecayMeasure : MeasureBase, IVolatile
     public IMeasure Minimum { get; set; }
     public IMeasure Maximum { get; set; }
 
-    public override Direction Direction => DecayRate.Direction;
     public override bool IsFullDefined => true;
 
     public override bool Inclusive => true;
@@ -22,21 +21,23 @@ public class DecayMeasure : MeasureBase, IVolatile
     public override bool IsMax => Position >= Maximum.Position;
     public override bool IsMin => Position <= Minimum.Position;
 
-    private long _position;
+    private IMeasure _position;
     public override long Position
     {
-        get => _position;
-        protected set => _position = long.Clamp(value, Minimum.Position, Maximum.Position);
+        get => _position.Position;
+        protected set => _position.SetPosition(long.Clamp(value, Minimum.Position, Maximum.Position));
     }
 
-    public DecayMeasure(long decayRate, long minimum, long maximum, Direction direction)
+    public DecayMeasure(long pos, long decayRate, long minimum, long maximum)
     {
-        DecayRate = new Measure(decayRate, direction, true, CertaintyLevel.Set);
-        Minimum = new Measure(minimum, direction, true, CertaintyLevel.Set);
-        Maximum = new Measure(maximum, direction, true, CertaintyLevel.Set);
+        _position = new Measure(pos, true, CertaintyLevel.Set);
+        DecayRate = new Measure(decayRate, true, CertaintyLevel.Set);
+        Minimum = new Measure(minimum, true, CertaintyLevel.Set);
+        Maximum = new Measure(maximum, true, CertaintyLevel.Set);
     }
-    public DecayMeasure(IMeasure decayRate, IMeasure minimum, IMeasure maximum)
+    public DecayMeasure(IMeasure pos, IMeasure decayRate, IMeasure minimum, IMeasure maximum)
     {
+        _position = pos;
         DecayRate = decayRate;
         Minimum = minimum;
         Maximum = maximum;

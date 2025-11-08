@@ -18,49 +18,39 @@ public class Creature : ConceptSpace
 	// For now it is all manual to get the feel of it.
 	// The whole creature is a concept space, but light is also a concept space, as is brightness.
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
-    public Measure RightEyeInput { get; } = new Measure(10, Direction.FacesRight);
-	public DecayMeasure RightEyeResolution { get; } = new DecayMeasure(1, 1, 255, Direction.FacesRight);// new DecayMeasure(4, 64, 200, Direction.FacesRight);
-    public Measure LeftEyeInput { get; } = new Measure(50, Direction.FacesLeft);
-    public DecayMeasure LeftEyeResolution { get; } = new DecayMeasure(1, 1, 255, Direction.FacesLeft);// new DecayMeasure(4, 64, 200, Direction.FacesLeft);
+    public IMeasure RightEyeInput { get; }	
+	public DecayMeasure RightEyeResolution { get; }   
+	public IMeasure LeftEyeInput { get; }   
+	public DecayMeasure LeftEyeResolution { get; }
 	public UnbalancedNumber Sight { get; } // sight is constructed from the left and right eye, based around Sight zero according to above, regardless of the actual eye input values.
 	
-	public IMeasure RightThrust { get; } = new Measure(10, Direction.FacesRight, true, CertaintyLevel.Uncertain);
-	public IMeasure LeftThrust { get; } = new Measure(30, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
-	public IMeasure LeftThrustResolution { get; } = new Measure(_leftThrustResolution, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
-	public IMeasure RightThrustResolution { get; } = new Measure(_rightThrustResolution, Direction.FacesRight, true, CertaintyLevel.Uncertain);
-	public UnbalancedNumber Motion { get; }
-
+	public IMeasure RightThrust { get; }	
+	public IMeasure LeftThrust { get; }	
+	public IMeasure LeftThrustResolution { get; }	
+	public IMeasure RightThrustResolution { get; }
 	public BinaryExpression Thrust { get; }
-	public BinaryExpression TurnRatio { get; }
-	public BinaryExpression Turn { get; }
-	public BinaryExpression TurnLeft { get; }
-	public BinaryExpression TurnRight { get; }
-
-	public double Speed { get; set; } = 5;
-	// this will be held in arena
-	public double XLocation { get; set; }
-	public double YLocation { get; set; }
+	
 	public double BrighterDirection { get; set; }
 
-	// these will be tuned values for sight and motion sensitivity
-	private static long _leftSightResolution = 1000;
-	private static long _rightSightResolution = 1000;
-	private static long _leftThrustResolution = 10;
-	private static long _rightThrustResolution = 10;
 	public ComplexNumber Brightness { get; }
-	private Measure BrightnessRes = new Measure(10, Direction.FacesRight, true, CertaintyLevel.Set);
+	private Measure BrightnessRes = new Measure(10, true, CertaintyLevel.Set);
 
 	public Creature()
-    {
-        RightEyeInput.PositionChanged += RightEyeResolution.OnTargetChange;
+	{ 
+		RightEyeInput = new Measure(10);
+		LeftEyeInput = new Measure(50);
+		RightEyeResolution = new DecayMeasure(128, 1, 1, 255);
+		LeftEyeResolution  = new DecayMeasure(128, 1, 1, 255);
+
+		RightThrust = new Measure(10, true, CertaintyLevel.Uncertain);
+		LeftThrust = new Measure(30, true, CertaintyLevel.Uncertain);
+		LeftThrustResolution = new Measure(10, true, CertaintyLevel.Uncertain);
+		RightThrustResolution = new Measure(10, true, CertaintyLevel.Uncertain);
+
+		RightEyeInput.PositionChanged += RightEyeResolution.OnTargetChange;
         LeftEyeInput.PositionChanged += LeftEyeResolution.OnTargetChange;
+
         Sight = new UnbalancedNumber(RightEyeInput, LeftEyeResolution, RightEyeResolution, LeftEyeInput);
-		//BrightnessDirection = new BinaryExpression(Sight.GetImaginary(), Sight.GetRational(), Ops.Subtract, null, CertaintyLevel.Derived);
-
-		//Motion = new UnbalancedNumber(RightThrust, LeftThrustResolution, RightThrustResolution, LeftThrust);
-
-		//var leftThrustValue = Motion.CreateValueRef(RefKind.ImaginaryValue);
-		//var rightThrustValue = Motion.CreateValueRef(RefKind.RealValue);
 		Thrust = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
 
 		Brightness = new ComplexNumber(LeftEyeInput, RightEyeInput, BrightnessRes);

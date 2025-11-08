@@ -49,19 +49,19 @@ public class RawNumber : INumber
 
     protected RawNumber()
     {
-        RightMeasure = new Measure(0, Direction.FacesRight, true, CertaintyLevel.Uncertain);
-        LeftUnit = new Measure(0, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
-        RightUnit = new Measure(0, Direction.FacesRight, true, CertaintyLevel.Uncertain);
-        LeftMeasure = new Measure(0, Direction.FacesLeft, true, CertaintyLevel.Uncertain);
-        ZeroPoint = new Measure(0, Direction.Zero, true, CertaintyLevel.Uncertain);
+        RightMeasure = new Measure(0, true, CertaintyLevel.Uncertain);
+        LeftUnit = new Measure(0, true, CertaintyLevel.Uncertain);
+        RightUnit = new Measure(0, true, CertaintyLevel.Uncertain);
+        LeftMeasure = new Measure(0, true, CertaintyLevel.Uncertain);
+        ZeroPoint = new Measure(0, true, CertaintyLevel.Uncertain);
     }
     protected RawNumber(long tr, long tl, long br, long bl, long zeroPoint = 0)
     {
-		RightMeasure = new Measure(tr, Direction.FacesRight, true);
-		LeftUnit = new Measure(tl, Direction.FacesLeft, true);
-		RightUnit = new Measure(br, Direction.FacesRight, true);
-		LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
-        ZeroPoint = new Measure(zeroPoint, Direction.Zero);
+		RightMeasure = new Measure(tr, true);
+		LeftUnit = new Measure(tl, true);
+		RightUnit = new Measure(br, true);
+		LeftMeasure = new Measure(bl, true);
+        ZeroPoint = new Measure(zeroPoint);
     }
     /// <summary>
     /// Cast internals of another number into this type.
@@ -257,6 +257,8 @@ public class RawNumber : INumber
         get => GetValue(LeftMeasure, LeftUnit);
         set => SetValue(LeftMeasure, LeftUnit, value);
 	}
+	public float MaxValue => LeftValue > RightValue ? LeftValue : RightValue;
+	public float MinValue => LeftValue > RightValue ? LeftValue : RightValue;
 	public float SumValue => LeftValue + RightValue;
 	public float LeftMinusRightValue => LeftValue - RightValue;
 	public float RightMinusLeftValue => RightValue - LeftValue;

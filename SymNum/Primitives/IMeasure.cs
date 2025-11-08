@@ -14,41 +14,36 @@ public interface IMeasure : IValue
 {
 	public event Action<IMeasure> PositionChanged;
 	long Position { get; }
-	/// <summary>
-	/// Which line direction this measure is on. 
-	/// For example, a segment's start point is on the left positive line, the end point is on the right.
-	/// </summary>
-	Direction Direction { get; }
 	void SetPosition(long position);
 	bool Inclusive { get; }
     void Negate();
     //public CertaintyLevel CertaintyLevel { get; } // inherited
     public bool IsCertain { get; }
-	bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;
+	bool IsFullDefined => !IsMin && !IsMax;
 	bool IsMax => Position == long.MaxValue;
 	bool IsMin => Position == long.MinValue;
 	bool IsZero => Position == 0 && IsFullDefined;
 
-	public static IMeasure CreateExtreme(bool positive, Direction dir, bool inclusive)
+	public static IMeasure CreateExtreme(bool positive, bool inclusive)
 	{
 		long pos = positive ? long.MaxValue : long.MinValue;
-		return new Measure(pos, dir, inclusive);
+		return new Measure(pos, inclusive);
 	}
 	public static IMeasure CreateUnknown(bool inclusive)
 	{
-		return new Measure(0, Direction.Unknown, inclusive);
+		return new Measure(0, inclusive);
 	}
 	public static IMeasure operator -(IMeasure a)
 	{
 		var position = a.IsMin ? long.MaxValue : a.IsMax ? long.MinValue : -a.Position;
-		return new Measure(position, a.Direction.Inverse(), a.Inclusive);
+		return new Measure(position, a.Inclusive);
 	}
 	public static IMeasure operator ++(IMeasure a)
 	{
 		var result = a;
 		if (a.IsFullDefined)
 		{
-			result = new Measure(a.Position + 1, a.Direction.Inverse(), a.Inclusive);
+			result = new Measure(a.Position + 1, a.Inclusive);
 		}
 		return result;
 	}
@@ -57,7 +52,7 @@ public interface IMeasure : IValue
 		var result = a;
 		if (a.IsFullDefined)
 		{
-			result = new Measure(a.Position - 1, a.Direction.Inverse(), a.Inclusive);
+			result = new Measure(a.Position - 1, a.Inclusive);
 		}
 		return result;
 	}
@@ -83,7 +78,6 @@ public interface IMeasure : IValue
 
 	public static IMeasure operator +(IMeasure a, IMeasure b)
 	{
-		Direction newDirection = a.Direction.Combine(b.Direction);
 		bool newInclusive = a.Inclusive && b.Inclusive;
 
 		if (a.IsMax || b.IsMax)
@@ -92,12 +86,12 @@ public interface IMeasure : IValue
 			{
 				return CreateUnknown(newInclusive);
 			}
-			return CreateExtreme(true, newDirection, newInclusive);
+			return CreateExtreme(true, newInclusive);
 		}
 
 		if (a.IsMin && b.IsMin)
 		{
-			return CreateExtreme(false, newDirection, newInclusive);
+			return CreateExtreme(false, newInclusive);
 		}
 
 		// Both finite
@@ -115,12 +109,11 @@ public interface IMeasure : IValue
 			newPosition = a.Position + b.Position;
 		}
 
-		return new Measure(newPosition, newDirection, newInclusive);
+		return new Measure(newPosition, newInclusive);
 	}
 
 	public static IMeasure operator -(IMeasure a, IMeasure b)
 	{
-		Direction newDirection = a.Direction.Combine(b.Direction);
 		bool newInclusive = a.Inclusive && b.Inclusive;
 
 		if (a.IsMax)
@@ -129,7 +122,7 @@ public interface IMeasure : IValue
 			{
 				return CreateUnknown(newInclusive);
 			}
-			return CreateExtreme(true, newDirection, newInclusive);
+			return CreateExtreme(true, newInclusive);
 		}
 
 		if (a.IsMin)
@@ -138,17 +131,17 @@ public interface IMeasure : IValue
 			{
 				return CreateUnknown(newInclusive);
 			}
-			return CreateExtreme(false, newDirection, newInclusive);
+			return CreateExtreme(false, newInclusive);
 		}
 
 		if (b.IsMax)
 		{
-			return CreateExtreme(false, newDirection, newInclusive);
+			return CreateExtreme(false, newInclusive);
 		}
 
 		if (b.IsMin)
 		{
-			return CreateExtreme(true, newDirection, newInclusive);
+			return CreateExtreme(true, newInclusive);
 		}
 
 		// Both finite
@@ -167,17 +160,16 @@ public interface IMeasure : IValue
 			newPosition = a.Position - b.Position;
 		}
 
-		return new Measure(newPosition, newDirection, newInclusive);
+		return new Measure(newPosition, newInclusive);
 	}
 
 	public static IMeasure operator *(IMeasure a, IMeasure b)
 	{
-		Direction newDirection = a.Direction.Combine(b.Direction);
 		bool newInclusive = a.Inclusive && b.Inclusive;
 
 		if (a.Position == 0 || b.Position == 0)
 		{
-			return new Measure(0, newDirection, newInclusive);
+			return new Measure(0, newInclusive);
 		}
 
 		bool aInf = a.IsMax || a.IsMin;
@@ -187,7 +179,7 @@ public interface IMeasure : IValue
 			bool signA = a.IsMax || a.Position > 0;
 			bool signB = b.IsMax || b.Position > 0;
 			bool productPositive = signA == signB;
-			return CreateExtreme(productPositive, newDirection, newInclusive);
+			return CreateExtreme(productPositive, newInclusive);
 		}
 
 		// Both finite and nonzero
@@ -205,19 +197,18 @@ public interface IMeasure : IValue
 			newPosition = a.Position * b.Position;
 		}
 
-		return new Measure(newPosition, newDirection, newInclusive);
+		return new Measure(newPosition, newInclusive);
 	}
 
 	public static IMeasure operator /(IMeasure a, IMeasure b)
 	{
-		Direction newDirection = a.Direction.Combine(b.Direction);
 		bool newInclusive = a.Inclusive && b.Inclusive;
 
 		bool bInf = b.IsMax || b.IsMin;
 		bool aInf = a.IsMax || a.IsMin;
 		if (bInf)
 		{
-			return new Measure(0, newDirection, newInclusive);
+			return new Measure(0, newInclusive);
 		}
 
 		if (aInf)
@@ -225,19 +216,19 @@ public interface IMeasure : IValue
 			bool signA = a.IsMax || a.Position > 0;
 			bool signB = b.Position > 0;
 			bool productPositive = signA == signB;  // Division sign: same as multiplication by reciprocal, but same rule as mul for signs
-			return CreateExtreme(productPositive, newDirection, newInclusive);
+			return CreateExtreme(productPositive, newInclusive);
 		}
 
 		if (b.Position == 0)
 		{
 			// Zero means below resolution, so dividing say 40/0 means greater than 40, but less than max.
 			// at some point there may need to be +0 and -0, but for now the sign comes from the numerator.
-			return new Measure(a.Position, b.Direction.Inverse(), newInclusive);
+			return new Measure(a.Position, newInclusive);
 		}
 
 		// Both finite, nonzero denominator
 		long newPosition = a.Position / b.Position;
-		return new Measure(newPosition, newDirection, newInclusive);
+		return new Measure(newPosition, newInclusive);
 	}
 
 }

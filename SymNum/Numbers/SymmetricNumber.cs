@@ -62,10 +62,10 @@ public class SymmetricNumber : RawNumber
 
 	public SymmetricNumber(long tr, long tl, long br, long bl)
 	{
-		RightMeasure = new Measure(tr, Direction.FacesRight, true);
-		LeftUnit = new Measure(tl, Direction.FacesLeft, true);
-		RightUnit = new Measure(br, Direction.FacesRight, true);
-		LeftMeasure = new Measure(bl, Direction.FacesLeft, true);
+		RightMeasure = new Measure(tr, true);
+		LeftUnit = new Measure(tl, true);
+		RightUnit = new Measure(br, true);
+		LeftMeasure = new Measure(bl, true);
 	}
 	public SymmetricNumber(IMeasure tr, IMeasure tl, IMeasure br, IMeasure bl)
 	{

@@ -3,9 +3,9 @@ namespace SymNum.Primitives;
 
 public class Measure : MeasureBase
 {
-	public Measure(long position, Direction direction, 
+	public Measure(long position,
 		bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Uncertain) :
-				base(position, direction, inclusive, certainty)
+				base(position, inclusive, certainty)
 	{
 	}
 
@@ -26,14 +26,13 @@ public class Measure : MeasureBase
 }
 public abstract class MeasureBase : IMeasure
 {
-	public static readonly IMeasure Unknown = new Measure(0, Direction.Unknown, false);
+	public static readonly IMeasure Unknown = new Measure(0, false);
 
 	public event Action<IMeasure> PositionChanged;
 
 	public virtual long Position { get; protected set; }
 	public virtual bool Inclusive { get; protected set; }
-	public virtual Direction Direction { get; protected set; }
-	public virtual bool IsFullDefined => !IsMin && !IsMax && Direction != Direction.Unknown;
+	public virtual bool IsFullDefined => !IsMin && !IsMax;
 	public virtual bool IsMax => Position == long.MaxValue;
 	public virtual bool IsMin => Position == long.MinValue;
 	public virtual bool IsZero => Position == 0 && IsFullDefined;
@@ -48,10 +47,9 @@ public abstract class MeasureBase : IMeasure
 	protected MeasureBase()
 	{
 	}
-	public MeasureBase(long position, Direction direction, bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Set)
+	public MeasureBase(long position, bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Set)
 	{
 		Position = position;
-		Direction = direction;
 		Inclusive = inclusive;
 		Certainty = certainty;
 	}
@@ -68,27 +66,27 @@ public abstract class MeasureBase : IMeasure
     }
     public static IMeasure MaxDown()
 	{
-		return IMeasure.CreateExtreme(true, Direction.FacesLeft, true);
+		return IMeasure.CreateExtreme(true, true);
 	}
 	public static IMeasure MinUp()
 	{
-		return IMeasure.CreateExtreme(true, Direction.FacesLeft, true);
+		return IMeasure.CreateExtreme(true, true);
 	}
 	public static IMeasure ZeroDown()
 	{
-		return new Measure(0, Direction.FacesLeft, true);
+		return new Measure(0, true);
 	}
 	public static IMeasure ZeroUnknown()
 	{
-		return new Measure(0, Direction.Unknown, true);
+		return new Measure(0, true);
 	}
 	public static IMeasure ZeroUp()
 	{
-		return new Measure(0, Direction.FacesRight, true);
+		return new Measure(0, true);
 	}
 	public static bool operator ==(MeasureBase a, MeasureBase b)
 	{
-		return a.Position == b.Position && a.Inclusive == b.Inclusive && a.Direction == b.Direction;
+		return a.Position == b.Position && a.Inclusive == b.Inclusive;
 	}
 	public static bool operator !=(MeasureBase a, MeasureBase b)
 	{
@@ -115,14 +113,13 @@ public abstract class MeasureBase : IMeasure
 	}
 	public override int GetHashCode()
 	{
-		return HashCode.Combine(Position, Inclusive, Direction);
+		return HashCode.Combine(Position, Inclusive);
 	}
 	public override string ToString()
 	{
-		string dirStr = Direction == Direction.FacesRight ? "→" : Direction == Direction.FacesLeft ? "←" : "?";
 		string inclStr = Inclusive ? "In" : "Ex";
 		string posStr = IsMax ? "Max" : IsMin ? "Min" : Position.ToString();
-		return $"{posStr}  {dirStr} {inclStr}";
+		return $"{posStr} {inclStr}";
 	}
 }
 
