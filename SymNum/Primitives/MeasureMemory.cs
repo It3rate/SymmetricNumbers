@@ -44,11 +44,11 @@ public class MeasureMemory : MeasureBase, IVolatile
 		Kind = kind;
 		MaxHistory = maxHistory;
 		SetPosition(initialValue);
-		Measure.PositionChanged += OnTargetChange;
+		Measure.PositionChanged += OnUpdate;
     }
-    public void OnTargetChange(IMeasure trackingTarget)
+    public void OnUpdate(IMeasure source)
     { 
-        SetPosition(trackingTarget.Position);
+        SetPosition(source.Position);
     }
     public long GetPostionByKind(MemoryKind kind)
 	{

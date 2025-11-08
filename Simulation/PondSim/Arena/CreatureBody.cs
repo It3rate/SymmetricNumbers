@@ -46,7 +46,7 @@ public class CreatureBody : DrawableBase
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
             linearDamping = 3f,
-            angularDamping = 1.3f,
+            angularDamping = 2.3f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
@@ -57,15 +57,15 @@ public class CreatureBody : DrawableBase
 			density = 1f, 
 			friction = 0.01f,
 			restitution = 0.8f,
-			//filter = new Filter
-			//{
-			//	categoryBits = 0x0002,  // Creature category
-			//	maskBits = 0x0001       // Only collide with wall category
-			//}
+			filter = new Filter
+			{
+				categoryBits = 0x0002,  // Creature category
+				maskBits = 0x0001       // Only collide with wall category
+			}
 		});
     }
 
-	private float _thrustForce = 6000f; // Tune for sim scale
+	private float _thrustForce = 15000f; // Tune for sim scale
 	private float _turnTorque = 4000f;
 	private Random _rnd = new Random();
 	private float _turnTotal = 0f;
@@ -78,48 +78,20 @@ public class CreatureBody : DrawableBase
 		{
 			var speed = Body.GetLinearVelocity().Length();
 			var angle = Body.GetAngle();
+            var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-			var turnOffset = (float)_creature.BrighterDirection;
-			var thrustSclalar = 1.2f;
-			if(_creature.Brightness.SumValue < 4) // dark
-			{
-				turnOffset = 0;
-				thrustSclalar = 4f;
-			}
-			_turnTotal = float.Clamp(turnOffset * _turnTorque, -15000f, 15000f);
+			_turnTotal = (float)_creature.BrighterDirection / 1.4f;
+			var thrustScale = _creature.InvBrightness.MinValue;
 
-            var turnVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
-			if (speed < 1)
-			{
-				thrustSclalar = 1000;
-				_turnTotal = (_rnd.NextSingle() - 0.5f) * 4000000f;
-			}
-
-			Body.ApplyTorque(_turnTotal, true);
-			Body.ApplyForceToCenter(turnVec * thrustSclalar * _thrustForce, true);
-			//Trace.WriteLine("tt: "+ _turnTotal);
+			var force = angleVec * _thrustForce * thrustScale;
+			var point = Body.GetWorldPoint(new(0, -_turnTotal));
+			Body.ApplyForce(force, point, true);
+			Trace.WriteLine("to: "+ thrustScale);
 			 
 		}
 	}
 	private void SampleEyes()
 	{
-		//var xform = Body.GetTransform();
-		//var angle = Body.GetAngle();
-		//var cosA = (float)Math.Cos(angle);
-		//var sinA = (float)Math.Sin(angle);
-		//var leftWorldOffset = new Vector2(
-		//	LeftEye.X * cosA - LeftEye.Y * sinA,
-		//	LeftEye.X * sinA + LeftEye.Y * cosA);
-		//var rightWorldOffset = new Vector2(
-		//	RightEye.X * cosA - RightEye.Y * sinA,
-		//	RightEye.X * sinA + RightEye.Y * cosA);
-		//var leftWorldPos = Position + leftWorldOffset;
-		//var rightWorldPos = Position + rightWorldOffset;
-
-		//Trace.WriteLine(_leftEyePos?.X + "," + _leftEyePos?.Y + " - " + leftWorldPos.X + "," + leftWorldPos.Y);
-
-		//var cLeft = _sim.GetLightAt(leftWorldPos.SKPoint());
-		//var cRight = _sim.GetLightAt(rightWorldPos.SKPoint());
 		if(_leftEyePos != null && _rightEyePos != null)
 		{
 			var cLeft = _sim.GetLightAt((SKPoint)_leftEyePos);
@@ -132,8 +104,8 @@ public class CreatureBody : DrawableBase
 	private SKPoint? _leftEyePos;
 	private SKPoint? _rightEyePos;
 	private static float _creatureRadius = 8f;
-	private SKPaint FillL = CorePens.GetBrush(SKColor.Parse("#00F0F0"));
-	private SKPaint FillR = CorePens.GetBrush(SKColor.Parse("#F0F000"));
+	private SKPaint FillL = CorePens.GetBrush(SKColor.Parse("#00F080"));
+	private SKPaint FillR = CorePens.GetBrush(SKColor.Parse("#80F000"));
 	private SKPaint White = CorePens.GetBrush(SKColor.Parse("#FFFFFF"));
 	private SKPaint Outline = CorePens.GetPen(SKColor.Parse("#F01000"), 2);
 	public override void Draw()

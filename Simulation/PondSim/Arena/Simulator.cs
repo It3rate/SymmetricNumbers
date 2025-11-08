@@ -31,7 +31,7 @@ public class Simulator : DrawableBase
 	public Simulator(PondArena arena)
     {
         _arena = arena;
-        _envImage = new SKImageMapper("map1.png", new SKSegment(new(0,0), new(_width, 0)));
+        _envImage = new SKImageMapper("map0.png", new SKSegment(new(0,0), new(_width, 0)));
         _bkgMap = new FastBitmap(_envImage.WinBmp);
 
 		var light = new LightSource { Position = new Vector2(100, 100), Brightness = 5f };
@@ -39,7 +39,7 @@ public class Simulator : DrawableBase
 
         CreateWalls();
 
-        var margin = 0.9f;
+        var margin = 0.7f;
         var offset = (1f - margin) / 2f;
         var rnd = new Random();
         var bodyCount = Debugger.IsAttached ? 1 : 80;
@@ -115,6 +115,11 @@ public class Simulator : DrawableBase
         {
             Canvas.Clear(SKColors.DarkSlateBlue);
             _envImage?.Draw();
+            Canvas.DrawRect(0, 0, _width, _height, new SKPaint
+			{
+				Color = SKColors.Black.WithAlpha(150),
+				BlendMode = SKBlendMode.Multiply
+			});
             //todo: draw obstacles/lights
             foreach (var creature in _creatureBodies)
             {

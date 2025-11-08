@@ -1,5 +1,6 @@
 ﻿namespace SymNum.Primitives;
 
+using SymNum.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,11 +9,12 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-public class DecayMeasure : MeasureBase, IVolatile
+public class DecayMeasure : MeasureBase, IVolatile, IDisposable
 {
     public IMeasure DecayRate { get; set; }
     public IMeasure Minimum { get; set; }
     public IMeasure Maximum { get; set; }
+    public IMeasure? FollowTarget { get; set; }
 
     public override bool IsFullDefined => true;
 
@@ -28,13 +30,19 @@ public class DecayMeasure : MeasureBase, IVolatile
         protected set => _position.SetPosition(long.Clamp(value, Minimum.Position, Maximum.Position));
     }
 
-    public DecayMeasure(long pos, long decayRate, long minimum, long maximum)
+    public DecayMeasure(long pos, long decayRate, long minimum, long maximum, IMeasure? followTarget = null)
     {
         _position = new Measure(pos, true, CertaintyLevel.Set);
         DecayRate = new Measure(decayRate, true, CertaintyLevel.Set);
         Minimum = new Measure(minimum, true, CertaintyLevel.Set);
         Maximum = new Measure(maximum, true, CertaintyLevel.Set);
-    }
+        FollowTarget = followTarget;
+        if(FollowTarget != null)
+		{
+			FollowTarget.PositionChanged += OnUpdate;
+		}
+
+	}
     public DecayMeasure(IMeasure pos, IMeasure decayRate, IMeasure minimum, IMeasure maximum)
     {
         _position = pos;
@@ -46,19 +54,21 @@ public class DecayMeasure : MeasureBase, IVolatile
     {
         DecayRate.Negate();
     }
-    private bool _isFirst = true;
-    public void OnTargetChange(IMeasure trackingTarget)
+    public void OnUpdate(IMeasure source)
     {
-        if (_isFirst)
-        {
-            _isFirst = false;
-            SetPosition(12);// trackingTarget.Position);
-        }
-        else
-        {
-            var change = trackingTarget.Position >= Position ? DecayRate.Position : -DecayRate.Position;
-            //SetPosition((long)((trackingTarget.Position - Position)* 0.07f + Position));
-			SetPosition((long)(change + Position));
+        var change = DecayRate.Position;
+        if(FollowTarget != null)
+		{
+			change = FollowTarget.Position >= Position ? DecayRate.Position : -DecayRate.Position;
 		}
+		SetPosition((long)(change + Position));
     }
+    public void Dispose()
+	{
+		if (FollowTarget != null)
+		{
+			FollowTarget.PositionChanged -= OnUpdate;
+		}
+	}
+    
 }

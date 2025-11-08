@@ -8,5 +8,5 @@ using System.Threading.Tasks;
 
 public interface IVolatile
 {
-    void OnTargetChange(IMeasure trackingTarget);
+    void OnUpdate(IMeasure source);
 }

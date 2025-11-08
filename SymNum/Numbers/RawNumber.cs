@@ -213,7 +213,7 @@ public class RawNumber : INumber
     //public static bool GetBool(IMeasure a, IMeasure b,)
     public static float GetValue(IMeasure numerator, IMeasure denominator)
     {
-        var result = float.NaN;
+        var result = 0f;
         // todo: Need to apply the math of uncertaintly to generate a range or probability distribution.
 		//if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
 		if (denominator.Position != 0)
@@ -222,7 +222,7 @@ public class RawNumber : INumber
         }
         else
         {
-            result = numerator.Position > 0 ? float.MaxValue : (numerator.Position < 0 ? float.MinValue : 0f);
+			result = numerator.Position;// > 0 ? float.MaxValue : (numerator.Position < 0 ? float.MinValue : 0f);
         }
         return result;
     }
@@ -258,7 +258,7 @@ public class RawNumber : INumber
         set => SetValue(LeftMeasure, LeftUnit, value);
 	}
 	public float MaxValue => LeftValue > RightValue ? LeftValue : RightValue;
-	public float MinValue => LeftValue > RightValue ? LeftValue : RightValue;
+	public float MinValue => LeftValue < RightValue ? LeftValue : RightValue;
 	public float SumValue => LeftValue + RightValue;
 	public float LeftMinusRightValue => LeftValue - RightValue;
 	public float RightMinusLeftValue => RightValue - LeftValue;

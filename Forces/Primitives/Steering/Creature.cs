@@ -19,9 +19,9 @@ public class Creature : ConceptSpace
 	// The whole creature is a concept space, but light is also a concept space, as is brightness.
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
     public IMeasure RightEyeInput { get; }	
-	public DecayMeasure RightEyeResolution { get; }   
+	public IMeasure RightEyeResolution { get; }   
 	public IMeasure LeftEyeInput { get; }   
-	public DecayMeasure LeftEyeResolution { get; }
+	public IMeasure LeftEyeResolution { get; }
 	public UnbalancedNumber Sight { get; } // sight is constructed from the left and right eye, based around Sight zero according to above, regardless of the actual eye input values.
 	
 	public IMeasure RightThrust { get; }	
@@ -32,28 +32,25 @@ public class Creature : ConceptSpace
 	
 	public double BrighterDirection { get; set; }
 
-	public ComplexNumber Brightness { get; }
-	private Measure BrightnessRes = new Measure(10, true, CertaintyLevel.Set);
+	public UnbalancedNumber InvBrightness { get; }
+	private Measure BrightnessRes = new Measure(200, true, CertaintyLevel.Set);
 
 	public Creature()
 	{ 
 		RightEyeInput = new Measure(10);
 		LeftEyeInput = new Measure(50);
-		RightEyeResolution = new DecayMeasure(128, 1, 1, 255);
-		LeftEyeResolution  = new DecayMeasure(128, 1, 1, 255);
+		RightEyeResolution = new DecayMeasure(128, 1, 1, 255, RightEyeInput);
+		LeftEyeResolution  = new DecayMeasure(128, 1, 1, 255, LeftEyeInput);
 
 		RightThrust = new Measure(10, true, CertaintyLevel.Uncertain);
-		LeftThrust = new Measure(30, true, CertaintyLevel.Uncertain);
+		LeftThrust = new Measure(10, true, CertaintyLevel.Uncertain);
 		LeftThrustResolution = new Measure(10, true, CertaintyLevel.Uncertain);
 		RightThrustResolution = new Measure(10, true, CertaintyLevel.Uncertain);
-
-		RightEyeInput.PositionChanged += RightEyeResolution.OnTargetChange;
-        LeftEyeInput.PositionChanged += LeftEyeResolution.OnTargetChange;
 
         Sight = new UnbalancedNumber(RightEyeInput, LeftEyeResolution, RightEyeResolution, LeftEyeInput);
 		Thrust = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
 
-		Brightness = new ComplexNumber(LeftEyeInput, RightEyeInput, BrightnessRes);
+		InvBrightness = new UnbalancedNumber(BrightnessRes, LeftEyeInput, RightEyeInput, BrightnessRes);
 		// expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
         //TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
     }
@@ -73,7 +70,7 @@ public class Creature : ConceptSpace
 			rot = (left > right) ? -(left / right + .1f) : (right > left) ? (right / left + .1f) : 0;
 		}
 		BrighterDirection = (float)rot;
-		Trace.WriteLine(rot.ToString("0.###"));
+		//Trace.WriteLine(rot.ToString("0.###"));
     }
     public void SetSight(long leftLight, long rightLight)
     {
