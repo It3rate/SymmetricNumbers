@@ -75,8 +75,9 @@ public interface INumber
 	UnbalancedNumber GetUnbalanced();
 	SymmetricNumber GetSymmetric();
     void Mirror();
+	INumber Negate();
 
-    INumber AddTo(INumber other);
+	INumber AddTo(INumber other);
 	INumber SubtractTo(INumber other);
 	INumber MultiplyTo(INumber other);
 	INumber DivideTo(INumber other);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
@@ -96,6 +97,12 @@ public class RawNumber : INumber
         RightUnit = LeftUnit;
         LeftUnit = tempru;
         LeftMeasure = temprm;
+	}
+	public INumber Negate()
+	{
+		RightMeasure.Negate();
+		LeftMeasure.Negate();
+		return this;
 	}
 	public INumber AddTo(INumber other)
 	{
@@ -257,8 +264,17 @@ public class RawNumber : INumber
         get => GetValue(LeftMeasure, LeftUnit);
         set => SetValue(LeftMeasure, LeftUnit, value);
 	}
+	public float LeftValueOrOne => 
+		LeftUnit.Position != 0 && LeftMeasure.Position != 0 ? 
+		LeftValue : 1f;
+	public float RightValueOrOne => 
+		RightUnit.Position != 0 && RightMeasure.Position != 0 ? 
+		RightValue : 1f;
 	public float MaxValue => LeftValue > RightValue ? LeftValue : RightValue;
 	public float MinValue => LeftValue < RightValue ? LeftValue : RightValue;
+	public float BalancedValue(float pow) => 
+		-MathF.Pow(LeftValue / RightValueOrOne, pow) +
+		MathF.Pow(RightValue / LeftValueOrOne, pow);
 	public float SumValue => LeftValue + RightValue;
 	public float LeftMinusRightValue => LeftValue - RightValue;
 	public float RightMinusLeftValue => RightValue - LeftValue;

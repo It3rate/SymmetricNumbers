@@ -11,8 +11,11 @@ using System.Threading.Tasks;
 
 public class DecayMeasure : MeasureBase, IVolatile, IDisposable
 {
-    public IMeasure DecayRate { get; set; }
-    public IMeasure Minimum { get; set; }
+	public RationalNumber DecayRate { get; set; } = RationalNumber.Zero;
+	public RationalNumber Scale { get; set; } = RationalNumber.One;
+    public IMeasure Bias { get; set; } = IMeasure.Zero;
+
+	public IMeasure Minimum { get; set; }
     public IMeasure Maximum { get; set; }
     public IMeasure? FollowTarget { get; set; }
 
@@ -26,14 +29,18 @@ public class DecayMeasure : MeasureBase, IVolatile, IDisposable
     private IMeasure _position;
     public override long Position
     {
-        get => _position.Position;
-        protected set => _position.SetPosition(long.Clamp(value, Minimum.Position, Maximum.Position));
+        get => (long)(_position.Position * Scale.FloatValue) + Bias.Position;
+        protected set
+        {
+            var val = (long)((value - Bias.Position) / Scale.FloatValue);
+            _position.SetPosition(long.Clamp(val, Minimum.Position, Maximum.Position));
+        }
     }
 
-    public DecayMeasure(long pos, long decayRate, long minimum, long maximum, IMeasure? followTarget = null)
+    public DecayMeasure(long pos, float decayRate, long minimum, long maximum, IMeasure? followTarget = null)
     {
         _position = new Measure(pos, true, CertaintyLevel.Set);
-        DecayRate = new Measure(decayRate, true, CertaintyLevel.Set);
+        DecayRate = new RationalNumber(decayRate, 1000);
         Minimum = new Measure(minimum, true, CertaintyLevel.Set);
         Maximum = new Measure(maximum, true, CertaintyLevel.Set);
         FollowTarget = followTarget;
@@ -43,7 +50,7 @@ public class DecayMeasure : MeasureBase, IVolatile, IDisposable
 		}
 
 	}
-    public DecayMeasure(IMeasure pos, IMeasure decayRate, IMeasure minimum, IMeasure maximum)
+    public DecayMeasure(IMeasure pos, RationalNumber decayRate, IMeasure minimum, IMeasure maximum)
     {
         _position = pos;
         DecayRate = decayRate;
@@ -56,12 +63,13 @@ public class DecayMeasure : MeasureBase, IVolatile, IDisposable
     }
     public void OnUpdate(IMeasure source)
     {
-        var change = DecayRate.Position;
+        var change = DecayRate.FloatValue;
         if(FollowTarget != null)
 		{
-			change = FollowTarget.Position >= Position ? DecayRate.Position : -DecayRate.Position;
+			change = (FollowTarget.Position - Position) * DecayRate.FloatValue;
 		}
 		SetPosition((long)(change + Position));
+        Trace.WriteLine(Position + " " + FollowTarget?.Position);
     }
     public void Dispose()
 	{

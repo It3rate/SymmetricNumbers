@@ -23,7 +23,8 @@ public interface IMeasure : IValue
 	bool IsMax => Position == long.MaxValue;
 	bool IsMin => Position == long.MinValue;
 	bool IsZero => Position == 0 && IsFullDefined;
-
+	public static IMeasure Zero => new Measure(0);
+	public static IMeasure One => new Measure(1);
 	public static IMeasure CreateExtreme(bool positive, bool inclusive)
 	{
 		long pos = positive ? long.MaxValue : long.MinValue;

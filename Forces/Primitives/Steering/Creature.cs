@@ -33,24 +33,26 @@ public class Creature : ConceptSpace
 	public double BrighterDirection { get; set; }
 
 	public UnbalancedNumber InvBrightness { get; }
-	private Measure BrightnessRes = new Measure(200, true, CertaintyLevel.Set);
+	private Measure BrightnessRes = new Measure(100, true, CertaintyLevel.Set);
 
 	public Creature()
 	{ 
 		RightEyeInput = new Measure(10);
 		LeftEyeInput = new Measure(50);
-		RightEyeResolution = new DecayMeasure(128, 1, 1, 255, RightEyeInput);
-		LeftEyeResolution  = new DecayMeasure(128, 1, 1, 255, LeftEyeInput);
+		RightEyeResolution = new DecayMeasure(128, 1.1f, 1, 255, RightEyeInput);
+		LeftEyeResolution  = new DecayMeasure(128, 1.1f, 1, 255, LeftEyeInput);
 
-		RightThrust = new Measure(10, true, CertaintyLevel.Uncertain);
-		LeftThrust = new Measure(10, true, CertaintyLevel.Uncertain);
-		LeftThrustResolution = new Measure(10, true, CertaintyLevel.Uncertain);
-		RightThrustResolution = new Measure(10, true, CertaintyLevel.Uncertain);
+		//RightThrust = new Measure(10, true, CertaintyLevel.Uncertain);
+		//LeftThrust = new Measure(10, true, CertaintyLevel.Uncertain);
+		//LeftThrustResolution = new Measure(10, true, CertaintyLevel.Uncertain);
+		//RightThrustResolution = new Measure(10, true, CertaintyLevel.Uncertain);
 
         Sight = new UnbalancedNumber(RightEyeInput, LeftEyeResolution, RightEyeResolution, LeftEyeInput);
-		Thrust = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
-
-		InvBrightness = new UnbalancedNumber(BrightnessRes, LeftEyeInput, RightEyeInput, BrightnessRes);
+		//Thrust = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
+		long min = 1;
+		var LeftEyeToRightLeg = new DecayMeasure(128, 10f, min, 255, LeftEyeInput);
+		var RighttEyeToLeftLeg = new DecayMeasure(128, 10f, min, 255, RightEyeInput);
+		InvBrightness = new UnbalancedNumber(BrightnessRes, RighttEyeToLeftLeg, LeftEyeToRightLeg, BrightnessRes);
 		// expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
         //TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
     }
@@ -61,17 +63,25 @@ public class Creature : ConceptSpace
 	private long _leftInc = 4;
 	public void OnTick()
 	{
-		Thrust.Calculate();
+		//Thrust.Calculate();
 		var left = Sight.LeftValue;
 		var right = Sight.RightValue;
 		var rot = 0f;
-		if (left != 0 && right != 0) 
+		if (left != 0 && right != 0)
 		{
 			rot = (left > right) ? -(left / right + .1f) : (right > left) ? (right / left + .1f) : 0;
 		}
 		BrighterDirection = (float)rot;
-		//Trace.WriteLine(rot.ToString("0.###"));
-    }
+
+
+		//BrighterDirection = MathF.Sqrt(Sight.BalancedValue(3));// * .002f;
+		//if (double.IsInfinity(BrighterDirection) || double.IsNaN(BrighterDirection)){
+		//	int x = 5;
+
+		//	BrighterDirection = Sight.BalancedValue(1) * .2f;
+		//}
+		//Trace.WriteLine(BrighterDirection.ToString("0.###"));
+	}
     public void SetSight(long leftLight, long rightLight)
     {
         LeftEyeInput.SetPosition(leftLight);

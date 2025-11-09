@@ -59,17 +59,20 @@ public class RationalNumber : RawNumber, IPartialNumber
         RightUnit = unit;
         LeftUnit = unit;
         LeftMeasure = new Measure(0, true);
-    }
-    public static RationalNumber Zero => new RationalNumber(0, long.MaxValue);
+	}
+	private static long _highRes = 0xFFFF;
+	public static RationalNumber Zero => new RationalNumber(0, _highRes);
+	public static RationalNumber One => new RationalNumber(_highRes, _highRes);
+	public static RationalNumber HigResNumber(float num) => new RationalNumber((long)(_highRes * num), _highRes);
 
-    // ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
-    // Value - measure / unit, what we normally consider the number to be.
-    // Reciprocal - unit/value.
-    // Shift - this is akin to add and subtract, but there is no added value. Essentially it is shifting the zero point. Add requires two things.
+	// ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
+	// Value - measure / unit, what we normally consider the number to be.
+	// Reciprocal - unit/value.
+	// Shift - this is akin to add and subtract, but there is no added value. Essentially it is shifting the zero point. Add requires two things.
 
-    // Add, multiply etc all require a second rational number.
+	// Add, multiply etc all require a second rational number.
 
-    public override string ToString()
+	public override string ToString()
     {
         return RightMeasurePosition + "/" + RightUnitPosition + ":" + RightValue.ToString("0.##");
     }
