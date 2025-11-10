@@ -11,6 +11,15 @@ using System.Threading.Tasks;
 
 public class DecayMeasure : MeasureBase, IVolatile, IDisposable
 {
+    // There is both the singal and the interpretation. The signal is always unaltered,
+    // but the interpretation is usally conditioned - at least with scale and bias, but other ways too.
+    // Not sure if this interpretation is always an equation, or if scale and bias are so common they are built in?
+
+    // An important operation is inverting, where the lighter it gets (positive) the slower you go (negative).
+    // the two ways to solve this are
+    // 1) use the imaginary side of complex number points (where real and imaginary are the same measure)
+    // thus getting height and depth with the same value. This needs a max value if everything is to remain positive.
+    // 2) have a clamped min/max on the measure, and the inverse is max-value. 
 	public RationalNumber DecayRate { get; set; } = RationalNumber.Zero;
 	public RationalNumber Scale { get; set; } = RationalNumber.One;
     public IMeasure Bias { get; set; } = IMeasure.Zero;

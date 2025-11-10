@@ -60,10 +60,10 @@ public class RationalNumber : RawNumber, IPartialNumber
         LeftUnit = unit;
         LeftMeasure = new Measure(0, true);
 	}
-	private static long _highRes = 0xFFFF;
+	private static long _highRes = 0x10000;
 	public static RationalNumber Zero => new RationalNumber(0, _highRes);
 	public static RationalNumber One => new RationalNumber(_highRes, _highRes);
-	public static RationalNumber HigResNumber(float num) => new RationalNumber((long)(_highRes * num), _highRes);
+	public static RationalNumber HighResNumber(float num) => new RationalNumber((long)(_highRes * num), _highRes);
 
 	// ScaleAll - multiply both measure and unit by the same factor, increasing resolution but not changing the value.
 	// Value - measure / unit, what we normally consider the number to be.

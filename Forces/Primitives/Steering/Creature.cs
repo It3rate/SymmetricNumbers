@@ -54,8 +54,12 @@ public class Creature : ConceptSpace
 		var RighttEyeToLeftLeg = new DecayMeasure(128, 10f, min, 255, RightEyeInput);
 		InvBrightness = new UnbalancedNumber(BrightnessRes, RighttEyeToLeftLeg, LeftEyeToRightLeg, BrightnessRes);
 		// expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
-        //TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
-    }
+		//TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
+		var measure = new Measure(100);
+		var unit = new Measure(10);
+		var test = new ComplexNumber(measure, measure, unit);
+		var x = test.LeftValue;
+	}
 
 	private Random _rnd = new Random();
 	private long _leftLight = 0;

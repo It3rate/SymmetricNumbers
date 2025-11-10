@@ -29,8 +29,8 @@ public class ComplexNumber : UnbalancedNumber
     {
         RightUnit = resolution;
         RightMeasure = rationalMeasure;
-        LeftUnit = resolution;
-        LeftMeasure = imaginaryMeasure;
+        LeftUnit = resolution; // this is negative on the measure position (positive in imaginary perspective)
+        LeftMeasure = imaginaryMeasure; // this is negative on the measure position too. leftunit/leftmeasure is a positive number.
     }
     public ComplexValue Complex => new ComplexValue(this);
     public class ComplexValue : NumberValue
