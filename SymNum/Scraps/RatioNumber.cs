@@ -25,17 +25,3 @@ public class RatioNumber : RawNumber
         LeftUnit = new Measure(startPoint);
     }
 }
-public class RatioValue : NumberValue
-{
-    public RatioNumber Reference { get; }
-    public float Value => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
-    public override long LeftResolution => Math.Abs(EndPosition - StartPosition);
-    public override long RightResolution => LeftResolution;
-    private long StartPosition => Reference.StartPosition;
-    private long MidPosition => Reference.MidPosition;
-    private long EndPosition => Reference.EndPosition;
-    public RatioValue(RatioNumber baseNumber) : base(baseNumber)
-    {
-        Reference = baseNumber;
-    }
-}

@@ -29,20 +29,7 @@ public class ComplexNumber : UnbalancedNumber
     {
         RightUnit = resolution;
         RightMeasure = rationalMeasure;
-        LeftUnit = resolution; // this is negative on the measure position (positive in imaginary perspective)
-        LeftMeasure = imaginaryMeasure; // this is negative on the measure position too. leftunit/leftmeasure is a positive number.
-    }
-    public ComplexValue Complex => new ComplexValue(this);
-    public class ComplexValue : NumberValue
-    {
-        public ComplexNumber Reference { get; }
-        public float Real => Reference.RightValue;
-        public float Imaginary => Reference.LeftValue;
-        public override long RightResolution => Reference.LeftUnit.Position;
-        public override long LeftResolution => RightResolution; // real and imaginary resolution are always the same in complex numbers.
-        public ComplexValue(ComplexNumber complexNumber) : base(complexNumber)
-        {
-            Reference = complexNumber;
-        }
+        LeftUnit = resolution; // this is 'negative' when interpreted in the rational perspective, but positive to itself.
+        LeftMeasure = imaginaryMeasure; // +leftunit/+leftmeasure is a positive imaginary number, but negative if converted to real.
     }
 }

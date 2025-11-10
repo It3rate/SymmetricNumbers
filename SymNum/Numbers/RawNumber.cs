@@ -34,7 +34,9 @@ public class RawNumber : INumber
     // C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
     // zero point is E
     public virtual IMeasure[] Measures { get; } = new IMeasure[5];
-    public virtual IMeasure RightMeasure { get => Measures[0]; protected set => Measures[0] = value; }
+	public Direction[] Directions { get; } = { Direction.FacesRight, Direction.FacesLeft, Direction.FacesLeft, Direction.FacesRight, Direction.Zero };
+
+	public virtual IMeasure RightMeasure { get => Measures[0]; protected set => Measures[0] = value; }
 	public virtual IMeasure RightUnit { get => Measures[2]; protected set => Measures[2] = value; }
 	public virtual IMeasure LeftMeasure { get => Measures[3]; protected set => Measures[3] = value; }
 	public virtual IMeasure LeftUnit { get => Measures[1]; protected set => Measures[1] = value; }
@@ -272,7 +274,7 @@ public class RawNumber : INumber
 		RightValue : 1f;
 	public float MaxValue => LeftValue > RightValue ? LeftValue : RightValue;
 	public float MinValue => LeftValue < RightValue ? LeftValue : RightValue;
-	public float BalancedValue(float pow) => 
+	public float CancelledSum(float pow) => 
 		-MathF.Pow(LeftValue / RightValueOrOne, pow) +
 		MathF.Pow(RightValue / LeftValueOrOne, pow);
 	public float SumValue => LeftValue + RightValue;
@@ -648,18 +650,6 @@ public class RawNumber : INumber
 	//}
 	#endregion
 
-}
-
-public abstract class NumberValue
-{
-    public RawNumber NumberReference { get; }
-    public abstract long RightResolution { get; }
-    public abstract long LeftResolution { get; }
-
-    public NumberValue(RawNumber number)
-    {
-        NumberReference = number;
-    }
 }
 
 public class AnnotatedFloat

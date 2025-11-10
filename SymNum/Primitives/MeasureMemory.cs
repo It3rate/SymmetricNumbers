@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 namespace SymNum.Primitives;
 
-public class MeasureMemory : MeasureBase, IVolatile
+public class MeasureMemory : MeasureBase, IDisposable
 {
 	public MemoryKind Kind { get; set; }
-	public IMeasure Measure { get; }
+	public IMeasure Ref { get; }
 	public override long Position
     {
         get
@@ -40,11 +40,11 @@ public class MeasureMemory : MeasureBase, IVolatile
 
 	public MeasureMemory(IMeasure measure, MemoryKind kind, long initialValue, int maxHistory = 5)
 	{
-		Measure = measure;
+		Ref = measure;
 		Kind = kind;
 		MaxHistory = maxHistory;
 		SetPosition(initialValue);
-		Measure.PositionChanged += OnUpdate;
+		Ref.PositionChanged += OnUpdate;
     }
     public void OnUpdate(IMeasure source)
     { 
@@ -108,5 +108,12 @@ public class MeasureMemory : MeasureBase, IVolatile
 		Max,
 		MaxDiff,
 		Product
+	}
+	public void Dispose()
+	{
+		if (Ref != null)
+		{
+			Ref.PositionChanged -= OnUpdate;
+		}
 	}
 }

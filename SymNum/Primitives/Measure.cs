@@ -30,7 +30,6 @@ public abstract class MeasureBase : IMeasure
 	public event Action<IMeasure> PositionChanged;
 
 	public virtual long Position { get; protected set; }
-	public virtual long Bias { get; set; } = 0;
 	public virtual bool IsFullDefined => !IsMin && !IsMax;
 	public virtual bool IsMax => Position == long.MaxValue;
 	public virtual bool IsMin => Position == long.MinValue;
@@ -58,11 +57,6 @@ public abstract class MeasureBase : IMeasure
 		Position = position;
 		PositionChanged?.Invoke(this);
 	}
-	public virtual void SetBias(long bias)
-	{
-		Bias = bias;
-		//PositionChanged?.Invoke(this);
-	}
 	public virtual void Negate()
     {
         SetPosition(-Position);
@@ -89,7 +83,7 @@ public abstract class MeasureBase : IMeasure
 	}
 	public static bool operator ==(MeasureBase a, MeasureBase b)
 	{
-		return a.Position == b.Position && a.Bias == b.Bias;
+		return a.Position == b.Position;
 	}
 	public static bool operator !=(MeasureBase a, MeasureBase b)
 	{
@@ -116,7 +110,7 @@ public abstract class MeasureBase : IMeasure
 	}
 	public override int GetHashCode()
 	{
-		return HashCode.Combine(Position, Bias);
+		return HashCode.Combine(Position, (int)Certainty);
 	}
 	public override string ToString()
 	{

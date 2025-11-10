@@ -15,8 +15,6 @@ public interface IMeasure : IValue
 	public event Action<IMeasure> PositionChanged;
 	long Position { get; }
 	void SetPosition(long position);
-	long Bias { get; }
-	void SetBias(long bias);
     void Negate();
     //public CertaintyLevel CertaintyLevel { get; } // inherited
     public bool IsCertain { get; }

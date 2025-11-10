@@ -65,7 +65,7 @@ public class CreatureBody : DrawableBase
 		});
     }
 
-	private float _thrustForce = 1000f; // Tune for sim scale
+	private float _thrustForce = 2000f; // Tune for sim scale
 	//private float _turnTorque = 3000f;
 	private Random _rnd = new Random();
 	private float _turnTotal = 0f;
@@ -80,7 +80,7 @@ public class CreatureBody : DrawableBase
 			var angle = Body.GetAngle();
             var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-			_turnTotal = (float)_creature.BrighterDirection * 6f;
+			_turnTotal = (float)_creature.BrighterDirection;
 			var thrustScale = _creature.InvBrightness.MinValue + 8f;
 
 			var force = angleVec * _thrustForce * thrustScale;

@@ -16,6 +16,8 @@ namespace SymNum.Numbers;
 /// </summary>
 public class RationalNumber : RawNumber, IPartialNumber
 {
+	// Q. Rather than a separate rational and imaginary split,
+	// perhaps just use a PointNumber, where real and imaginary are the same ref?
 	public bool IsRationalPart => true;
 	public bool IsImaginaryPart => false;
 

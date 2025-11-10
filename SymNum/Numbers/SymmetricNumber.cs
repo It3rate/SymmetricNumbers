@@ -74,21 +74,4 @@ public class SymmetricNumber : RawNumber
 		RightUnit = br;
 		LeftMeasure = bl;
 	}
-	public SymmetricValue Symmetric => new SymmetricValue(this);
-    public class SymmetricValue : NumberValue
-    {
-        public SymmetricNumber Reference { get; }
-        public float RightFloat => RawNumber.GetValue(Reference.RightMeasure, Reference.RightUnit);
-        public float LeftFloat => RawNumber.GetValue(Reference.LeftMeasure, Reference.LeftUnit);
-        public float GetFloat(Measure measure) => measure.IsFullDefined ? measure.Position : 0;
-        public float GetFloat(Measure numerator, Measure denominator) => RawNumber.GetValue(numerator, denominator);
-        // todo: public float GetValue(Measure a, Measure b, Measure c) => ;
-        // todo: public float GetValue(Measure a, Measure b, Measure c, Measure d) => ;
-        public override long RightResolution => Reference.RightResolution;
-        public override long LeftResolution => Reference.LeftResolution;
-        public SymmetricValue(SymmetricNumber baseNumber) : base(baseNumber)
-        {
-            Reference = baseNumber;
-        }
-    }
 }
