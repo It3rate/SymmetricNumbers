@@ -15,7 +15,8 @@ public interface IMeasure : IValue
 	public event Action<IMeasure> PositionChanged;
 	long Position { get; }
 	void SetPosition(long position);
-	bool Inclusive { get; }
+	long Bias { get; }
+	void SetBias(long bias);
     void Negate();
     //public CertaintyLevel CertaintyLevel { get; } // inherited
     public bool IsCertain { get; }
@@ -25,26 +26,26 @@ public interface IMeasure : IValue
 	bool IsZero => Position == 0 && IsFullDefined;
 	public static IMeasure Zero => new Measure(0);
 	public static IMeasure One => new Measure(1);
-	public static IMeasure CreateExtreme(bool positive, bool inclusive)
+	public static IMeasure CreateExtreme(bool positive)
 	{
 		long pos = positive ? long.MaxValue : long.MinValue;
-		return new Measure(pos, inclusive);
+		return new Measure(pos);
 	}
-	public static IMeasure CreateUnknown(bool inclusive)
+	public static IMeasure CreateUnknown()
 	{
-		return new Measure(0, inclusive);
+		return new Measure(0);
 	}
 	public static IMeasure operator -(IMeasure a)
 	{
 		var position = a.IsMin ? long.MaxValue : a.IsMax ? long.MinValue : -a.Position;
-		return new Measure(position, a.Inclusive);
+		return new Measure(position);
 	}
 	public static IMeasure operator ++(IMeasure a)
 	{
 		var result = a;
 		if (a.IsFullDefined)
 		{
-			result = new Measure(a.Position + 1, a.Inclusive);
+			result = new Measure(a.Position + 1);
 		}
 		return result;
 	}
@@ -53,7 +54,7 @@ public interface IMeasure : IValue
 		var result = a;
 		if (a.IsFullDefined)
 		{
-			result = new Measure(a.Position - 1, a.Inclusive);
+			result = new Measure(a.Position - 1);
 		}
 		return result;
 	}
@@ -79,20 +80,19 @@ public interface IMeasure : IValue
 
 	public static IMeasure operator +(IMeasure a, IMeasure b)
 	{
-		bool newInclusive = a.Inclusive && b.Inclusive;
 
 		if (a.IsMax || b.IsMax)
 		{
 			if (a.IsMin || b.IsMin)
 			{
-				return CreateUnknown(newInclusive);
+				return CreateUnknown();
 			}
-			return CreateExtreme(true, newInclusive);
+			return CreateExtreme(true);
 		}
 
 		if (a.IsMin && b.IsMin)
 		{
-			return CreateExtreme(false, newInclusive);
+			return CreateExtreme(false);
 		}
 
 		// Both finite
@@ -110,39 +110,37 @@ public interface IMeasure : IValue
 			newPosition = a.Position + b.Position;
 		}
 
-		return new Measure(newPosition, newInclusive);
+		return new Measure(newPosition);
 	}
 
 	public static IMeasure operator -(IMeasure a, IMeasure b)
 	{
-		bool newInclusive = a.Inclusive && b.Inclusive;
-
 		if (a.IsMax)
 		{
 			if (b.IsMax)
 			{
-				return CreateUnknown(newInclusive);
+				return CreateUnknown();
 			}
-			return CreateExtreme(true, newInclusive);
+			return CreateExtreme(true);
 		}
 
 		if (a.IsMin)
 		{
 			if (b.IsMin)
 			{
-				return CreateUnknown(newInclusive);
+				return CreateUnknown();
 			}
-			return CreateExtreme(false, newInclusive);
+			return CreateExtreme(false);
 		}
 
 		if (b.IsMax)
 		{
-			return CreateExtreme(false, newInclusive);
+			return CreateExtreme(false);
 		}
 
 		if (b.IsMin)
 		{
-			return CreateExtreme(true, newInclusive);
+			return CreateExtreme(true);
 		}
 
 		// Both finite
@@ -161,16 +159,14 @@ public interface IMeasure : IValue
 			newPosition = a.Position - b.Position;
 		}
 
-		return new Measure(newPosition, newInclusive);
+		return new Measure(newPosition);
 	}
 
 	public static IMeasure operator *(IMeasure a, IMeasure b)
 	{
-		bool newInclusive = a.Inclusive && b.Inclusive;
-
 		if (a.Position == 0 || b.Position == 0)
 		{
-			return new Measure(0, newInclusive);
+			return new Measure(0);
 		}
 
 		bool aInf = a.IsMax || a.IsMin;
@@ -180,7 +176,7 @@ public interface IMeasure : IValue
 			bool signA = a.IsMax || a.Position > 0;
 			bool signB = b.IsMax || b.Position > 0;
 			bool productPositive = signA == signB;
-			return CreateExtreme(productPositive, newInclusive);
+			return CreateExtreme(productPositive);
 		}
 
 		// Both finite and nonzero
@@ -198,18 +194,17 @@ public interface IMeasure : IValue
 			newPosition = a.Position * b.Position;
 		}
 
-		return new Measure(newPosition, newInclusive);
+		return new Measure(newPosition);
 	}
 
 	public static IMeasure operator /(IMeasure a, IMeasure b)
 	{
-		bool newInclusive = a.Inclusive && b.Inclusive;
 
 		bool bInf = b.IsMax || b.IsMin;
 		bool aInf = a.IsMax || a.IsMin;
 		if (bInf)
 		{
-			return new Measure(0, newInclusive);
+			return new Measure(0);
 		}
 
 		if (aInf)
@@ -217,19 +212,19 @@ public interface IMeasure : IValue
 			bool signA = a.IsMax || a.Position > 0;
 			bool signB = b.Position > 0;
 			bool productPositive = signA == signB;  // Division sign: same as multiplication by reciprocal, but same rule as mul for signs
-			return CreateExtreme(productPositive, newInclusive);
+			return CreateExtreme(productPositive);
 		}
 
 		if (b.Position == 0)
 		{
 			// Zero means below resolution, so dividing say 40/0 means greater than 40, but less than max.
 			// at some point there may need to be +0 and -0, but for now the sign comes from the numerator.
-			return new Measure(a.Position, newInclusive);
+			return new Measure(a.Position);
 		}
 
 		// Both finite, nonzero denominator
 		long newPosition = a.Position / b.Position;
-		return new Measure(newPosition, newInclusive);
+		return new Measure(newPosition);
 	}
 
 }

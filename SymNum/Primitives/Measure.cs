@@ -3,9 +3,8 @@ namespace SymNum.Primitives;
 
 public class Measure : MeasureBase
 {
-	public Measure(long position,
-		bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Uncertain) :
-				base(position, inclusive, certainty)
+	public Measure(long position, CertaintyLevel certainty = CertaintyLevel.Uncertain) :
+				base(position, certainty)
 	{
 	}
 
@@ -26,12 +25,12 @@ public class Measure : MeasureBase
 }
 public abstract class MeasureBase : IMeasure
 {
-	public static readonly IMeasure Unknown = new Measure(0, false);
+	public static readonly IMeasure Unknown = new Measure(0);
 
 	public event Action<IMeasure> PositionChanged;
 
 	public virtual long Position { get; protected set; }
-	public virtual bool Inclusive { get; protected set; }
+	public virtual long Bias { get; set; } = 0;
 	public virtual bool IsFullDefined => !IsMin && !IsMax;
 	public virtual bool IsMax => Position == long.MaxValue;
 	public virtual bool IsMin => Position == long.MinValue;
@@ -47,46 +46,50 @@ public abstract class MeasureBase : IMeasure
 	protected MeasureBase()
 	{
 	}
-	public MeasureBase(long position, bool inclusive = true, CertaintyLevel certainty = CertaintyLevel.Set)
+	public MeasureBase(long position, CertaintyLevel certainty = CertaintyLevel.Set)
 	{
 		Position = position;
-		Inclusive = inclusive;
 		Certainty = certainty;
 	}
 
 
-    public virtual void SetPosition(long position)
+	public virtual void SetPosition(long position)
 	{
 		Position = position;
 		PositionChanged?.Invoke(this);
-    }
-    public virtual void Negate()
+	}
+	public virtual void SetBias(long bias)
+	{
+		Bias = bias;
+		//PositionChanged?.Invoke(this);
+	}
+	public virtual void Negate()
     {
         SetPosition(-Position);
     }
     public static IMeasure MaxDown()
 	{
-		return IMeasure.CreateExtreme(true, true);
+		return IMeasure.CreateExtreme(true);
 	}
 	public static IMeasure MinUp()
 	{
-		return IMeasure.CreateExtreme(true, true);
+		return IMeasure.CreateExtreme(true);
 	}
 	public static IMeasure ZeroDown()
 	{
-		return new Measure(0, true);
+		return new Measure(0);
 	}
 	public static IMeasure ZeroUnknown()
 	{
-		return new Measure(0, true);
+		return new Measure(0);
 	}
 	public static IMeasure ZeroUp()
 	{
-		return new Measure(0, true);
+		return new Measure(0);
 	}
 	public static bool operator ==(MeasureBase a, MeasureBase b)
 	{
-		return a.Position == b.Position && a.Inclusive == b.Inclusive;
+		return a.Position == b.Position && a.Bias == b.Bias;
 	}
 	public static bool operator !=(MeasureBase a, MeasureBase b)
 	{
@@ -113,13 +116,12 @@ public abstract class MeasureBase : IMeasure
 	}
 	public override int GetHashCode()
 	{
-		return HashCode.Combine(Position, Inclusive);
+		return HashCode.Combine(Position, Bias);
 	}
 	public override string ToString()
 	{
-		string inclStr = Inclusive ? "In" : "Ex";
 		string posStr = IsMax ? "Max" : IsMin ? "Min" : Position.ToString();
-		return $"{posStr} {inclStr}";
+		return $"{posStr}";
 	}
 }
 

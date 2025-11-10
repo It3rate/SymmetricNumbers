@@ -31,13 +31,13 @@ public class UnbalancedNumber : RawNumber
     protected UnbalancedNumber() { }
     public UnbalancedNumber(long? rational, long? imaginaryResolution, long? rationalResolution, long? imaginary)
     {
-        RightMeasure = new Measure(rational ?? 0, true,
+        RightMeasure = new Measure(rational ?? 0,
             (rational == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
-        LeftUnit = new Measure(imaginary ?? 0, true,
+        LeftUnit = new Measure(imaginary ?? 0,
             (imaginary == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
-        RightUnit = new Measure(rationalResolution ?? 0, true,
+        RightUnit = new Measure(rationalResolution ?? 0,
             (rationalResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
-        LeftMeasure = new Measure(imaginaryResolution ?? 0, true,
+        LeftMeasure = new Measure(imaginaryResolution ?? 0,
             (imaginaryResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
         Initialize();
     }

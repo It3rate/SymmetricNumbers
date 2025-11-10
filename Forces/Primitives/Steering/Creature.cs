@@ -33,7 +33,7 @@ public class Creature : ConceptSpace
 	public double BrighterDirection { get; set; }
 
 	public UnbalancedNumber InvBrightness { get; }
-	private Measure BrightnessRes = new Measure(100, true, CertaintyLevel.Set);
+	private Measure BrightnessRes = new Measure(100, CertaintyLevel.Set);
 
 	public Creature()
 	{ 

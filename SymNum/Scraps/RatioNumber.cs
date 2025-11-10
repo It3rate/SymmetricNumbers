@@ -20,9 +20,9 @@ public class RatioNumber : RawNumber
     public float FloatValue => (MidPosition - StartPosition) / (float)(EndPosition - StartPosition);
     public RatioNumber(long startPoint, long midPoint, long endPoint, bool isPositiveRight)
     {
-        RightMeasure = new Measure(midPoint, true);
-        LeftMeasure = new Measure(endPoint, true);
-        LeftUnit = new Measure(startPoint, true);
+        RightMeasure = new Measure(midPoint);
+        LeftMeasure = new Measure(endPoint);
+        LeftUnit = new Measure(startPoint);
     }
 }
 public class RatioValue : NumberValue
