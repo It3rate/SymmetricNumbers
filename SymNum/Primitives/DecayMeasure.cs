@@ -20,14 +20,13 @@ public class DecayMeasure : MeasureBase, IDisposable
     // 1) use the imaginary side of complex number points (where real and imaginary are the same measure)
     // thus getting height and depth with the same value. This needs a max value if everything is to remain positive.
     // 2) have a clamped min/max on the measure, and the inverse is max-value. 
-	public RationalNumber DecayRate { get; set; } = RationalNumber.Zero;
+    public IMeasure Ref { get; set; }
+	public DriftMeasure Decay { get; set; }
 
 	public IMeasure Minimum { get; set; }
     public IMeasure Maximum { get; set; }
-    public IMeasure? FollowTarget { get; set; }
 
     public override bool IsFullDefined => true;
-
     public override bool IsCertain => true;
     public override bool IsMax => Position >= Maximum.Position;
     public override bool IsMin => Position <= Minimum.Position;
@@ -44,45 +43,38 @@ public class DecayMeasure : MeasureBase, IDisposable
  //       }
  //   }
 
-    public DecayMeasure(long pos, float decayRate, long minimum, long maximum, IMeasure? followTarget = null)
-    {
-        Position = pos;// new Measure(pos,  CertaintyLevel.Set);
-        DecayRate = new RationalNumber(decayRate, 1000);
-        Minimum = new Measure(minimum, CertaintyLevel.Set);
-        Maximum = new Measure(maximum, CertaintyLevel.Set);
-        FollowTarget = followTarget;
-        if(FollowTarget != null)
-		{
-			FollowTarget.PositionChanged += OnUpdate;
-		}
-
+    public DecayMeasure(IMeasure reference, float decayRate)
+    {   
+        Ref = reference;
+		Decay = DriftMeasure.SlowFollow(reference);
+		Minimum = DriftMeasure.Min(reference);
+		Maximum = DriftMeasure.Max(reference);
+		Ref.PositionChanged += OnUpdate;
 	}
-    public DecayMeasure(long pos, RationalNumber decayRate, IMeasure minimum, IMeasure maximum)
-    {
-        Position = pos;
-        DecayRate = decayRate;
+	public override void SetPosition(long position)
+	{
+		Position = position;
+	}
+	public DecayMeasure(IMeasure reference, float decayRate, IMeasure minimum, IMeasure maximum)
+	{
+		Ref = reference;
+		Position = reference.Position;// new Measure(pos,  CertaintyLevel.Set);
+        Decay = DriftMeasure.SlowFollow(reference, decayRate);
         Minimum = minimum;
         Maximum = maximum;
-    }
-    public void FlipDecayRate()
-    {
-        DecayRate.Negate();
-    }
+        Ref.PositionChanged += OnUpdate;
+	}
     public void OnUpdate(IMeasure source)
-    {
-        var change = DecayRate.FloatValue;
-        if(FollowTarget != null)
-		{
-			change = (FollowTarget.Position - Position) * DecayRate.FloatValue;
-		}
-		SetPosition((long)(change + Position));
-        Trace.WriteLine(Position + " " + FollowTarget?.Position);
+	{
+		// all sub refs have now updated
+		SetPosition(long.Clamp(Decay.Position, Minimum.Position, Maximum.Position));
+        //Trace.WriteLine(Position + " " + Ref?.Position);
     }
     public void Dispose()
 	{
-		if (FollowTarget != null)
+		if (Ref != null)
 		{
-			FollowTarget.PositionChanged -= OnUpdate;
+			Ref.PositionChanged -= OnUpdate;
 		}
 	}
     

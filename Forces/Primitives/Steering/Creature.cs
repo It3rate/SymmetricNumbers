@@ -31,8 +31,8 @@ public class Creature : ConceptSpace
 
 		var rightEyeMeasure = new MeasureRef(RightEyeInput, 5f);
 		var leftEyeMeasure = new MeasureRef(LeftEyeInput, 5f);
-		var RightEyeResolution = new DecayMeasure(128, 0.1f, 2, 205, RightEyeInput);
-		var LeftEyeResolution  = new DecayMeasure(128, 0.1f, 2, 205, LeftEyeInput);
+		var RightEyeResolution = new DecayMeasure(RightEyeInput, 0.01f);
+		var LeftEyeResolution  = new DecayMeasure(LeftEyeInput, 0.01f);
 
 		//RightThrust = new Measure(10, true, CertaintyLevel.Uncertain);
 		//LeftThrust = new Measure(10, true, CertaintyLevel.Uncertain);
@@ -42,8 +42,8 @@ public class Creature : ConceptSpace
         Sight = new UnbalancedNumber(rightEyeMeasure, LeftEyeResolution, RightEyeResolution, leftEyeMeasure);
 		//Thrust = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
 		long min = 1;
-		var LeftEyeToRightLeg = new DecayMeasure(128, 10f, min, 255, LeftEyeInput);
-		var RighttEyeToLeftLeg = new DecayMeasure(128, 10f, min, 255, RightEyeInput);
+		var LeftEyeToRightLeg = new DecayMeasure(LeftEyeInput, .01f);
+		var RighttEyeToLeftLeg = new DecayMeasure(RightEyeInput, .01f);
 		var  BrightnessRes = new Measure(100, CertaintyLevel.Set);
 		InvBrightness = new UnbalancedNumber(BrightnessRes, RighttEyeToLeftLeg, LeftEyeToRightLeg, BrightnessRes);
 		// expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)

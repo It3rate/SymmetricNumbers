@@ -15,6 +15,7 @@ namespace SymNum.Numbers
 	/// </summary>
 	public class PointNumber : RawNumber
 	{
+		public bool IsRightPositiveContext { get; set; } = true;	
 		public PointNumber(long value, long resolution) :
 			 this(new Measure(value), new Measure(resolution))
 		{ }
