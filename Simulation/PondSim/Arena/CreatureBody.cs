@@ -65,7 +65,7 @@ public class CreatureBody : DrawableBase
 		});
     }
 
-	private float _thrustForce = 300f; // Tune for sim scale
+	private float _thrustForce = 5000f; // Tune for sim scale
 	//private float _turnTorque = 3000f;
 	private Random _rnd = new Random();
 	private float _turnTotal = 0f;
@@ -80,14 +80,14 @@ public class CreatureBody : DrawableBase
 			var angle = Body.GetAngle();
             var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-			_turnTotal = (float)_creature.BrighterDirection / 200f ;
-			var thrustScale = _creature.InvBrightness.MinValue + 0f;
+			_turnTotal = (float)_creature.BrighterDirection * 2f;
+			var thrustScale = (_creature.InvBrightness.MinValue + 1f) * 2f;
 
 			var force = angleVec * _thrustForce * thrustScale;
 			var point = Body.GetWorldPoint(new(0, _turnTotal));
 			Body.ApplyForce(force, point, true);
 
-			if(speed < 5f) // dont stick to walls
+			if(false && speed < 5f) // dont stick to walls
 			{
 				Body.ApplyTorque(_rnd.NextSingle() * 800000f, true);
 				Body.ApplyForce(angleVec * -10000,Body.GetWorldPoint(new(0, 0)), true);

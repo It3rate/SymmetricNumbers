@@ -46,7 +46,7 @@ public class DecayMeasure : MeasureBase, IDisposable
     public DecayMeasure(IMeasure reference, float decayRate)
     {   
         Ref = reference;
-		Decay = DriftMeasure.SlowFollow(reference);
+		Decay = DriftMeasure.SlowFollow(reference, decayRate);
 		Minimum = DriftMeasure.Min(reference);
 		Maximum = DriftMeasure.Max(reference);
 		Ref.PositionChanged += OnUpdate;

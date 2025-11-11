@@ -9,6 +9,7 @@ namespace SymNum.Primitives;
 
 public class DriftMeasure : Measure, IDisposable
 {
+	private float _accPosition;
 	public IMeasure Ref { get; }
 	public bool TrackRef { get; } = true;
 
@@ -19,12 +20,16 @@ public class DriftMeasure : Measure, IDisposable
 		Ref = reference;
 		TrackRef = false;
 		DriftRate = new ComplexNumber(driftRate, driftRate, resolution);
+		Position = reference.Position;
+		_accPosition = reference.Position;
 		Ref.PositionChanged += OnUpdate;
 	}
 	public DriftMeasure(IMeasure reference, float ifLower, float ifHigher, long resolution) : base(reference.Position)
 	{
 		Ref = reference;
 		DriftRate = new ComplexNumber(ifLower, ifHigher, resolution);
+		Position = reference.Position;
+		_accPosition = reference.Position;
 		Ref.PositionChanged += OnUpdate;
 	}
 	public void OnUpdate(IMeasure source)
@@ -39,7 +44,8 @@ public class DriftMeasure : Measure, IDisposable
 		{
 			change = Position * DriftRate.RightValue;
 		}
-		SetPosition(Position + (long)change);
+		_accPosition += change;
+		SetPosition((long)_accPosition);
 	}
 
 	public void Dispose()

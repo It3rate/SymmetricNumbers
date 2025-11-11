@@ -23,7 +23,7 @@ public class ComplexNumber : UnbalancedNumber
         //LeftMeasure = new Measure(startPosition, Direction.Unknown, true);
     }
     public ComplexNumber(float startPosition, float endPosition, long resolution) :
-        this(resolution, (long)(startPosition / resolution), (long)(endPosition / resolution))
+        this((long)(startPosition * resolution), (long)(endPosition * resolution), resolution)
     { }
     public ComplexNumber(IMeasure imaginaryMeasure, IMeasure rationalMeasure, IMeasure resolution) 
     {

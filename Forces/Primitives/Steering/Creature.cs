@@ -44,7 +44,7 @@ public class Creature : ConceptSpace
 		long min = 1;
 		var LeftEyeToRightLeg = new DecayMeasure(LeftEyeInput, .01f);
 		var RighttEyeToLeftLeg = new DecayMeasure(RightEyeInput, .01f);
-		var  BrightnessRes = new Measure(100, CertaintyLevel.Set);
+		var  BrightnessRes = new Measure(10, CertaintyLevel.Set);
 		InvBrightness = new UnbalancedNumber(BrightnessRes, RighttEyeToLeftLeg, LeftEyeToRightLeg, BrightnessRes);
 		// expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
 		//TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
@@ -71,11 +71,11 @@ public class Creature : ConceptSpace
 		//BrighterDirection = (float)rot;
 
 
-		//BrighterDirection = MathF.Sqrt(Sight.BalancedValue(3));// * .002f;
+		//BrighterDirection = MathF.Sqrt(Sight.CancelledSum(1));// * .002f;
 		//if (double.IsInfinity(BrighterDirection) || double.IsNaN(BrighterDirection)){
 		//	int x = 5;
 		// }
-		BrighterDirection = Sight.CancelledSum(1);
+		BrighterDirection = Sight.CancelledSum(1) / 2f;
 		//Trace.WriteLine(BrighterDirection.ToString("0.###"));
 	}
     public void SetSight(long leftLight, long rightLight)
