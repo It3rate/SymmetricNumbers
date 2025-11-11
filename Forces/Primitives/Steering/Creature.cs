@@ -22,8 +22,8 @@ public class Creature : ConceptSpace
 	public IMeasure LeftEyeInput { get; }
 	public UnbalancedNumber Sight { get; } 
 	public BinaryExpression Thrust { get; }
-	public double BrighterDirection { get; set; }
-	public UnbalancedNumber InvBrightness { get; }
+	public double ThrustDirection { get; set; }
+	public UnbalancedNumber Legs { get; }
 	public Creature()
 	{ 
 		RightEyeInput = new Measure(0);
@@ -44,8 +44,8 @@ public class Creature : ConceptSpace
 		long min = 1;
 		var LeftEyeToRightLeg = new DecayMeasure(LeftEyeInput, .01f);
 		var RighttEyeToLeftLeg = new DecayMeasure(RightEyeInput, .01f);
-		var  BrightnessRes = new Measure(10, CertaintyLevel.Set);
-		InvBrightness = new UnbalancedNumber(BrightnessRes, RighttEyeToLeftLeg, LeftEyeToRightLeg, BrightnessRes);
+		var  BrightnessRes = new Measure(255, CertaintyLevel.Set);
+		Legs = new UnbalancedNumber(RighttEyeToLeftLeg, BrightnessRes, BrightnessRes, LeftEyeToRightLeg);
 		// expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
 		//TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
 		var measure = new Measure(100);
@@ -61,21 +61,16 @@ public class Creature : ConceptSpace
 	public void OnTick()
 	{
 		//Thrust.Calculate();
-		var left = Sight.LeftValue;
-		var right = Sight.RightValue;
-		var rot = 0f;
-		if (left != 0 && right != 0)
-		{
-			rot = (left > right) ? -(left / right + .1f) : (right > left) ? (right / left + .1f) : 0;
-		}
-		//BrighterDirection = (float)rot;
+		//var left = Legs.LeftValue;
+		//var right = Legs.RightValue;
+		//var rot = 0f;
+		//if (left != 0 && right != 0)
+		//{
+		//	rot = (left > right) ? -(left / right + .1f) : (right > left) ? (right / left + .1f) : 0;
+		//}
+		//ThrustDirection = (float)rot;
+		ThrustDirection = Legs.CancelledSum(1);
 
-
-		//BrighterDirection = MathF.Sqrt(Sight.CancelledSum(1));// * .002f;
-		//if (double.IsInfinity(BrighterDirection) || double.IsNaN(BrighterDirection)){
-		//	int x = 5;
-		// }
-		BrighterDirection = Sight.CancelledSum(1) / 2f;
 		//Trace.WriteLine(BrighterDirection.ToString("0.###"));
 	}
     public void SetSight(long leftLight, long rightLight)

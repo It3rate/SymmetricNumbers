@@ -45,8 +45,8 @@ public class CreatureBody : DrawableBase
             type = BodyType.Dynamic,
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
-            linearDamping = 3f,
-            angularDamping = 2.3f,
+            linearDamping = 4f,
+            angularDamping = 3f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
@@ -67,7 +67,7 @@ public class CreatureBody : DrawableBase
 		});
     }
 
-	private float _thrustForce = 5000f; // Tune for sim scale
+	private float _thrustForce = 4000f; // Tune for sim scale
 	//private float _turnTorque = 3000f;
 	private Random _rnd = new Random();
 	private float _turnTotal = 0f;
@@ -82,11 +82,13 @@ public class CreatureBody : DrawableBase
 			var angle = Body.GetAngle();
             var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-			_turnTotal = (float)_creature.BrighterDirection * 2f;
-			var thrustScale = (_creature.InvBrightness.MinValue + 1f) * 2f;
-
+			var darkness = _creature.Sight.MinValue;
+			var thrustScale = (darkness == 0 ? 6f : 1f/darkness) + 4f;
 			var force = angleVec * _thrustForce * thrustScale;
+
+			_turnTotal = (float)_creature.ThrustDirection * -1.4f;
 			var point = Body.GetWorldPoint(new(0, _turnTotal));
+
 			Body.ApplyForce(force, point, true);
 
 		}

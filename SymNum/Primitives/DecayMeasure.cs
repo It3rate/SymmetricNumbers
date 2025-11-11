@@ -46,11 +46,13 @@ public class DecayMeasure : MeasureBase, IDisposable
     public DecayMeasure(IMeasure reference, float decayRate)
     {   
         Ref = reference;
-		Decay = DriftMeasure.SlowFollow(reference, decayRate);
+		Decay = DriftMeasure.FastFollow(reference, .9f);
 		Minimum = DriftMeasure.Min(reference);
 		Maximum = DriftMeasure.Max(reference);
 		Ref.PositionChanged += OnUpdate;
 	}
+	public float Norm() => (float)(Position - Minimum.Position) / (Maximum.Position - Minimum.Position);
+	public float InvNorm => 1f - Norm();
 	public override void SetPosition(long position)
 	{
 		Position = position;

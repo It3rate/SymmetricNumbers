@@ -57,7 +57,7 @@ public class DriftMeasure : Measure, IDisposable
 	}
 
 	private const float _smallDrift = 0.001f;
-	private const float _largeDrift = 0.2f;
+	private const float _largeDrift = 0.08f;
 	private const long _highResolution = 10000;
 	public static DriftMeasure Min(IMeasure reference)
 	{

@@ -150,16 +150,27 @@ public class Simulator : DrawableBase
                 var lineWidth = 255 * 2;
                 var offset = 50;
                 var y = 20;
-                Canvas.DrawLine(new(offset, 0), new(offset, y), Pens.SegPen1);
-                Canvas.DrawLine(new(offset + lineWidth, 0), new(offset + lineWidth, y), Pens.SegPen1);
 				Canvas.DrawLine(
 					new(offset + dml.Minimum.Position * 2, y-5),
 					new(offset + dml.Maximum.Position * 2, y-5),
 					Pens.SegPen2);
 				Canvas.DrawLine(
+					new(offset + dml.Position * 2, y - 5),
+					new(offset + dml.Position * 2, y - 5),
+					Pens.SegPen1);
+
+				Canvas.DrawLine(
 					new(offset + dmr.Minimum.Position * 2, y),
 					new(offset + dmr.Maximum.Position * 2, y),
+					Pens.SegPen2);
+				Canvas.DrawLine(
+					new(offset + dmr.Position * 2, y - 0),
+					new(offset + dmr.Position * 2, y - 0),
 					Pens.SegPen3);
+
+				Canvas.DrawLine(new(offset, 0), new(offset, y), Pens.TickBoldPen);
+				Canvas.DrawLine(new(offset + lineWidth / 2f, 0), new(offset + lineWidth/2f, y), Pens.TickBoldPen);
+				Canvas.DrawLine(new(offset + lineWidth, 0), new(offset + lineWidth, y), Pens.TickBoldPen);
 			}
 		}
     }
