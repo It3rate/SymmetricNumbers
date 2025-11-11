@@ -61,11 +61,11 @@ public class DriftMeasure : Measure, IDisposable
 	private const long _highResolution = 10000;
 	public static DriftMeasure Min(IMeasure reference)
 	{
-		return new DriftMeasure(reference, _largeDrift, _smallDrift, _highResolution);
+		return new DriftMeasure(reference, _largeDrift, _smallDrift*4, _highResolution);
 	}
 	public static DriftMeasure Max(IMeasure reference)
 	{
-		return new DriftMeasure(reference, _smallDrift, _largeDrift, _highResolution);
+		return new DriftMeasure(reference, _smallDrift*0.4f, _largeDrift, _highResolution);
 	}
 	public static DriftMeasure SlowFollow(IMeasure reference, float smallDrift = _smallDrift)
 	{

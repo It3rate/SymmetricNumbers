@@ -22,7 +22,7 @@ public class CreatureBody : DrawableBase
     public Body? Body { 
         get;
         private set; }
-    private Creature _creature;
+    public Creature _creature;
 
     public SKPoint LeftEye { get; }
     public SKPoint RightEye { get; }
@@ -51,7 +51,9 @@ public class CreatureBody : DrawableBase
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
         Body = body;
-        var circleShape = new CircleShape { Radius = _creatureRadius };
+		Body.SetUserData(this);
+
+		var circleShape = new CircleShape { Radius = _creatureRadius };
         Body.CreateFixture(new FixtureDef { 
 			shape = circleShape, 
 			density = 1f, 
@@ -87,11 +89,16 @@ public class CreatureBody : DrawableBase
 			var point = Body.GetWorldPoint(new(0, _turnTotal));
 			Body.ApplyForce(force, point, true);
 
-			if(false && speed < 5f) // dont stick to walls
-			{
-				Body.ApplyTorque(_rnd.NextSingle() * 800000f, true);
-				Body.ApplyForce(angleVec * -10000,Body.GetWorldPoint(new(0, 0)), true);
-			}
+		}
+	}
+	public void OnWallHit()
+	{
+		if (Body != null)
+		{
+			var angle = Body.GetAngle();
+			var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
+			var vec = new Vector2(angleVec.X + _rnd.NextSingle(), angleVec.Y - _rnd.NextSingle());
+			Body.ApplyForce(vec * -5000000, Body.GetWorldPoint(new(4f, 0)), true);
 		}
 	}
 	private void SampleEyes()
