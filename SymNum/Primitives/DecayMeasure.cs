@@ -24,9 +24,11 @@ public class DecayMeasure : MeasureBase, IDisposable
 	public DriftMeasure Decay { get; set; }
 
 	public IMeasure Minimum { get; set; }
-    public IMeasure Maximum { get; set; }
+	public IMeasure Maximum { get; set; }
+	public IMeasure PositionInLength { get; } = new Measure(1);
+	public IMeasure Length { get; } = new Measure(1);
 
-    public override bool IsFullDefined => true;
+	public override bool IsFullDefined => true;
     public override bool IsCertain => true;
     public override bool IsMax => Position >= Maximum.Position;
     public override bool IsMin => Position <= Minimum.Position;
@@ -46,7 +48,7 @@ public class DecayMeasure : MeasureBase, IDisposable
     public DecayMeasure(IMeasure reference, float decayRate)
     {   
         Ref = reference;
-		Decay = DriftMeasure.FastFollow(reference, .9f);
+		Decay = DriftMeasure.FastFollow(reference, decayRate);
 		Minimum = DriftMeasure.Min(reference);
 		Maximum = DriftMeasure.Max(reference);
 		Ref.PositionChanged += OnUpdate;
@@ -64,12 +66,14 @@ public class DecayMeasure : MeasureBase, IDisposable
         Decay = DriftMeasure.SlowFollow(reference, decayRate);
         Minimum = minimum;
         Maximum = maximum;
-        Ref.PositionChanged += OnUpdate;
+		Ref.PositionChanged += OnUpdate;
 	}
     public void OnUpdate(IMeasure source)
 	{
 		// all sub refs have now updated
 		SetPosition(long.Clamp(Decay.Position, Minimum.Position, Maximum.Position));
+		Length.SetPosition(Maximum.Position - Minimum.Position);
+		PositionInLength.SetPosition(Position - Minimum.Position);
         //Trace.WriteLine(Position + " " + Ref?.Position);
     }
     public void Dispose()

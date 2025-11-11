@@ -56,16 +56,16 @@ public class DriftMeasure : Measure, IDisposable
 		}
 	}
 
-	private const float _smallDrift = 0.001f;
-	private const float _largeDrift = 0.08f;
+	private const float _smallDrift = 0.0005f;
+	private const float _largeDrift = 0.1f;
 	private const long _highResolution = 10000;
-	public static DriftMeasure Min(IMeasure reference)
+	public static DriftMeasure Min(IMeasure reference, float small=_smallDrift, float large = _largeDrift)
 	{
-		return new DriftMeasure(reference, _largeDrift, _smallDrift*4, _highResolution);
+		return new DriftMeasure(reference, large, small, _highResolution);
 	}
-	public static DriftMeasure Max(IMeasure reference)
+	public static DriftMeasure Max(IMeasure reference, float small = _smallDrift, float large = _largeDrift)
 	{
-		return new DriftMeasure(reference, _smallDrift*0.4f, _largeDrift, _highResolution);
+		return new DriftMeasure(reference, small, large, _highResolution);
 	}
 	public static DriftMeasure SlowFollow(IMeasure reference, float smallDrift = _smallDrift)
 	{

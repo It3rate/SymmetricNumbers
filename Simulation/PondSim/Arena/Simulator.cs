@@ -145,8 +145,8 @@ public class Simulator : DrawableBase
             if (_creatureBodies.Count > 0 && _creatureBodies[0]._creature != null)
             {
                 var c = _creatureBodies[0]._creature;
-                var dml = (DecayMeasure)c.Sight.LeftUnit;
-                var dmr = (DecayMeasure)c.Sight.RightUnit;
+                var dml = (DecayMeasure)c.LeftEyeDecay;
+                var dmr = (DecayMeasure)c.RightEyeDecay;
                 var lineWidth = 255 * 2;
                 var offset = 50;
                 var y = 20;
