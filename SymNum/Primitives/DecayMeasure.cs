@@ -21,7 +21,7 @@ public class DecayMeasure : MeasureBase, IDisposable
     // thus getting height and depth with the same value. This needs a max value if everything is to remain positive.
     // 2) have a clamped min/max on the measure, and the inverse is max-value. 
     public IMeasure Ref { get; set; }
-	public DriftMeasure Decay { get; set; }
+	public DynamicMeasure Decay { get; set; }
 
 	public IMeasure Minimum { get; set; }
 	public IMeasure Maximum { get; set; }
@@ -48,9 +48,9 @@ public class DecayMeasure : MeasureBase, IDisposable
     public DecayMeasure(IMeasure reference, float decayRate)
     {   
         Ref = reference;
-		Decay = DriftMeasure.FastFollow(reference, decayRate);
-		Minimum = DriftMeasure.Min(reference);
-		Maximum = DriftMeasure.Max(reference);
+		Decay = DynamicMeasure.FastFollow(reference, decayRate);
+		Minimum = DynamicMeasure.Min(reference);
+		Maximum = DynamicMeasure.Max(reference);
 		Ref.PositionChanged += OnUpdate;
 	}
 	public float Norm() => (float)(Position - Minimum.Position) / (Maximum.Position - Minimum.Position);
@@ -63,7 +63,7 @@ public class DecayMeasure : MeasureBase, IDisposable
 	{
 		Ref = reference;
 		Position = reference.Position;// new Measure(pos,  CertaintyLevel.Set);
-        Decay = DriftMeasure.SlowFollow(reference, decayRate);
+        Decay = DynamicMeasure.SlowFollow(reference, decayRate);
         Minimum = minimum;
         Maximum = maximum;
 		Ref.PositionChanged += OnUpdate;

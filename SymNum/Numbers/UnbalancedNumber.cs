@@ -78,6 +78,8 @@ public class UnbalancedNumber : RawNumber
     public RationalNumber Area => new RationalNumber((long)(_rationalValue * _imaginaryValue * MinResolution), MinResolution);
     public RationalNumber RatioReal => new RationalNumber((long)((_rationalValue / _imaginaryValue) * MinResolution), MinResolution);
     public RationalNumber RatioImaginary => new RationalNumber((long)((_rationalValue / _imaginaryValue) * MinResolution), MinResolution);
+    public static UnbalancedNumber Zero => new UnbalancedNumber(0, 1, 1, 0);
+	public static UnbalancedNumber One => new UnbalancedNumber(1, 1, 1, 1);
 }
 
 

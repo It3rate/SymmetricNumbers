@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SymNum.Numbers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,4 +26,44 @@ namespace SymNum.Primitives;
 public class BiologicNumbers
 {
 	// min, max, average, accumulate, follow, time series estimates, sin, cos, calculus.
+	// These come from arrangements of Dynamic measures, and interpretations of their resulting numbers.
+}
+public class MinMaxMeasure : MeasureBase
+{
+	// may need to accommodate multiple references?
+	// Real and imaginary side combine into minmax, but maybe imaginary is always min (even if it is greater than real)?
+	public IMeasure Ref { get; }
+
+	public override long Position { get => Ref.Position; protected set => Ref.SetPosition(value); }
+	public DynamicMeasure MinMeasure { get; }
+	public DynamicMeasure MaxMeasure { get; }
+	public MinMaxMeasure(IMeasure reference, float? centerForce = null, float? edgeForce = null)
+	{
+		Ref = reference;
+		MinMeasure = DynamicMeasure.Min(reference, centerForce, edgeForce);
+		MaxMeasure = DynamicMeasure.Max(reference, centerForce, edgeForce);
+	}
+}
+
+public class SinCosMeasure : DynamicMeasure
+{
+	public float Speed => SpeedMeasure.Accumulator;
+	public float Sin => throw new NotImplementedException();
+	public float Cos => throw new NotImplementedException();
+	
+	public DynamicMeasure SpeedMeasure { get; }
+	public MinMaxMeasure MinMaxPosition { get; }
+	public MinMaxMeasure MinMaxSpeed { get; }
+	public SinCosMeasure(IMeasure reference) : base(reference)
+	{
+		SpeedMeasure = DynamicMeasure.CreateFollow(reference, 1f, 1000);
+		MinMaxPosition = new MinMaxMeasure(SpeedMeasure, centerForce: 0, edgeForce: 1);
+		MinMaxSpeed = new MinMaxMeasure(Ref, centerForce: 0, edgeForce: 1);
+	}
+	private float _runningPosition;
+	public override void SetPosition(long position)
+	{
+		_runningPosition += (long)Accumulator;
+		Position = (long)_runningPosition;
+	}
 }
