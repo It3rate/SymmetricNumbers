@@ -11,7 +11,7 @@ namespace SymNum.Primitives;
 public class DynamicMeasure : Measure, IRef, IDisposable 
 {
 	public IMeasure Ref { get; }
-	public INumber Scale { get; protected set; }
+	public INumber DiffScale { get; protected set; }
 	public INumber Bias { get; protected set; }
 
 	public virtual float Accumulator { get; protected set; }
@@ -20,16 +20,16 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 	public DynamicMeasure(IMeasure reference, RawNumber diffScale, RawNumber bias) : base(reference.Position)
 	{
 		Ref = reference;
-		Scale = diffScale;
+		DiffScale = diffScale;
 		Bias = bias;
 		Position = reference.Position;
 		Accumulator = reference.Position;
 		Ref.PositionChanged += OnUpdate;
 	}
 	public static DynamicMeasure CreateFollow(IMeasure reference, float diffScale, long resolution) =>
-		new DynamicMeasure(reference, new ComplexNumber(diffScale, diffScale, resolution), RationalNumber.Zero);
+		new DynamicMeasure(reference, new ComplexNumber(diffScale, diffScale, resolution), ComplexNumber.Zero);
 	public static DynamicMeasure CreateFollow(IMeasure reference, float ifLowerScale, float ifHigherScale, long resolution) =>
-		new DynamicMeasure(reference, new ComplexNumber(ifLowerScale, ifHigherScale, resolution), RationalNumber.Zero);
+		new DynamicMeasure(reference, new ComplexNumber(ifLowerScale, ifHigherScale, resolution), ComplexNumber.Zero);
 	public static DynamicMeasure CreateDrift(IMeasure reference, float bias, long resolution) =>
 		new DynamicMeasure(reference, new ComplexNumber(0, 0, resolution), new ComplexNumber(bias, bias, resolution));
 	public static DynamicMeasure CreateDrift(IMeasure reference, float ifLowerBias, float ifHigherBias, long resolution) =>
@@ -46,12 +46,12 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 		var change = 0f;
 		if (dif < 0)
 		{
-			change = dif * Scale.LeftValue;
+			change = dif * DiffScale.LeftValue;
 			change += Bias.LeftValue;
 		}
 		else
 		{
-			change = dif * Scale.RightValue;
+			change = dif * DiffScale.RightValue;
 			change += Bias.RightValue;
 		}
 		return change;
@@ -73,11 +73,11 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 	private const float _largeDrift = 0.1f;
 	private const long _highResolution = 10000;
 	// Eventually these rates will be learned and updated accordingly, for now use engineered values.
-	public static DynamicMeasure Min(IMeasure reference, float? small=null, float? large = null) =>
-		CreateFollow(reference, large ?? _largeDrift, small ?? _smallDrift, _highResolution);
+	public static DynamicMeasure Min(IMeasure reference, float? isLessForce=null, float? isMoreForce = null) =>
+		CreateFollow(reference, isMoreForce ?? _largeDrift, isLessForce ?? _smallDrift, _highResolution);
 
-	public static DynamicMeasure Max(IMeasure reference, float? small = null, float? large = null) =>
-		CreateFollow(reference, small ?? _smallDrift, large ?? _largeDrift, _highResolution);
+	public static DynamicMeasure Max(IMeasure reference, float? isLessForce = null, float? isMoreForce = null) =>
+		CreateFollow(reference, isLessForce ?? _smallDrift, isMoreForce ?? _largeDrift, _highResolution);
 	
 	public static DynamicMeasure SlowFollow(IMeasure reference, float? smallDrift = null) =>
 		CreateDrift(reference, smallDrift ?? _smallDrift, _highResolution);

@@ -20,8 +20,8 @@ using SymNum.Primitives;
 /// </summary>
 public class UnbalancedNumber : RawNumber
 {
-    protected float _rationalValue => GetRational().FloatValue;
-    protected float _imaginaryValue => GetImaginary().FloatValue;
+    protected float _rationalValue => GetRational().Value;
+    protected float _imaginaryValue => GetImaginary().Value;
     public bool RealIsCertain => RightMeasure.IsCertain && RightUnit.IsCertain;
     public bool ImaginaryIsCertain => LeftMeasure.IsCertain && LeftUnit.IsCertain;
 

@@ -3,10 +3,10 @@ namespace SymNum.Primitives;
 
 public class Measure : MeasureBase
 {
-	public Measure(long position, CertaintyLevel certainty = CertaintyLevel.Uncertain) :
-				base(position, certainty)
-	{
-	}
+	public Measure(long position, CertaintyLevel certainty = CertaintyLevel.Uncertain) : base(position, certainty)
+	{ }
+	public Measure(CertaintyLevel certainty = CertaintyLevel.Uncertain) : base(0, certainty)
+	{ }
 
 
 	//public Measure(long position, bool inclusive = true)

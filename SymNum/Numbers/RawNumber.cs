@@ -53,31 +53,36 @@ public class RawNumber : INumber
 	public Ratio LeftRatio { get; }
 	public Ratio RightRatio { get; }
 
-	protected RawNumber()
+	protected RawNumber() : this(0, 1, 1, 0, 0) { }
+	protected RawNumber(long tr, long tl, long br, long bl, long zeroPoint = 0):
+		this(new Measure(tr), new Measure(tl), new Measure(br), new Measure(bl), zeroPoint)
     {
-        RightMeasure = new Measure(0, CertaintyLevel.Uncertain);
-        LeftUnit = new Measure(0, CertaintyLevel.Uncertain);
-        RightUnit = new Measure(0, CertaintyLevel.Uncertain);
-        LeftMeasure = new Measure(0, CertaintyLevel.Uncertain);
-        ZeroPoint = new Measure(0, CertaintyLevel.Uncertain);
+	}
+	protected RawNumber(IMeasure rightMeasure, IMeasure leftUnit, IMeasure rightUnit, IMeasure leftMeasure, long zeroPoint = 0)
+	{
+		RightMeasure = rightMeasure;
+		LeftUnit = leftUnit;
+		RightUnit = rightUnit;
+		LeftMeasure = leftMeasure;
+		ZeroPoint = new Measure(zeroPoint);
 		LeftRatio = new Ratio(LeftMeasure, LeftUnit, Direction.FacesLeft);
 		RightRatio = new Ratio(RightMeasure, RightUnit, Direction.FacesRight);
 	}
-    protected RawNumber(long tr, long tl, long br, long bl, long zeroPoint = 0)
-    {
-		RightMeasure = new Measure(tr);
-		LeftUnit = new Measure(tl);
-		RightUnit = new Measure(br);
-		LeftMeasure = new Measure(bl);
-        ZeroPoint = new Measure(zeroPoint);
-		LeftRatio = new Ratio(LeftMeasure, LeftUnit, Direction.FacesLeft);
-		RightRatio = new Ratio(RightMeasure, RightUnit, Direction.FacesRight);
+	protected RawNumber(Ratio left, Ratio right, long zeroPoint = 0)
+	{
+		RightMeasure = right.Numerator;
+		LeftUnit = left.Denominator;
+		RightUnit = right.Denominator;
+		LeftMeasure = left.Numerator;
+		ZeroPoint = new Measure(zeroPoint);
+		LeftRatio = left;
+		RightRatio = right;
 	}
-    /// <summary>
-    /// Cast internals of another number into this type.
-    /// eg complex to rational will ignore the i values and not allow setting them, but they will be preserved if cast back.
-    /// </summary>
-    public RawNumber(RawNumber number)
+	/// <summary>
+	/// Cast internals of another number into this type.
+	/// eg complex to rational will ignore the i values and not allow setting them, but they will be preserved if cast back.
+	/// </summary>
+	public RawNumber(RawNumber number)
     {
         Array.Copy(number.Measures, Measures, Measures.Length);
     }
@@ -92,10 +97,10 @@ public class RawNumber : INumber
 
 
 	public virtual RationalNumber GetRational() => new RationalNumber(RightMeasure, RightUnit);
-    public virtual ImaginaryNumber GetImaginary() => new ImaginaryNumber(LeftMeasure, LeftUnit);
-    public virtual RationalNumber GetImaginaryAsRational() => new RationalNumber(LeftMeasure, LeftUnit);
-    public virtual ImaginaryNumber GetRationalAsImaginary() => new ImaginaryNumber(RightMeasure, RightUnit);
-    public virtual ComplexNumber GetComplex() => new ComplexNumber(LeftMeasure, RightMeasure, RightUnit);
+	public virtual ImaginaryNumber GetImaginary() => new ImaginaryNumber(LeftMeasure, LeftUnit);
+	public virtual RationalNumber GetImaginaryAsRational() => new RationalNumber(LeftMeasure, LeftUnit);
+	public virtual ImaginaryNumber GetRationalAsImaginary() => new ImaginaryNumber(RightMeasure, RightUnit);
+	public virtual ComplexNumber GetComplex() => new ComplexNumber(LeftMeasure, RightMeasure, RightUnit);
 	public virtual UnbalancedNumber GetUnbalanced() => new UnbalancedNumber(RightMeasure, RightUnit, LeftUnit, LeftMeasure);
     public virtual SymmetricNumber GetSymmetric() { throw new NotImplementedException(); }
     public void Mirror()
@@ -252,8 +257,6 @@ public class RawNumber : INumber
         }
         return result;
     }
-
-
 
 	/// <summary>
 	/// RightValue is the positive polarity value, up vs down, right vs left, large vs small etc.

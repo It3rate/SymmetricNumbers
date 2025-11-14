@@ -29,18 +29,15 @@ public class BiologicNumbers
 	// min, max, average, accumulate, follow, time series estimates, sin, cos, calculus.
 	// These come from arrangements of Dynamic measures, and interpretations of their resulting numbers.
 }
-public class MinMaxMeasure : MeasureBase
+public class MinMaxMeasure : DynamicMeasure
 {
 	// may need to accommodate multiple references?
 	// Real and imaginary side combine into minmax, but maybe imaginary is always min (even if it is greater than real)?
-	public IMeasure Ref { get; }
-
 	public override long Position { get => Ref.Position; protected set => Ref.SetPosition(value); }
 	public DynamicMeasure MinMeasure { get; }
 	public DynamicMeasure MaxMeasure { get; }
-	public MinMaxMeasure(IMeasure reference, float? centerForce = null, float? edgeForce = null)
+	public MinMaxMeasure(IMeasure reference, float? centerForce = null, float? edgeForce = null):base(reference)
 	{
-		Ref = reference;
 		MinMeasure = DynamicMeasure.Min(reference, centerForce, edgeForce);
 		MaxMeasure = DynamicMeasure.Max(reference, centerForce, edgeForce);
 	}

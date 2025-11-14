@@ -39,11 +39,11 @@ public class RationalNumber : RawNumber, IPartialNumber
 		get => UnitPosition;
 		protected set
 		{
-			MeasurePosition = (long)(FloatValue * value);
+			MeasurePosition = (long)(Value * value);
 			UnitPosition = value;
 		}
 	}
-	public float FloatValue
+	public float Value
 	{
 		get => RightValue;
 		protected set => RightValue = value;

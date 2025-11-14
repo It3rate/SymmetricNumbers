@@ -12,16 +12,10 @@ namespace SymNum.Numbers;
 /// </summary>
 public class ComplexNumber : UnbalancedNumber
 {
-    //public RationalNumber RealPart { get; }
     protected ComplexNumber() { }
     public ComplexNumber(long startPosition, long endPosition, long resolution) : 
         base(endPosition, resolution, resolution, startPosition)
-    {
-        //RightUnit = new Measure(resolution, Direction.FacesLeft, true);
-        //RightMeasure = new Measure(endPosition, Direction.Unknown, true);
-        //LeftUnit = new Measure(-resolution, Direction.FacesRight, true);
-        //LeftMeasure = new Measure(startPosition, Direction.Unknown, true);
-    }
+    { }
     public ComplexNumber(float startPosition, float endPosition, long resolution) :
         this((long)(startPosition * resolution), (long)(endPosition * resolution), resolution)
     { }
