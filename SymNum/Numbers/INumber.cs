@@ -66,6 +66,8 @@ public interface INumber
 	long ZeroPosition { get; }
 	bool IsFullyDefined { get; }
 
+	Ratio LeftRatio { get; }
+	Ratio RightRatio { get; }
 	float LeftValue { get; }
 	float RightValue { get; }
 

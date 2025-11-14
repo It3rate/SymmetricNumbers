@@ -50,14 +50,19 @@ public class RawNumber : INumber
 
 	public virtual bool IsFullyDefined => Measures.All(m => m.IsFullDefined);
 
-    protected RawNumber()
+	public Ratio LeftRatio { get; }
+	public Ratio RightRatio { get; }
+
+	protected RawNumber()
     {
         RightMeasure = new Measure(0, CertaintyLevel.Uncertain);
         LeftUnit = new Measure(0, CertaintyLevel.Uncertain);
         RightUnit = new Measure(0, CertaintyLevel.Uncertain);
         LeftMeasure = new Measure(0, CertaintyLevel.Uncertain);
         ZeroPoint = new Measure(0, CertaintyLevel.Uncertain);
-    }
+		LeftRatio = new Ratio(LeftMeasure, LeftUnit, Direction.FacesLeft);
+		RightRatio = new Ratio(RightMeasure, RightUnit, Direction.FacesRight);
+	}
     protected RawNumber(long tr, long tl, long br, long bl, long zeroPoint = 0)
     {
 		RightMeasure = new Measure(tr);
@@ -65,7 +70,9 @@ public class RawNumber : INumber
 		RightUnit = new Measure(br);
 		LeftMeasure = new Measure(bl);
         ZeroPoint = new Measure(zeroPoint);
-    }
+		LeftRatio = new Ratio(LeftMeasure, LeftUnit, Direction.FacesLeft);
+		RightRatio = new Ratio(RightMeasure, RightUnit, Direction.FacesRight);
+	}
     /// <summary>
     /// Cast internals of another number into this type.
     /// eg complex to rational will ignore the i values and not allow setting them, but they will be preserved if cast back.
@@ -248,14 +255,14 @@ public class RawNumber : INumber
 
 
 
-    /// <summary>
-    /// RightValue is the positive polarity value, up vs down, right vs left, large vs small etc.
-    /// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
-    /// </summary>
-    public float RightValue
+	/// <summary>
+	/// RightValue is the positive polarity value, up vs down, right vs left, large vs small etc.
+	/// We generally have opposites in a definition, and one of them is 'dominant', like getting bigger (up) vs getting smaller (down).
+	/// </summary>
+	public float RightValue
     {
-        get => GetValue(RightMeasure, RightUnit);
-        set => SetValue(RightMeasure, RightUnit, value);
+        get => RightRatio.Value;
+		set => RightRatio.Value = value;
     }
     /// <summary>
     /// LeftValue is the negative polarity value, down vs up, left vs right, small vs large etc.
@@ -263,15 +270,11 @@ public class RawNumber : INumber
     /// </summary>
     public float LeftValue
     {
-        get => GetValue(LeftMeasure, LeftUnit);
-        set => SetValue(LeftMeasure, LeftUnit, value);
+        get => LeftRatio.Value;
+		set => LeftRatio.Value = value;
 	}
-	public float LeftValueOrOne => 
-		LeftUnit.Position != 0 && LeftMeasure.Position != 0 ? 
-		LeftValue : 1f;
-	public float RightValueOrOne => 
-		RightUnit.Position != 0 && RightMeasure.Position != 0 ? 
-		RightValue : 1f;
+	public float LeftValueOrOne => LeftRatio.ValueOrOne;
+	public float RightValueOrOne => RightRatio.ValueOrOne;
 	public float MaxValue => LeftValue > RightValue ? LeftValue : RightValue;
 	public float MinValue => LeftValue < RightValue ? LeftValue : RightValue;
 	public float CancelledSum(float pow) => 
@@ -284,21 +287,12 @@ public class RawNumber : INumber
 	public float LeftOverRightValue => RightValue != 0 ? LeftValue / RightValue : Math.Sign(LeftValue) > 0 ? float.MaxValue : float.MinValue;
 	public float RighOverLeftValue => LeftValue != 0 ? RightValue / LeftValue : Math.Sign(RightValue) > 0 ? float.MaxValue : float.MinValue;
 
-	public INumber MapLeftToValue(float leftValue)
+	public void MapLeftToValue(float leftValue) => LeftRatio.MapToValue(leftValue);
+	public void MapRightToValue(float rightValue) => RightRatio.MapToValue(rightValue);
+	public void MapToValues(float leftValue, float rightValue)
 	{
-		LeftMeasure.SetPosition((long)(leftValue * LeftUnit.Position));
-		return this;
-	}
-	public INumber MapRightToValue(float rightValue)
-	{
-		RightMeasure.SetPosition((long)(rightValue * RightUnit.Position));
-		return this;
-	}
-	public INumber MapToValues(float leftValue, float rightValue)
-	{
-		LeftMeasure.SetPosition((long)(leftValue * LeftUnit.Position));
-		RightMeasure.SetPosition((long)(rightValue * RightUnit.Position));
-		return this;
+		MapLeftToValue(leftValue);
+		MapRightToValue(rightValue);
 	}
 	// there is a general question with operations, what happens to the original value? Three possibilities:
 	// 1) It can be modified in place, like 'gaining' in the additive sense, stretching, or exponentially growing (repeated stretching)

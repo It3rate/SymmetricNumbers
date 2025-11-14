@@ -1,4 +1,5 @@
-﻿using SymNum.Numbers;
+﻿using SymNum.Expressions;
+using SymNum.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,25 +46,61 @@ public class MinMaxMeasure : MeasureBase
 	}
 }
 
+public class AccumulateMeasure : DynamicMeasure // these are probably just RefMeasures
+{
+	public AccumulateMeasure(IMeasure reference):base(reference)
+	{
+	}
+	public override void OnUpdate(IMeasure source)
+	{
+		SetPosition(Position + source.Position);
+	}
+}
+
+/// <summary>
+/// Creates a measure that follows the zero point, increasing speed towards it evenly at every update.
+/// The Position is the accumulation of the speed for each tick, going to positive to negative and back each cycle.
+/// The Speed is the current speed of the position, positive or negative.
+/// The inherited Bias is how much speed is added per tick. If the rational an imaginary part aren't equal it will not be symmetric.
+/// The inheritied DiffScale will slowly dampen (or strengthen) the sine wave.
+/// </summary>
 public class SinCosMeasure : DynamicMeasure
 {
-	public float Speed => SpeedMeasure.Accumulator;
+	public float Speed => Accumulator;
 	public float Sin => throw new NotImplementedException();
 	public float Cos => throw new NotImplementedException();
 	
-	public DynamicMeasure SpeedMeasure { get; }
+	public IMeasure SpeedMeasure { get; }
 	public MinMaxMeasure MinMaxPosition { get; }
 	public MinMaxMeasure MinMaxSpeed { get; }
 	public SinCosMeasure(IMeasure reference) : base(reference)
 	{
-		SpeedMeasure = DynamicMeasure.CreateFollow(reference, 1f, 1000);
-		MinMaxPosition = new MinMaxMeasure(SpeedMeasure, centerForce: 0, edgeForce: 1);
-		MinMaxSpeed = new MinMaxMeasure(Ref, centerForce: 0, edgeForce: 1);
+		MinMaxPosition = new MinMaxMeasure(this, centerForce: 0, edgeForce: 1);
+		SpeedMeasure = new Measure(0);
+		MinMaxSpeed = new MinMaxMeasure(SpeedMeasure, centerForce: 0, edgeForce: 1);
+	}
+	public static SinCosMeasure CreateWithSpeed(IMeasure reference, RawNumber bias, float speed)
+	{
+		var result = new SinCosMeasure(reference);
+		result.Bias = bias;
+		result.Accumulator = speed;
+		result.Position = 0;
+		return result;
+	}
+	public static SinCosMeasure CreateWithStartPosition(IMeasure reference, RawNumber bias, long startPosition)
+	{
+		var result = new SinCosMeasure(reference);
+		result.Bias = bias;
+		result.Accumulator = 0;
+		result.Position = startPosition;
+		return result;
 	}
 	private float _runningPosition;
-	public override void SetPosition(long position)
+	protected override void UpdateState(float change)
 	{
+		Accumulator += change;
 		_runningPosition += (long)Accumulator;
-		Position = (long)_runningPosition;
+		SetPosition((long)_runningPosition);
+		SpeedMeasure.SetPosition((long)Accumulator);
 	}
 }

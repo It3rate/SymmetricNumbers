@@ -136,4 +136,9 @@ public static class DirectionExtensions
 	{
 		return a == Direction.FacesRight ? Direction.FacesLeft : a == Direction.FacesRight ? Direction.FacesLeft : Direction.Unknown;
 	}
+	public static bool IsMirror(this Direction a, Direction b)
+	{
+		return (a == Direction.FacesRight && b == Direction.FacesLeft) ||
+			 (b == Direction.FacesRight && a == Direction.FacesLeft);
+	}
 }

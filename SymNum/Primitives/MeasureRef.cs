@@ -15,22 +15,21 @@ namespace SymNum.Primitives;
 public class MeasureRef : MeasureBase, IRef
 {
 	public IMeasure Ref { get; }
-	public RationalNumber Scale { get; } // this scales the reference position and bias
-
-	public override long Position
-	{
-		get => (long)(Ref.Position * Scale.FloatValue) + Bias;
-		protected set
-		{
-			var val = (long)((value - Bias) / Scale.FloatValue);
-			Ref.SetPosition(val);
-		}
-	}
+	public INumber Scale { get; } // this scales the reference position and bias
 	public virtual long Bias { get; set; } = 0;
 	public virtual void SetBias(long bias)
 	{
 		Bias = bias;
 		//PositionChanged?.Invoke(this); // does this trigger a number change?
+	}
+	public override long Position
+	{
+		get => (long)(Ref.Position * Scale.RightValue) + Bias;
+		protected set
+		{
+			var val = (long)((value - Bias) / Scale.RightValue);
+			Ref.SetPosition(val);
+		}
 	}
 	//public override long Bias
 	//{
@@ -41,6 +40,9 @@ public class MeasureRef : MeasureBase, IRef
 	{
 		Ref = measure;
 		Scale = RationalNumber.HighResNumber(scale);
+	}
+	public virtual void OnUpdate(IMeasure source)
+	{
 	}
 
 	// the offset needs to be negated if the ref measure has an offset.

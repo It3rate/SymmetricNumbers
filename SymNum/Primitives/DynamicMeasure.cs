@@ -1,25 +1,26 @@
 ﻿using SymNum.Numbers;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SymNum.Primitives;
 
-public class DynamicMeasure : Measure, IDisposable 
+public class DynamicMeasure : Measure, IRef, IDisposable 
 {
 	public IMeasure Ref { get; }
+	public INumber Scale { get; protected set; }
+	public INumber Bias { get; protected set; }
 
-	public float Accumulator { get; private set; }
-	public RawNumber DiffScale { get; }
-	public RawNumber Bias { get; }
+	public virtual float Accumulator { get; protected set; }
 
 	protected DynamicMeasure(IMeasure reference) :base(reference.Position) { }
 	public DynamicMeasure(IMeasure reference, RawNumber diffScale, RawNumber bias) : base(reference.Position)
 	{
 		Ref = reference;
-		DiffScale = diffScale;
+		Scale = diffScale;
 		Bias = bias;
 		Position = reference.Position;
 		Accumulator = reference.Position;
@@ -36,22 +37,30 @@ public class DynamicMeasure : Measure, IDisposable
 
 	public virtual void OnUpdate(IMeasure source)
 	{
-		var dif = source.Position - Position;
+		var change = CalculateChange();
+		UpdateState(change);
+	}
+	protected virtual float CalculateChange()
+	{
+		var dif = Ref.Position - Position;
 		var change = 0f;
-		if(dif < 0)
+		if (dif < 0)
 		{
-			change = dif * DiffScale.LeftValue;
+			change = dif * Scale.LeftValue;
 			change += Bias.LeftValue;
 		}
 		else
 		{
-			change = dif * DiffScale.RightValue;
+			change = dif * Scale.RightValue;
 			change += Bias.RightValue;
 		}
+		return change;
+	}
+	protected virtual void UpdateState(float change)
+	{
 		Accumulator += change;
 		SetPosition((long)Accumulator);
 	}
-
 	public void Dispose()
 	{
 		if (Ref != null)

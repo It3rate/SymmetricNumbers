@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 public interface IRef : IMeasure
 {
     IMeasure Ref { get; }
-	RationalNumber Scale { get; }
-	long Bias { get; }
-	void SetBias(long bias);
-	//void OnUpdate(IMeasure source);
+	//INumber Scale { get; }
+	//INumber Bias { get; }
+	
+	void OnUpdate(IMeasure source); // this probably doesn't need the arg, should always be Ref?
 }
