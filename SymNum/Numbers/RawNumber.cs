@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SymNum.Expressions;
 using SymNum.Primitives;
+using SymNum.Scraps;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SymNum.Numbers;
 
@@ -34,7 +35,7 @@ public class RawNumber : INumber
     // C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
     // zero point is E
     public virtual IMeasure[] Measures { get; } = new IMeasure[5];
-	public Direction[] Directions { get; } = { Direction.FacesRight, Direction.FacesLeft, Direction.FacesLeft, Direction.FacesRight, Direction.Zero };
+	public Polarity[] Directions { get; } = { Polarity.FacesRight, Polarity.FacesLeft, Polarity.FacesLeft, Polarity.FacesRight, Polarity.Zero };
 
 	public virtual IMeasure RightMeasure { get => Measures[0]; protected set => Measures[0] = value; }
 	public virtual IMeasure RightUnit { get => Measures[2]; protected set => Measures[2] = value; }
@@ -50,8 +51,8 @@ public class RawNumber : INumber
 
 	public virtual bool IsFullyDefined => Measures.All(m => m.IsFullDefined);
 
-	public Ratio LeftRatio { get; }
-	public Ratio RightRatio { get; }
+	public Ratio LeftRatio => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesLeft);
+	public Ratio RightRatio => new Ratio(RightMeasure, RightUnit, Polarity.FacesRight);
 
 	protected RawNumber() : this(0, 1, 1, 0, 0) { }
 	protected RawNumber(long tr, long tl, long br, long bl, long zeroPoint = 0):
@@ -65,18 +66,10 @@ public class RawNumber : INumber
 		RightUnit = rightUnit;
 		LeftMeasure = leftMeasure;
 		ZeroPoint = new Measure(zeroPoint);
-		LeftRatio = new Ratio(LeftMeasure, LeftUnit, Direction.FacesLeft);
-		RightRatio = new Ratio(RightMeasure, RightUnit, Direction.FacesRight);
 	}
-	protected RawNumber(Ratio left, Ratio right, long zeroPoint = 0)
+	protected RawNumber(Ratio left, Ratio right, long zeroPoint = 0) :
+		this(right.Numerator, left.Denominator, right.Denominator, left.Numerator, zeroPoint)
 	{
-		RightMeasure = right.Numerator;
-		LeftUnit = left.Denominator;
-		RightUnit = right.Denominator;
-		LeftMeasure = left.Numerator;
-		ZeroPoint = new Measure(zeroPoint);
-		LeftRatio = left;
-		RightRatio = right;
 	}
 	/// <summary>
 	/// Cast internals of another number into this type.
@@ -91,26 +84,21 @@ public class RawNumber : INumber
 		Array.Copy(number.Measures, Measures, Measures.Length);
 	}
 
-    protected static long _resolution = 1000000;
-	protected static RationalNumber CreateRational(float value) => new RationalNumber(value, _resolution);
-
-
-
-	public virtual RationalNumber GetRational() => new RationalNumber(RightMeasure, RightUnit);
-	public virtual ImaginaryNumber GetImaginary() => new ImaginaryNumber(LeftMeasure, LeftUnit);
-	public virtual RationalNumber GetImaginaryAsRational() => new RationalNumber(LeftMeasure, LeftUnit);
-	public virtual ImaginaryNumber GetRationalAsImaginary() => new ImaginaryNumber(RightMeasure, RightUnit);
+	public virtual Ratio GetRational() => new Ratio(RightMeasure, RightUnit, Polarity.FacesRight);
+	public virtual Ratio GetImaginary() => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesLeft);
+	public virtual Ratio GetImaginaryAsRational() => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesRight);
+	public virtual Ratio GetRationalAsImaginary() => new Ratio(RightMeasure, RightUnit, Polarity.FacesLeft);
 	public virtual ComplexNumber GetComplex() => new ComplexNumber(LeftMeasure, RightMeasure, RightUnit);
 	public virtual UnbalancedNumber GetUnbalanced() => new UnbalancedNumber(RightMeasure, RightUnit, LeftUnit, LeftMeasure);
     public virtual SymmetricNumber GetSymmetric() { throw new NotImplementedException(); }
     public void Mirror()
     {
-        var temprm = RightMeasure;
-        var tempru = RightUnit;
+        var tempMeasure = RightMeasure;
+        var tempUnit = RightUnit;
         RightMeasure = LeftMeasure;
         RightUnit = LeftUnit;
-        LeftUnit = tempru;
-        LeftMeasure = temprm;
+        LeftUnit = tempUnit;
+        LeftMeasure = tempMeasure;
 	}
 	public INumber Negate()
 	{

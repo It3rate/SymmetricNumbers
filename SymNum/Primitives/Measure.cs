@@ -118,27 +118,3 @@ public abstract class MeasureBase : IMeasure
 		return $"{posStr}";
 	}
 }
-
-public enum Direction
-{
-    Unknown, // direction is determined by a second measure
-    Zero,
-    FacesLeft,
-	FacesRight,
-}
-public static class DirectionExtensions
-{
-	public static Direction Combine(this Direction a, Direction b)
-	{
-		return a == b ? a : Direction.Unknown;
-	}
-	public static Direction Inverse(this Direction a)
-	{
-		return a == Direction.FacesRight ? Direction.FacesLeft : a == Direction.FacesRight ? Direction.FacesLeft : Direction.Unknown;
-	}
-	public static bool IsMirror(this Direction a, Direction b)
-	{
-		return (a == Direction.FacesRight && b == Direction.FacesLeft) ||
-			 (b == Direction.FacesRight && a == Direction.FacesLeft);
-	}
-}

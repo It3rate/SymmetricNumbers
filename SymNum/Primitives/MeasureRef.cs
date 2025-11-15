@@ -1,4 +1,5 @@
 ﻿using SymNum.Numbers;
+using SymNum.Scraps;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,7 +40,7 @@ public class MeasureRef : MeasureBase, IRef
 	public MeasureRef(IMeasure measure, float scale = 1f)
 	{
 		Ref = measure;
-		Scale = RationalNumber.HighResNumber(scale);
+		Scale = Ratio.HighResNumber(scale);
 	}
 	public virtual void OnUpdate(IMeasure source)
 	{

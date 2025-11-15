@@ -40,6 +40,8 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 		var change = CalculateChange();
 		UpdateState(change);
 	}
+	// This probably should do both cases every time, like reaction diffusion equations, or PDEs.
+	// It would need to scale the reactions based on the delta though, so maybe that just is a complicated version of this.
 	protected virtual float CalculateChange()
 	{
 		var dif = Ref.Position - Position;

@@ -11,8 +11,8 @@ public class RectangleNumber : ComplexNumber
 {
 	private INumber _numberRef;
 	public override IMeasure[] Measures => _numberRef.Measures;	
-	IPartialNumber Length => _numberRef.GetImaginary();
-	IPartialNumber Width => _numberRef.GetRational();
+	Ratio Length => _numberRef.GetImaginary();
+	Ratio Width => _numberRef.GetRational();
 	public BinaryExpression? Area { get; }
 	public BinaryExpression? AspectRatio { get; }
 	public BinaryExpression? Perimeter { get; }
@@ -38,5 +38,5 @@ public class RectangleNumber : ComplexNumber
 			null,
 			CertaintyLevel.Derived);
 	}
-	public static BinaryOp PerimeterOp = (left, right) => left.AddTo(right).MultiplyTo(CreateRational(2f));
+	public static BinaryOp PerimeterOp = (left, right) => left.AddTo(right).MultiplyTo(Ratio.HighResNumber(2f, Polarity.FacesRight));
 }

@@ -1,5 +1,7 @@
 ﻿
 
+using SymNum.Primitives;
+
 namespace Simulation.Render;
 
 /// <summary>
@@ -18,8 +20,8 @@ public struct PRange
 
 	public Polarity Polarity { get; private set; }
 	public int PolarityDirection => IsAligned ? 1 : -1;
-	public bool IsAligned => Polarity == Polarity.Aligned;
-	public bool IsInverted => Polarity == Polarity.Inverted;
+	public bool IsAligned => Polarity == Polarity.FacesRight;
+	public bool IsInverted => Polarity == Polarity.FacesLeft;
 
 	public double Start { get; private set; }
 	public double End
@@ -48,21 +50,21 @@ public struct PRange
 		_hasValue = true;
 		Start = start;
 		End = end;
-		Polarity = isAligned ? Polarity.Aligned : Polarity.Inverted;
+		Polarity = isAligned ? Polarity.FacesRight : Polarity.FacesLeft;
 	}
 	public PRange(double start, double end, bool isAligned = true)
 	{
 		_hasValue = true;
 		Start = start;
 		End = end;
-		Polarity = isAligned ? Polarity.Aligned : Polarity.Inverted;
+		Polarity = isAligned ? Polarity.FacesRight : Polarity.FacesLeft;
 	}
 	public PRange(PRange value, bool isAligned = true)
 	{
 		_hasValue = true;
 		Start = value.Start;
 		End = value.End;
-		Polarity = isAligned ? Polarity.Aligned : Polarity.Inverted;
+		Polarity = isAligned ? Polarity.FacesRight : Polarity.FacesLeft;
 	}
 
 	private PRange(double start, double end, bool isEmpty, bool isAligned = true) // empty ctor
@@ -70,7 +72,7 @@ public struct PRange
 		_hasValue = !isEmpty;
 		Start = start;
 		End = end;
-		Polarity = isAligned ? Polarity.Aligned : Polarity.Inverted;
+		Polarity = isAligned ? Polarity.FacesRight : Polarity.FacesLeft;
 	}
 
 	public bool IsEmpty => _hasValue;
@@ -180,11 +182,11 @@ public struct PRange
 	public PRange SolvePolarityWith(Polarity right)
 	{
 		var result = this;
-		if (Polarity == Polarity.Inverted && right == Polarity.Inverted)
+		if (Polarity == Polarity.FacesLeft && right == Polarity.FacesLeft)
 		{
 			result = InvertPolarityAndRange();
 		}
-		else if (Polarity == Polarity.Aligned && right == Polarity.Inverted)
+		else if (Polarity == Polarity.FacesRight && right == Polarity.FacesLeft)
 		{
 			result = InvertPolarity();
 		}
@@ -286,7 +288,7 @@ public struct PRange
 
 	public override string ToString()
 	{
-		var prefix = Polarity == Polarity.Inverted ? "~" : "";
+		var prefix = Polarity == Polarity.FacesLeft ? "~" : "";
 		return $"{prefix}[{Start:0.00}->{End:0.00}]";
 	}
 

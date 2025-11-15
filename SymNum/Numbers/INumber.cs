@@ -71,8 +71,8 @@ public interface INumber
 	float LeftValue { get; }
 	float RightValue { get; }
 
-	RationalNumber GetRational();
-	ImaginaryNumber GetImaginary();
+	Ratio GetRational();
+	Ratio GetImaginary();
 	ComplexNumber GetComplex();
 	UnbalancedNumber GetUnbalanced();
 	SymmetricNumber GetSymmetric();
