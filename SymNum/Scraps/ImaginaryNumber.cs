@@ -26,12 +26,12 @@ public class ImaginaryNumber : RawNumber, IPartialNumber
     public long MeasurePosition
     {
         get => LeftMeasure.Position;
-        set { LeftMeasure.SetPosition(value); LeftMeasure.SetPosition(0); }
+        set { LeftMeasure.SetPositionAndInvoke(value); LeftMeasure.SetPositionAndInvoke(0); }
     }
     public long UnitPosition
     {
         get => LeftUnit.Position;
-        set { LeftUnit.SetPosition(value); LeftUnit.SetPosition(-value); }
+        set { LeftUnit.SetPositionAndInvoke(value); LeftUnit.SetPositionAndInvoke(-value); }
     }
     public long TickCount => MeasurePosition;
     public long Resolution

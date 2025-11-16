@@ -1,4 +1,5 @@
-﻿using SymNum.Numbers;
+﻿using SymNum.Expressions;
+using SymNum.Numbers;
 using SymNum.Scraps;
 using System;
 using System.Collections.Generic;
@@ -23,14 +24,11 @@ public class MeasureRef : MeasureBase, IRef
 		Bias = bias;
 		//PositionChanged?.Invoke(this); // does this trigger a number change?
 	}
-	public override long Position
+	public override long Position  => (long)(Ref.Position * Scale.RightValue) + Bias;
+	public override void SetPosition(long position)
 	{
-		get => (long)(Ref.Position * Scale.RightValue) + Bias;
-		protected set
-		{
-			var val = (long)((value - Bias) / Scale.RightValue);
-			Ref.SetPosition(val);
-		}
+		var val = (long)((position - Bias) / Scale.RightValue);
+		Ref.SetPositionAndInvoke(val);
 	}
 	//public override long Bias
 	//{

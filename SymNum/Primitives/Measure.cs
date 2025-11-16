@@ -29,37 +29,44 @@ public abstract class MeasureBase : IMeasure
 
 	public event Action<IMeasure> PositionChanged;
 
-	public virtual long Position { get; protected set; }
+	public virtual long Position { get; private set; }
 	public virtual bool IsFullDefined => !IsMin && !IsMax;
 	public virtual bool IsMax => Position == long.MaxValue;
 	public virtual bool IsMin => Position == long.MinValue;
 	public virtual bool IsZero => Position == 0 && IsFullDefined;
 	public virtual bool IsCertain => Certainty.HasValue();
-	public virtual double Value
-	{
-		get => (double)Position;
-		protected set => Position = (long)value;
-	}
     public virtual CertaintyLevel Certainty { get; set; }
+
+	/// <summary>
+	/// Some measures are positive only. 
+	/// Units are positive only (imaginary units will point left, but will still be positive).
+	/// Also used when a value is unambigous with polarity, like not allowing negative debt, or negative credit (only debt or credit)
+	/// Used when you need one calculation above zero, and another below zero, like accumulating speed on a sine wave.
+	/// </summary>
+	public virtual bool CanBeNegative => true;
 
 	protected MeasureBase()
 	{
 	}
 	public MeasureBase(long position, CertaintyLevel certainty = CertaintyLevel.Set)
 	{
-		Position = position;
+		SetPosition(position);
 		Certainty = certainty;
 	}
 
-
 	public virtual void SetPosition(long position)
 	{
-		Position = position;
+		Position = !CanBeNegative && position < 0 ? 0 : position;
+	}
+	public virtual void SetPositionAndInvoke(long position)
+	{
+		SetPosition(position);
 		PositionChanged?.Invoke(this);
 	}
+
 	public virtual void Negate()
     {
-        SetPosition(-Position);
+        SetPositionAndInvoke(-Position);
     }
     public static IMeasure MaxDown()
 	{
@@ -110,7 +117,7 @@ public abstract class MeasureBase : IMeasure
 	}
 	public override int GetHashCode()
 	{
-		return HashCode.Combine(Position, (int)Certainty);
+		return HashCode.Combine(Position, (int)Certainty, CanBeNegative);
 	}
 	public override string ToString()
 	{

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SymNum.Expressions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,30 +10,24 @@ public class MeasureMemory : MeasureBase, IDisposable
 {
 	public MemoryKind Kind { get; set; }
 	public IMeasure Ref { get; }
-	public override long Position
-    {
-        get
-        {
-            return GetPostionByKind(Kind);
-        }
-        protected set
-        {
-            lock (_historyLock)
-            {
-                if (_isFirst)
-                {
-                    for (int i = 0; i < MaxHistory; i++)
-                    {
-                        History.Enqueue(value);
-                    }
-                    _isFirst = false;
-                }
+	public override long Position =>  GetPostionByKind(Kind);
+	public override void SetPosition(long position)
+	{
+		lock (_historyLock)
+		{
+			if (_isFirst)
+			{
+				for (int i = 0; i < MaxHistory; i++)
+				{
+					History.Enqueue(position);
+				}
+				_isFirst = false;
+			}
 
-                History.Enqueue(value);
-                History.Dequeue();
-            }
-        }
-    }
+			History.Enqueue(position);
+			History.Dequeue();
+		}
+	}
 	public Queue<long> History { get; } = new Queue<long>();
 	public int MaxHistory { get; }
 
@@ -43,12 +38,12 @@ public class MeasureMemory : MeasureBase, IDisposable
 		Ref = measure;
 		Kind = kind;
 		MaxHistory = maxHistory;
-		SetPosition(initialValue);
+		SetPositionAndInvoke(initialValue);
 		Ref.PositionChanged += OnUpdate;
     }
     public void OnUpdate(IMeasure source)
     { 
-        SetPosition(source.Position);
+        SetPositionAndInvoke(source.Position);
     }
     public long GetPostionByKind(MemoryKind kind)
 	{

@@ -15,7 +15,9 @@ public interface IMeasure : IValue
 	public event Action<IMeasure> PositionChanged;
 	long Position { get; }
 	void SetPosition(long position);
-    void Negate();
+	void SetPositionAndInvoke(long position);
+	public bool CanBeNegative { get; }
+	void Negate();
     //public CertaintyLevel CertaintyLevel { get; } // inherited
     public bool IsCertain { get; }
 	bool IsFullDefined => !IsMin && !IsMax;

@@ -14,10 +14,10 @@ public class Relations : UnbalancedNumber
 {
     // EXPERIMENTAL, not used, exploring mechanics of partially set equations, correct and incorrect.
 
-    public long Real { get => RightMeasure.Position; private set => RightMeasure.SetPosition(value); }
-    public long RealResolution { get => RightUnit.Position; private set => RightUnit.SetPosition(value); }
-    public long Imaginary { get => LeftMeasure.Position; private set => LeftMeasure.SetPosition(value); }
-    public long ImaginaryResolution { get => LeftUnit.Position; private set => LeftUnit.SetPosition(value); }
+    public long Real { get => RightMeasure.Position; private set => RightMeasure.SetPositionAndInvoke(value); }
+    public long RealResolution { get => RightUnit.Position; private set => RightUnit.SetPositionAndInvoke(value); }
+    public long Imaginary { get => LeftMeasure.Position; private set => LeftMeasure.SetPositionAndInvoke(value); }
+    public long ImaginaryResolution { get => LeftUnit.Position; private set => LeftUnit.SetPositionAndInvoke(value); }
 
     public BinaryExpression RealState { get; private set; }
     public BinaryExpression ImaginaryState { get; private set; }

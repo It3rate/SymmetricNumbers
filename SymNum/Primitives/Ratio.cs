@@ -33,7 +33,7 @@ public class Ratio : RawNumber, IPartialNumber
 	public bool IsRationalPart => Polarity.IsRationalPart();
 	public bool IsImaginaryPart => Polarity.IsImaginaryPart();
 	public float ValueOrOne => Denominator.Position != 0 && Numerator.Position != 0 ? Value : 1f;
-	public void MapToValue(float value) => Numerator.SetPosition((long)(value * Denominator.Position));
+	public void MapToValue(float value) => Numerator.SetPositionAndInvoke((long)(value * Denominator.Position));
 	public float ValueForPolarity(Polarity polarity) => Polarity.IsMirror(polarity) ? -Value : Value;
 	public Ratio(IMeasure numerator, IMeasure denominator, Polarity polarity = Polarity.FacesRight)
 		: base(

@@ -60,10 +60,10 @@ public class UnbalancedNumber : RawNumber
     /// </summary>
     public void Reset(long leftZero, long leftMeasure, long leftResolution, long rightZero, long rightMeasure, long rightResolution)
     {
-        LeftMeasure.SetPosition(leftMeasure - leftZero);
-        LeftUnit.SetPosition(leftResolution);
-        RightMeasure.SetPosition(rightMeasure - rightZero);
-        RightUnit.SetPosition(rightResolution);
+        LeftMeasure.SetPositionAndInvoke(leftMeasure - leftZero);
+        LeftUnit.SetPositionAndInvoke(leftResolution);
+        RightMeasure.SetPositionAndInvoke(rightMeasure - rightZero);
+        RightUnit.SetPositionAndInvoke(rightResolution);
     }
 
     public override ComplexNumber GetComplex()

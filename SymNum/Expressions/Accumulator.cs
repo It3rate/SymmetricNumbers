@@ -22,20 +22,20 @@ public class Accumulator : IValue
 	{
 		if (a.RefKind.ContainsA())
 		{
-			_number.RightMeasure.SetPosition(_number.RightMeasure.Position + a.RefNumber.RightMeasurePosition);
+			_number.RightMeasure.SetPositionAndInvoke(_number.RightMeasure.Position + a.RefNumber.RightMeasurePosition);
 		}
 		if (a.RefKind.ContainsB())
 		{
-			_number.LeftUnit.SetPosition(_number.LeftUnit.Position + a.RefNumber.LeftUnitPosition);
+			_number.LeftUnit.SetPositionAndInvoke(_number.LeftUnit.Position + a.RefNumber.LeftUnitPosition);
 		}
 
 		if (a.RefKind.ContainsD())
 		{
-			_number.LeftMeasure.SetPosition(_number.LeftMeasure.Position + a.RefNumber.LeftMeasurePosition);
+			_number.LeftMeasure.SetPositionAndInvoke(_number.LeftMeasure.Position + a.RefNumber.LeftMeasurePosition);
 		}
 		if (a.RefKind.ContainsC())
 		{
-			_number.RightUnit.SetPosition(_number.RightUnit.Position + a.RefNumber.RightUnitPosition);
+			_number.RightUnit.SetPositionAndInvoke(_number.RightUnit.Position + a.RefNumber.RightUnitPosition);
 		}
 
 	}

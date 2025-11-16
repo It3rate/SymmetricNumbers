@@ -108,15 +108,15 @@ public class RawNumber : INumber
 	}
 	public INumber AddTo(INumber other)
 	{
-		RightMeasure.SetPosition(RightMeasure.Position + other.RightMeasure.Position);
-		LeftMeasure.SetPosition(LeftMeasure.Position + other.LeftMeasure.Position);
+		RightMeasure.SetPositionAndInvoke(RightMeasure.Position + other.RightMeasure.Position);
+		LeftMeasure.SetPositionAndInvoke(LeftMeasure.Position + other.LeftMeasure.Position);
 		return this;
 	}
 
 	public INumber SubtractTo(INumber other)
 	{
-		RightMeasure.SetPosition(RightMeasure.Position - other.RightMeasure.Position);
-		LeftMeasure.SetPosition(LeftMeasure.Position - other.LeftMeasure.Position);
+		RightMeasure.SetPositionAndInvoke(RightMeasure.Position - other.RightMeasure.Position);
+		LeftMeasure.SetPositionAndInvoke(LeftMeasure.Position - other.LeftMeasure.Position);
 		return this;
 	}
 	/// <summary>
@@ -199,16 +199,16 @@ public class RawNumber : INumber
         switch (refKind)
         {
             case RefKind.TopRight:
-                RightMeasure.SetPosition((long)value);
+                RightMeasure.SetPositionAndInvoke((long)value);
                 break;
             case RefKind.TopLeft:
-                LeftUnit.SetPosition((long)value);
+                LeftUnit.SetPositionAndInvoke((long)value);
                 break;
             case RefKind.BottomRight:
-                RightUnit.SetPosition((long)value);
+                RightUnit.SetPositionAndInvoke((long)value);
                 break;
             case RefKind.BottomLeft:
-                LeftUnit.SetPosition((long)value);
+                LeftUnit.SetPositionAndInvoke((long)value);
                 break;
 			case RefKind.RealValue:
                 // need to check for locks etc.
@@ -240,7 +240,7 @@ public class RawNumber : INumber
         var result = false;
         if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
         {
-            numerator.SetPosition((long)(value * denominator.Position));
+            numerator.SetPositionAndInvoke((long)(value * denominator.Position));
             result = true;
         }
         return result;

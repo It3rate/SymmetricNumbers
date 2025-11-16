@@ -17,10 +17,10 @@ namespace SymNum.Numbers;
 /// </summary>
 public class SymmetricNumber : RawNumber
 {
-    public long TopRight { get => RightMeasure.Position; protected set => RightMeasure.SetPosition(value); }
-    public long TopLeft { get => LeftUnit.Position; protected set => LeftUnit.SetPosition(value); }
-    public long BottomRight { get => RightUnit.Position; protected set => RightUnit.SetPosition(value); }
-    public long BottomLeft { get => LeftMeasure.Position; protected set => LeftMeasure.SetPosition(value); }
+    public long TopRight { get => RightMeasure.Position; protected set => RightMeasure.SetPositionAndInvoke(value); }
+    public long TopLeft { get => LeftUnit.Position; protected set => LeftUnit.SetPositionAndInvoke(value); }
+    public long BottomRight { get => RightUnit.Position; protected set => RightUnit.SetPositionAndInvoke(value); }
+    public long BottomLeft { get => LeftMeasure.Position; protected set => LeftMeasure.SetPositionAndInvoke(value); }
 
     public bool HasTR => RightMeasure.IsFullDefined;
     public bool HasTL => LeftUnit.IsFullDefined;

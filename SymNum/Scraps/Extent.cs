@@ -120,7 +120,7 @@ public class Extent : IExtent // essentially a segment on an uncalibrated line
     public Extent Negated => new Extent(-StartMeasure, -EndMeasure);
     public void MirrorAroundStart()
     {
-        EndMeasure.SetPosition(StartMeasure.Position - LengthInTicks); // todo: check for isMax, isMin
+        EndMeasure.SetPositionAndInvoke(StartMeasure.Position - LengthInTicks); // todo: check for isMax, isMin
     }
     public void Reverse()
     {
@@ -459,11 +459,11 @@ public class Extent : IExtent // essentially a segment on an uncalibrated line
     {
         if (index == 0)
         {
-            StartMeasure.SetPosition(value);
+            StartMeasure.SetPositionAndInvoke(value);
         }
         else if (index == 1)
         {
-            EndMeasure.SetPosition(value);
+            EndMeasure.SetPositionAndInvoke(value);
         }
     }
     public virtual void ClearInternalPositions() { }

@@ -56,7 +56,7 @@ public class DecayMeasure : MeasureBase, IDisposable
 	public DecayMeasure(IMeasure reference, float decayRate, IMeasure minimum, IMeasure maximum)
 	{
 		Ref = reference;
-		Position = reference.Position;// new Measure(pos,  CertaintyLevel.Set);
+		SetPosition(reference.Position);// new Measure(pos,  CertaintyLevel.Set);
         Decay = DynamicMeasure.SlowFollow(reference, decayRate);
         Minimum = minimum;
         Maximum = maximum;
@@ -64,16 +64,12 @@ public class DecayMeasure : MeasureBase, IDisposable
 	}
 	public float Norm() => (float)(Position - Minimum.Position) / (Maximum.Position - Minimum.Position);
 	public float InvNorm => 1f - Norm();
-	public override void SetPosition(long position)
-	{
-		Position = position;
-	}
     public void OnUpdate(IMeasure source)
 	{
 		// all sub refs have now updated
-		SetPosition(long.Clamp(Decay.Position, Minimum.Position, Maximum.Position));
-		Length.SetPosition(Maximum.Position - Minimum.Position);
-		PositionFromMinimum.SetPosition(Position - Minimum.Position);
+		SetPositionAndInvoke(long.Clamp(Decay.Position, Minimum.Position, Maximum.Position));
+		Length.SetPositionAndInvoke(Maximum.Position - Minimum.Position);
+		PositionFromMinimum.SetPositionAndInvoke(Position - Minimum.Position);
         //Trace.WriteLine(Position + " " + Ref?.Position);
     }
     public void Dispose()

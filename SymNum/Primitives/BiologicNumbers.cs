@@ -33,13 +33,21 @@ public class MinMaxMeasure : DynamicMeasure
 {
 	// may need to accommodate multiple references?
 	// Real and imaginary side combine into minmax, but maybe imaginary is always min (even if it is greater than real)?
-	public override long Position { get => Ref.Position; protected set => Ref.SetPosition(value); }
+	public override long Position { get => Ref.Position; }
 	public DynamicMeasure MinMeasure { get; }
 	public DynamicMeasure MaxMeasure { get; }
 	public MinMaxMeasure(IMeasure reference, float? centerForce = null, float? edgeForce = null):base(reference)
 	{
 		MinMeasure = DynamicMeasure.Min(reference, centerForce, edgeForce);
 		MaxMeasure = DynamicMeasure.Max(reference, centerForce, edgeForce);
+	}
+	public override void SetPosition(long position)
+	{
+		Ref.SetPosition(position);
+	}
+	public override void SetPositionAndInvoke(long position)
+	{
+		Ref.SetPositionAndInvoke(position);
 	}
 }
 
@@ -50,7 +58,7 @@ public class AccumulateMeasure : DynamicMeasure // these are probably just RefMe
 	}
 	public override void OnUpdate(IMeasure source)
 	{
-		SetPosition(Position + source.Position);
+		SetPositionAndInvoke(Position + source.Position);
 	}
 }
 
@@ -81,7 +89,7 @@ public class SinCosMeasure : DynamicMeasure
 		var result = new SinCosMeasure(reference);
 		result.Bias = bias;
 		result.Accumulator = speed;
-		result.Position = 0;
+		result.SetPosition(0);
 		return result;
 	}
 	public static SinCosMeasure CreateWithStartPosition(IMeasure reference, RawNumber bias, long startPosition)
@@ -89,7 +97,7 @@ public class SinCosMeasure : DynamicMeasure
 		var result = new SinCosMeasure(reference);
 		result.Bias = bias;
 		result.Accumulator = 0;
-		result.Position = startPosition;
+		result.SetPosition(startPosition);
 		return result;
 	}
 	private float _runningPosition;
@@ -97,7 +105,7 @@ public class SinCosMeasure : DynamicMeasure
 	{
 		Accumulator += change;
 		_runningPosition += (long)Accumulator;
-		SetPosition((long)_runningPosition);
-		SpeedMeasure.SetPosition((long)Accumulator);
+		SetPositionAndInvoke((long)_runningPosition);
+		SpeedMeasure.SetPositionAndInvoke((long)Accumulator);
 	}
 }

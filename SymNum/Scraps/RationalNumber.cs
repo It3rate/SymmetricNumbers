@@ -27,12 +27,12 @@ public class RationalNumber : RawNumber, IPartialNumber
     public long MeasurePosition
     {
         get => RightMeasure.Position;
-        set { RightMeasure.SetPosition(value); LeftMeasure.SetPosition(0); }
+        set { RightMeasure.SetPositionAndInvoke(value); LeftMeasure.SetPositionAndInvoke(0); }
     }
     public long UnitPosition
     {
         get => RightUnit.Position;
-        set { RightUnit.SetPosition(value); LeftUnit.SetPosition(-value); }
+        set { RightUnit.SetPositionAndInvoke(value); LeftUnit.SetPositionAndInvoke(-value); }
     }
     public long TickCount => MeasurePosition;
     public long Resolution

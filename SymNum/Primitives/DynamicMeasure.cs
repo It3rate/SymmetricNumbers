@@ -22,7 +22,7 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 		Ref = reference;
 		DiffScale = diffScale;
 		Bias = bias;
-		Position = reference.Position;
+		SetPosition(reference.Position);
 		Accumulator = reference.Position;
 		Ref.PositionChanged += OnUpdate;
 	}
@@ -61,7 +61,7 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 	protected virtual void UpdateState(float change)
 	{
 		Accumulator += change;
-		SetPosition((long)Accumulator);
+		SetPositionAndInvoke((long)Accumulator);
 	}
 	public void Dispose()
 	{

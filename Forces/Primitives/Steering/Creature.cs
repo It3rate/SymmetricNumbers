@@ -79,7 +79,7 @@ public class Creature : ConceptSpace
 	}
     public void SetSight(long leftLight, long rightLight)
     {
-        LeftEyeInput.SetPosition(leftLight);
-        RightEyeInput.SetPosition(rightLight);
+        LeftEyeInput.SetPositionAndInvoke(leftLight);
+        RightEyeInput.SetPositionAndInvoke(rightLight);
     }
 }
