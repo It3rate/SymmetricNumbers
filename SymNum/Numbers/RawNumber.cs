@@ -66,6 +66,8 @@ public class RawNumber : INumber
 		RightUnit = rightUnit;
 		LeftMeasure = leftMeasure;
 		ZeroPoint = new Measure(zeroPoint);
+		LeftUnit.CanBeNegative = false;
+		RightUnit.CanBeNegative = false;
 	}
 	protected RawNumber(Ratio left, Ratio right, long zeroPoint = 0) :
 		this(right.Numerator, left.Denominator, right.Denominator, left.Numerator, zeroPoint)

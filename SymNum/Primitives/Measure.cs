@@ -3,11 +3,15 @@ namespace SymNum.Primitives;
 
 public class Measure : MeasureBase
 {
-	public Measure(long position, CertaintyLevel certainty = CertaintyLevel.Uncertain) : base(position, certainty)
+	public Measure(long position, CertaintyLevel certainty = CertaintyLevel.Uncertain, bool canBeNegative = true) : 
+		base(position, certainty, canBeNegative)
 	{ }
-	public Measure(CertaintyLevel certainty = CertaintyLevel.Uncertain) : base(0, certainty)
-	{ }
+	public Measure(CertaintyLevel certainty = CertaintyLevel.Uncertain) : base(0, certainty) { }
 
+	public static Measure CreateUnit(long resolution)
+	{
+		return new Measure(resolution, CertaintyLevel.Set, false);
+	}
 
 	//public Measure(long position, bool inclusive = true)
 	//{
@@ -37,25 +41,36 @@ public abstract class MeasureBase : IMeasure
 	public virtual bool IsCertain => Certainty.HasValue();
     public virtual CertaintyLevel Certainty { get; set; }
 
+	private bool _canBeNegative = true;
 	/// <summary>
 	/// Some measures are positive only. 
 	/// Units are positive only (imaginary units will point left, but will still be positive).
 	/// Also used when a value is unambigous with polarity, like not allowing negative debt, or negative credit (only debt or credit)
 	/// Used when you need one calculation above zero, and another below zero, like accumulating speed on a sine wave.
 	/// </summary>
-	public virtual bool CanBeNegative => true;
+	public virtual bool CanBeNegative
+	{
+		get => _canBeNegative;
+		set
+		{
+			_canBeNegative = value;
+			SetPosition(Position); // re-clamp position if needed
+		}
+	}
 
 	protected MeasureBase()
 	{
 	}
-	public MeasureBase(long position, CertaintyLevel certainty = CertaintyLevel.Set)
+	public MeasureBase(long position, CertaintyLevel certainty = CertaintyLevel.Set, bool canBeNegative = true)
 	{
 		SetPosition(position);
 		Certainty = certainty;
+		CanBeNegative = canBeNegative;
 	}
-
+	public long ProposedPosition { get; private set; }
 	public virtual void SetPosition(long position)
 	{
+		ProposedPosition = position;
 		Position = !CanBeNegative && position < 0 ? 0 : position;
 	}
 	public virtual void SetPositionAndInvoke(long position)

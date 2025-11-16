@@ -14,9 +14,10 @@ public interface IMeasure : IValue
 {
 	public event Action<IMeasure> PositionChanged;
 	long Position { get; }
+	long ProposedPosition { get; }
 	void SetPosition(long position);
 	void SetPositionAndInvoke(long position);
-	public bool CanBeNegative { get; }
+	public bool CanBeNegative { get; set; }
 	void Negate();
     //public CertaintyLevel CertaintyLevel { get; } // inherited
     public bool IsCertain { get; }
