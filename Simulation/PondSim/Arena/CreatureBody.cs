@@ -61,8 +61,9 @@ public class CreatureBody : DrawableBase
 			restitution = 0.8f,
 			filter = new Filter
 			{
-				categoryBits = 0x0002,  // Creature category
-				maskBits = 0x0001       // Only collide with wall category
+				categoryBits = 0x0002, // Creature category
+				maskBits = 0x0003 // collide with wall and other creatures   
+				//maskBits = 0x0001 // Only collide with wall category
 			}
 		});
     }
