@@ -83,11 +83,11 @@ public class CreatureBody : DrawableBase
             var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
 			var darkness = _creature.Sight.MinValue * 6f;
-			var thrustScale = 7.5f-Math.Clamp(darkness, .5f, 6f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
+			var thrustScale = 8.5f-Math.Clamp(darkness, .5f, 6f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
 			var force = angleVec * _thrustForce * thrustScale;
 
 			var dir = _creature.ThrustDirection;
-			_turnTotal = Math.Abs(dir) > .6f ? Math.Clamp(-dir*8f, -3.0f, 3.0f) : 0;
+			_turnTotal = Math.Abs(dir) > 0.6f ? Math.Clamp(dir * 0.9f, -1.2f, 1.2f) : 0;
 			var point = Body.GetWorldPoint(new(0, _turnTotal));
 
 			Body.ApplyForce(force, point, true);

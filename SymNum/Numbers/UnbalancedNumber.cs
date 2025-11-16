@@ -42,15 +42,16 @@ public class UnbalancedNumber : RawNumber
             (imaginary == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
         Initialize();
     }
-    public UnbalancedNumber(IMeasure rational, IMeasure imaginaryResolution, IMeasure rationalResolution, IMeasure imaginary)
+    public UnbalancedNumber(IMeasure rational, IMeasure imaginaryResolution, IMeasure rationalResolution, IMeasure imaginary) :
+        base(rational, imaginaryResolution, rationalResolution, imaginary, 0)
     {
-        RightMeasure = rational;
-        LeftUnit = imaginaryResolution;
-        RightUnit = rationalResolution;
-        LeftMeasure = imaginary;
         Initialize();
-    }
-    private void Initialize()
+	}
+	public UnbalancedNumber(Ratio left, Ratio right, long zeroPoint = 0) : base(left, right, zeroPoint)
+	{
+		Initialize();
+	}
+	private void Initialize()
     {
     }
     /// <summary>

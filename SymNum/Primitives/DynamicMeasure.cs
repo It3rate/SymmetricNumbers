@@ -82,10 +82,10 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 		CreateFollow(reference, isLessForce ?? _smallDrift, isMoreForce ?? _largeDrift, _highResolution);
 	
 	public static DynamicMeasure SlowFollow(IMeasure reference, float? smallDrift = null) =>
-		CreateDrift(reference, smallDrift ?? _smallDrift, _highResolution);
+		CreateFollow(reference, smallDrift ?? _smallDrift, _highResolution);
 	
 	public static DynamicMeasure FastFollow(IMeasure reference, float? largeDrift = null) =>
-		CreateDrift(reference, largeDrift ?? _largeDrift, _highResolution);
+		CreateFollow(reference, largeDrift ?? _largeDrift, _highResolution);
 	
 	public static DynamicMeasure SlowSink(IMeasure reference, float? slowDrift = null) =>
 		CreateDrift(reference, -slowDrift ?? _smallDrift, _highResolution);

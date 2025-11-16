@@ -30,19 +30,13 @@ public class Creature : ConceptSpace
 	{ 
 		RightEyeInput = new Measure(0);
 		LeftEyeInput = new Measure(0);
+		LeftEyeDecay = new DecayMeasure(RightEyeInput, 0.08f);
+		RightEyeDecay = new DecayMeasure(LeftEyeInput, 0.08f);
 
-		//var rightEyeMeasure = new MeasureRef(RightEyeInput, 5f);
-		//var leftEyeMeasure = new MeasureRef(LeftEyeInput, 5f);
-		//var RightEyeResolution = new DecayMeasure(RightEyeInput, 0.01f);
-		//var LeftEyeResolution = new DecayMeasure(LeftEyeInput, 0.01f);
-		LeftEyeDecay = new DecayMeasure(RightEyeInput, 0.4f);
-		RightEyeDecay = new DecayMeasure(LeftEyeInput, 0.4f);
 
-		Sight = new UnbalancedNumber(
-			RightEyeDecay.PositionInLength,
-			LeftEyeDecay.Length,
-			RightEyeDecay.Length, 
-			LeftEyeDecay.PositionInLength);
+		var leftEyeRatio = new Ratio(LeftEyeDecay.PositionFromMinimum, LeftEyeDecay.Length, Polarity.FacesLeft);
+		var rightEyeRatio = new Ratio(RightEyeDecay.PositionFromMinimum, RightEyeDecay.Length, Polarity.FacesRight);
+		Sight = new UnbalancedNumber(leftEyeRatio, rightEyeRatio);
 
 		// a ratio number has min and max DriftMeasrues, and creates a denominator with length,
 		// and a measure with position - min. It supplies both numerator and denominator to half a number.
@@ -71,15 +65,15 @@ public class Creature : ConceptSpace
 	private long _leftInc = 4;
 	public void OnTick()
 	{
-		//var left = Legs.LeftValue;
-		//var right = Legs.RightValue;
-		//var rot = 0f;
-		//if (left != 0 && right != 0)
-		//{
-		//	rot = (left > right) ? -(left / right + .1f) : (right > left) ? (right / left + .1f) : 0;
-		//}
-		//ThrustDirection = (float)rot;
-		ThrustDirection = Legs.CancelledSum(1);
+		var left = Sight.LeftValue;
+		var right = Sight.RightValue;
+		var rot = 0f;
+		if (left != 0 && right != 0)
+		{
+			rot = (left > right) ? -(left / right + .1f) : (right > left) ? (right / left + .1f) : 0;
+		}
+		ThrustDirection = (float)rot;
+		//ThrustDirection = Legs.CancelledSum(1);
 
 		Trace.WriteLine(ThrustDirection.ToString("0.###"));
 	}

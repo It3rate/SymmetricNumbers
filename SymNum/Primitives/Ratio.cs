@@ -18,11 +18,11 @@ namespace SymNum.Primitives;
 // They map all the way when solved, and the equations required to acheive this are the intelligence.
 // The goal of prediction is the align two units with each other somehow.
 
-public class Ratio : RawNumber
+public class Ratio : RawNumber, IPartialNumber
 {
 	// Q. Could have one of numerator, denomonator or Value being calculated. Allows storing float as source of truth.
-	public IMeasure Numerator => Polarity == Polarity.FacesLeft ? LeftMeasure : RightMeasure;
-	public IMeasure Denominator => Polarity == Polarity.FacesLeft ? LeftUnit : RightUnit;
+	public IMeasure Numerator => IsImaginaryPart ? LeftMeasure : RightMeasure;
+	public IMeasure Denominator => IsImaginaryPart ? LeftUnit : RightUnit;
 	public float Value
 	{
 		get => GetValue(Numerator, Denominator);
@@ -30,16 +30,17 @@ public class Ratio : RawNumber
 	}
 	public Polarity Polarity { get; }
 
-
+	public bool IsRationalPart => Polarity.IsRationalPart();
+	public bool IsImaginaryPart => Polarity.IsImaginaryPart();
 	public float ValueOrOne => Denominator.Position != 0 && Numerator.Position != 0 ? Value : 1f;
 	public void MapToValue(float value) => Numerator.SetPosition((long)(value * Denominator.Position));
 	public float ValueForPolarity(Polarity polarity) => Polarity.IsMirror(polarity) ? -Value : Value;
 	public Ratio(IMeasure numerator, IMeasure denominator, Polarity polarity = Polarity.FacesRight)
 		: base(
-			polarity == Polarity.FacesRight ? numerator : IMeasure.Zero,
-			polarity == Polarity.FacesRight ? IMeasure.Zero : denominator,
-			polarity == Polarity.FacesRight ? denominator : IMeasure.Zero,
-			polarity == Polarity.FacesRight ? IMeasure.Zero : numerator,
+			polarity.IsNotImaginary() ? numerator : IMeasure.Zero,
+			polarity.IsNotImaginary() ? IMeasure.Zero : denominator,
+			polarity.IsNotImaginary() ? denominator : IMeasure.Zero,
+			polarity.IsNotImaginary() ? IMeasure.Zero : numerator,
 			0
 		)
 	{

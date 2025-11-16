@@ -25,7 +25,7 @@ public class DecayMeasure : MeasureBase, IDisposable
 
 	public IMeasure Minimum { get; set; }
 	public IMeasure Maximum { get; set; }
-	public IMeasure PositionInLength { get; } = new Measure(1);
+	public IMeasure PositionFromMinimum { get; } = new Measure(1);
 	public IMeasure Length { get; } = new Measure(1);
 
 	public override bool IsFullDefined => true;
@@ -53,12 +53,6 @@ public class DecayMeasure : MeasureBase, IDisposable
 		Maximum = DynamicMeasure.Max(reference);
 		Ref.PositionChanged += OnUpdate;
 	}
-	public float Norm() => (float)(Position - Minimum.Position) / (Maximum.Position - Minimum.Position);
-	public float InvNorm => 1f - Norm();
-	public override void SetPosition(long position)
-	{
-		Position = position;
-	}
 	public DecayMeasure(IMeasure reference, float decayRate, IMeasure minimum, IMeasure maximum)
 	{
 		Ref = reference;
@@ -68,12 +62,18 @@ public class DecayMeasure : MeasureBase, IDisposable
         Maximum = maximum;
 		Ref.PositionChanged += OnUpdate;
 	}
+	public float Norm() => (float)(Position - Minimum.Position) / (Maximum.Position - Minimum.Position);
+	public float InvNorm => 1f - Norm();
+	public override void SetPosition(long position)
+	{
+		Position = position;
+	}
     public void OnUpdate(IMeasure source)
 	{
 		// all sub refs have now updated
 		SetPosition(long.Clamp(Decay.Position, Minimum.Position, Maximum.Position));
 		Length.SetPosition(Maximum.Position - Minimum.Position);
-		PositionInLength.SetPosition(Position - Minimum.Position);
+		PositionFromMinimum.SetPosition(Position - Minimum.Position);
         //Trace.WriteLine(Position + " " + Ref?.Position);
     }
     public void Dispose()

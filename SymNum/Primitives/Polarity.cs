@@ -11,10 +11,12 @@ public enum Polarity { Unknown, Zero, FacesRight, FacesLeft };//, Zero, Max }
 public static class PolarityExtension
 {
 	public static bool HasPolarity(this Polarity polarity) => polarity == Polarity.FacesRight || polarity == Polarity.FacesLeft;
-	public static bool IsTrue(this Polarity polarity) => polarity == Polarity.FacesRight;
-	public static bool IsFalse(this Polarity polarity) => polarity == Polarity.FacesLeft;
+	public static bool IsRationalPart(this Polarity polarity) => polarity == Polarity.FacesRight;
+	public static bool IsImaginaryPart(this Polarity polarity) => polarity == Polarity.FacesLeft;
+	public static bool IsNotImaginary(this Polarity polarity) => polarity != Polarity.FacesLeft;
 	public static int Direction(this Polarity polarity) => polarity == Polarity.FacesRight ? 1 : polarity == Polarity.FacesLeft ? -1 : 0;
 	public static int ForceValue(this Polarity polarity) => polarity == Polarity.FacesLeft ? -1 : 1;
+
 
 	public static Polarity Invert(this Polarity polarity)//Inverse
 	{
