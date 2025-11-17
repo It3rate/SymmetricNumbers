@@ -8,6 +8,9 @@ public class Measure : MeasureBase
 	{ }
 	public Measure(CertaintyLevel certainty = CertaintyLevel.Uncertain) : base(0, certainty) { }
 
+	public Measure(long position, CertaintyLevel certainty, long min, long max) : 
+		base(position, certainty, min, max)
+	{ }
 	public static Measure CreateUnit(long resolution)
 	{
 		return new Measure(resolution, CertaintyLevel.Set, false);
@@ -34,14 +37,15 @@ public abstract class MeasureBase : IMeasure
 	public event Action<IMeasure> PositionChanged;
 
 	public virtual long Position { get; private set; }
+    public virtual CertaintyLevel Certainty { get; set; }
+	public long Minimum { get; set; } = long.MinValue;
+	public long Maximum { get; set; } = long.MaxValue;
+
 	public virtual bool IsFullDefined => !IsMin && !IsMax;
 	public virtual bool IsMax => Position == long.MaxValue;
 	public virtual bool IsMin => Position == long.MinValue;
 	public virtual bool IsZero => Position == 0 && IsFullDefined;
 	public virtual bool IsCertain => Certainty.HasValue();
-    public virtual CertaintyLevel Certainty { get; set; }
-
-	private bool _canBeNegative = true;
 	/// <summary>
 	/// Some measures are positive only. 
 	/// Units are positive only (imaginary units will point left, but will still be positive).
@@ -50,10 +54,10 @@ public abstract class MeasureBase : IMeasure
 	/// </summary>
 	public virtual bool CanBeNegative
 	{
-		get => _canBeNegative;
+		get => Minimum < 0;
 		set
 		{
-			_canBeNegative = value;
+			Minimum = !value && Minimum > 0 ? Minimum : 0;
 			SetPosition(Position); // re-clamp position if needed
 		}
 	}
@@ -63,21 +67,30 @@ public abstract class MeasureBase : IMeasure
 	}
 	public MeasureBase(long position, CertaintyLevel certainty = CertaintyLevel.Set, bool canBeNegative = true)
 	{
-		SetPosition(position);
 		Certainty = certainty;
-		CanBeNegative = canBeNegative;
+		Minimum = canBeNegative ? long.MinValue : 0;
+		SetPosition(position);
+	}
+	public MeasureBase(long position, CertaintyLevel certainty, long min, long max)
+	{
+		Certainty = certainty;
+		Minimum = min;
+		Maximum = max;
+		SetPosition(position);
 	}
 	public long ProposedPosition { get; private set; }
 	public virtual void SetPosition(long position)
 	{
 		ProposedPosition = position;
-		Position = !CanBeNegative && position < 0 ? 0 : position;
+		Position = long.Clamp(position, Minimum, Maximum);
 	}
 	public virtual void SetPositionAndInvoke(long position)
 	{
 		SetPosition(position);
 		PositionChanged?.Invoke(this);
 	}
+	public void Increment() => SetPositionAndInvoke(Position + 1);
+	public void Decrement() => SetPositionAndInvoke(Position - 1);
 
 	public virtual void Negate()
     {

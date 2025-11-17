@@ -18,7 +18,8 @@ public class Creature : ConceptSpace
 	// For now it is all manual to get the feel of it.
 	// The whole creature is a concept space, but light is also a concept space, as is brightness.
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
-    public IMeasure RightEyeInput { get; }	
+	public IMeasure Tick { get; } = new Measure(0, CertaintyLevel.Set, false);
+	public IMeasure RightEyeInput { get; }	
 	public IMeasure LeftEyeInput { get; }
 	public UnbalancedNumber Sight { get; } 
 	public BinaryExpression Thrust { get; }
@@ -26,6 +27,8 @@ public class Creature : ConceptSpace
 	public UnbalancedNumber Legs { get; }
 	public DecayMeasure LeftEyeDecay;
 	public DecayMeasure RightEyeDecay;
+
+	public IMeasure EnergyStore { get; }
 	public Creature()
 	{ 
 		RightEyeInput = new Measure(0);
@@ -42,9 +45,8 @@ public class Creature : ConceptSpace
 		// and a measure with position - min. It supplies both numerator and denominator to half a number.
 
 		//Thrust = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
-		long min = 1;
-		var LeftEyeToRightLeg = new DecayMeasure(LeftEyeInput, .01f);
-		var RighttEyeToLeftLeg = new DecayMeasure(RightEyeInput, .01f);
+		var LeftEyeToRightLeg = new DecayMeasure(LeftEyeInput, 1f);
+		var RighttEyeToLeftLeg = new DecayMeasure(RightEyeInput, 1f);
 		var  BrightnessRes = new Measure(255, CertaintyLevel.Set);
 		Legs = new UnbalancedNumber(
 			RighttEyeToLeftLeg, 
@@ -53,10 +55,8 @@ public class Creature : ConceptSpace
 			LeftEyeToRightLeg);
 		// expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
 		//TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
-		var measure = new Measure(100);
-		var unit = new Measure(10);
-		var test = new ComplexNumber(measure, measure, unit);
-		var x = test.LeftValue;
+
+		EnergyStore = new Measure(1000, CertaintyLevel.Set, 0, 4000);
 	}
 
 	private Random _rnd = new Random();
@@ -65,6 +65,8 @@ public class Creature : ConceptSpace
 	private long _leftInc = 4;
 	public void OnTick()
 	{
+		Tick.Increment();
+		// calculate internal reactions to input
 		var left = Sight.LeftValue;
 		var right = Sight.RightValue;
 		var rot = 0f;
@@ -75,11 +77,17 @@ public class Creature : ConceptSpace
 		ThrustDirection = (float)rot;
 		//ThrustDirection = Legs.CancelledSum(1);
 
-		Trace.WriteLine(ThrustDirection.ToString("0.###"));
+		//Trace.WriteLine(ThrustDirection.ToString("0.###"));
 	}
-    public void SetSight(long leftLight, long rightLight)
+    public void SetInputs(long leftLight, long rightLight, long energyInput, long energyUse)
     {
+		// Q. Should all updates happen on tick, or should they be independent of clock?
         LeftEyeInput.SetPositionAndInvoke(leftLight);
         RightEyeInput.SetPositionAndInvoke(rightLight);
-    }
+		// Add energy based on how much light is there.
+		EnergyStore.SetPositionAndInvoke(EnergyStore.Position + energyInput - energyUse);
+
+		Trace.WriteLine(EnergyStore.Position);
+
+	}
 }

@@ -34,6 +34,7 @@ namespace SymNum.Numbers;
 // This implies than resolution for numbers has to specify how it obtains it's resolution if you want to scale those values, which makes sense.
 public interface INumber
 {
+	public event Action<INumber> ValueSet;
 	/// <summary>
 	/// The holder for raw measure values. Can be redirected for refs.
 	/// </summary>
@@ -59,6 +60,7 @@ public interface INumber
 	/// </summary>
 	IMeasure ZeroPoint { get; }
 	void SetWith(INumber number);
+	void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure);
 	long RightMeasurePosition { get; }
 	long RightUnitPosition { get; }
 	long LeftMeasurePosition { get; }
@@ -71,6 +73,7 @@ public interface INumber
 	float LeftValue { get; }
 	float RightValue { get; }
 
+	void Validate();
 	Ratio GetRational();
 	Ratio GetImaginary();
 	ComplexNumber GetComplex();

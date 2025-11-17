@@ -14,39 +14,37 @@ namespace SymNum.Numbers
 	/// </summary>
 	public class AnchorNumber : RawNumber, IDisposable
 	{
-		public AnchorNumber(float value, long resolution) : this((long)(value * resolution), resolution) { }
-		public AnchorNumber(long position, long resolution, Polarity polarityContext = Polarity.FacesRight)
-		{ 
-			LeftUnit = Measure.CreateUnit(resolution);
-			RightUnit = Measure.CreateUnit(resolution);
+		private Ratio _ratioRef;
+		private long _position => _ratioRef.Numerator.ProposedPosition;
+		private long _resolution => _ratioRef.Denominator.Position;
+		private Polarity _polarity => _ratioRef.Polarity;
+		public AnchorNumber(Polarity polarity, long resolution) : this(new Ratio(0, resolution, polarity)) {}
+		public AnchorNumber(Ratio ratio)
+		{
+			_ratioRef = ratio;
+
+			LeftUnit = Measure.CreateUnit(_resolution);
+			RightUnit = Measure.CreateUnit(_resolution);
 			LeftMeasure = new Measure(0, CertaintyLevel.Set, false);
 			RightMeasure = new Measure(0, CertaintyLevel.Set, false);
-			UpdateMeasures(position, polarityContext);
+			OnMeasureChanged(_ratioRef.Numerator);
 
-			LeftMeasure.PositionChanged += OnLeftMeasureChanged;
-			RightMeasure.PositionChanged += OnRightMeasureChanged;
+			_ratioRef.Numerator.PositionChanged += OnMeasureChanged;
 		}
-
-		private void OnLeftMeasureChanged(IMeasure obj)
+		public override void Validate()
 		{
-			UpdateMeasures(obj.ProposedPosition, Polarity.FacesLeft);
 		}
-		private void OnRightMeasureChanged(IMeasure obj)
+		private void OnMeasureChanged(IMeasure obj)
 		{
-			UpdateMeasures(obj.ProposedPosition, Polarity.FacesLeft);
-		}
-		private void UpdateMeasures(long position, Polarity polarityContext)
-		{
-			bool isRight = polarityContext == Polarity.FacesRight;
-			var rightPos = isRight && position > 0 ? position : !isRight && position < 0 ? -position : 0;
-			var leftPos = !isRight && position > 0 ? position : isRight && position < 0 ? -position : 0;
+			bool isRight = _polarity == Polarity.FacesRight;
+			var rightPos = isRight && _position > 0 ? _position : !isRight && _position < 0 ? -_position : 0;
+			var leftPos = !isRight && _position > 0 ? _position : isRight && _position < 0 ? -_position : 0;
 			LeftMeasure.SetPosition(leftPos);
 			RightMeasure.SetPosition(rightPos);
 		}
 		public void Dispose()
 		{
-			LeftMeasure.PositionChanged -= OnLeftMeasureChanged;
-			RightMeasure.PositionChanged -= OnRightMeasureChanged;
+			_ratioRef.Numerator.PositionChanged -= OnMeasureChanged;
 		}
 	}
 }

@@ -24,7 +24,7 @@ namespace SymNum.Primitives;
 // Essentially they are also regular equations, but react to input.
 // In biology or other continuous systems these numbers are more natural, as they expect continuous interaction with the environment.
 
-public class BiologicNumbers
+public class BiologicMeasures
 {
 	// min, max, average, accumulate, follow, time series estimates, sin, cos, calculus.
 	// These come from arrangements of Dynamic measures, and interpretations of their resulting numbers.
@@ -38,8 +38,8 @@ public class MinMaxMeasure : DynamicMeasure
 	public DynamicMeasure MaxMeasure { get; }
 	public MinMaxMeasure(IMeasure reference, float? centerForce = null, float? edgeForce = null):base(reference)
 	{
-		MinMeasure = DynamicMeasure.Min(reference, centerForce, edgeForce);
-		MaxMeasure = DynamicMeasure.Max(reference, centerForce, edgeForce);
+		MinMeasure = Min(reference, centerForce, edgeForce);
+		MaxMeasure = Max(reference, centerForce, edgeForce);
 	}
 	public override void SetPosition(long position)
 	{

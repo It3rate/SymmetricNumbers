@@ -22,8 +22,8 @@ public class BinaryExpression : IValue, IConstraint
 {
 	public INumber First { get; set; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
     public INumber Second { get; set; }
-    public BinaryOp Op { get; set; }
-    public INumber Result { get; set; }
+    public virtual BinaryOp Op { get; protected set; }
+    public INumber Result { get; protected set; }
     // Calculations and predictions are expected results, the actual result is measured.
     // The diff is error/information and can be used in if/else etc.
     public INumber ExpectedResult { get; set; } 
@@ -71,4 +71,14 @@ public class BinaryExpression : IValue, IConstraint
         }
         return Result;
 	}
+}
+
+public class AnchorExpression : BinaryExpression
+{
+	public AnchorNumber AnchorResult => (Result as AnchorNumber)!;
+	public AnchorExpression(INumber? first, INumber? second,  CertaintyLevel state = CertaintyLevel.Uncertain) :
+		base(first, second, Ops.Subtract, new AnchorNumber(0, first.RightUnitPosition), state)
+	{
+	}
+
 }

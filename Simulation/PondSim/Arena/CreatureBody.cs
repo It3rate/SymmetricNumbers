@@ -72,9 +72,11 @@ public class CreatureBody : DrawableBase
 	//private float _turnTorque = 3000f;
 	private Random _rnd = new Random();
 	private float _turnTotal = 0f;
+	private float _thrustScale = 0f;
+	private float _lastForce = 0f;
 	public override void Update(float deltaTime)
 	{
-		SampleEyes();
+		ExternalInput();
         _creature.OnTick();
 
         if(Body != null)
@@ -84,15 +86,16 @@ public class CreatureBody : DrawableBase
             var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
 			var darkness = _creature.Sight.MinValue * 6f;
-			var thrustScale = 8.5f-Math.Clamp(darkness, .5f, 6f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
-			var force = angleVec * _thrustForce * thrustScale;
+			_thrustScale = 8.5f-Math.Clamp(darkness, .5f, 6f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
+			_lastForce = _thrustForce * _thrustScale;
+			var force = angleVec * _lastForce;
 
 			var dir = _creature.ThrustDirection;
-			_turnTotal = Math.Abs(dir) > 0.6f ? Math.Clamp(dir * 0.8f, -1.2f, 1.2f) : 0;
+			_turnTotal = Math.Abs(dir) > 0.6f ? Math.Clamp(dir * 0.38f, -1.2f, 1.2f) : 0;
 			var point = Body.GetWorldPoint(new(0, _turnTotal));
 
 			Body.ApplyForce(force, point, true);
-
+			// remove energy based on how much thrust expended.
 		}
 	}
 	public void OnWallHit()
@@ -105,13 +108,15 @@ public class CreatureBody : DrawableBase
 			Body.ApplyForce(vec * -5000000, Body.GetWorldPoint(new(4f, 0)), true);
 		}
 	}
-	private void SampleEyes()
+	private void ExternalInput()
 	{
 		if(_leftEyePos != null && _rightEyePos != null)
 		{
 			var cLeft = _sim.GetLightAt((SKPoint)_leftEyePos);
 			var cRight = _sim.GetLightAt((SKPoint)_rightEyePos!);
-			_creature.SetSight(cLeft, cRight);
+			var energyInput = (cLeft + cRight) / 20;
+			var energyUse = (long)(_thrustScale);
+			_creature.SetInputs(cLeft, cRight, energyInput, energyUse);
 
 		}
 	}

@@ -23,12 +23,12 @@ public class Ratio : RawNumber, IPartialNumber
 	// Q. Could have one of numerator, denomonator or Value being calculated. Allows storing float as source of truth.
 	public IMeasure Numerator => IsImaginaryPart ? LeftMeasure : RightMeasure;
 	public IMeasure Denominator => IsImaginaryPart ? LeftUnit : RightUnit;
+	public Polarity Polarity { get; }
 	public float Value
 	{
 		get => GetValue(Numerator, Denominator);
 		set => SetValue(Numerator, Denominator, value);
 	}
-	public Polarity Polarity { get; }
 
 	public bool IsRationalPart => Polarity.IsRationalPart();
 	public bool IsImaginaryPart => Polarity.IsImaginaryPart();

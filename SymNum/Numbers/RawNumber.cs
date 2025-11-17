@@ -24,17 +24,19 @@ namespace SymNum.Numbers;
 public class RawNumber : INumber
 {
     public static RawNumber Unknown => new RawNumber();
-    // A number can be composed of multiple measures with different restrictions. 
-    // A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
-    // An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
-    // but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
+	// A number can be composed of multiple measures with different restrictions. 
+	// A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
+	// An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
+	// but they are all 'numbers' for lack of a better word. Values are always constructed, even in the number 9 (which is 9 * unit).
 
-    // needs to be protected to allow subclasses to enforce their constraints.
+	// needs to be protected to allow subclasses to enforce their constraints.
 
-    // B | A   // A/D forms the real part, and C/B the imaginary part
-    // C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
-    // zero point is E
-    public virtual IMeasure[] Measures { get; } = new IMeasure[5];
+	public event Action<INumber> ValueSet;
+
+	// B | A   // A/D forms the real part, and C/B the imaginary part
+	// C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
+	// zero point is E
+	public virtual IMeasure[] Measures { get; } = new IMeasure[5];
 	public Polarity[] Directions { get; } = { Polarity.FacesRight, Polarity.FacesLeft, Polarity.FacesLeft, Polarity.FacesRight, Polarity.Zero };
 
 	public virtual IMeasure RightMeasure { get => Measures[0]; protected set => Measures[0] = value; }
@@ -84,8 +86,19 @@ public class RawNumber : INumber
     public void SetWith(INumber number)
 	{
 		Array.Copy(number.Measures, Measures, Measures.Length);
+		Validate();
+		ValueSet?.Invoke(this);
+	}
+	public void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure)
+	{
+		if (rightMeasure != null) { RightMeasure.SetPosition(rightMeasure.Position); }
+		if (leftUnit != null) { LeftUnit.SetPosition(leftUnit.Position); }
+		if (rightUnit != null) { RightUnit.SetPosition(rightUnit.Position); }
+		if (leftMeasure != null) { LeftMeasure.SetPosition(leftMeasure.Position); }
+		ValueSet?.Invoke(this);
 	}
 
+	public virtual void Validate() { }
 	public virtual Ratio GetRational() => new Ratio(RightMeasure, RightUnit, Polarity.FacesRight);
 	public virtual Ratio GetImaginary() => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesLeft);
 	public virtual Ratio GetImaginaryAsRational() => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesRight);

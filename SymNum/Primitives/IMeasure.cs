@@ -36,6 +36,8 @@ public interface IMeasure : IValue
 	{
 		return new Measure(0);
 	}
+	public void Increment();
+	public void Decrement();
 	public static IMeasure operator -(IMeasure a)
 	{
 		var position = a.IsMin ? long.MaxValue : a.IsMax ? long.MinValue : -a.Position;
