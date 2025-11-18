@@ -86,7 +86,7 @@ public class CreatureBody : DrawableBase
             var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
 			var darkness = _creature.Sight.MinValue * 6f;
-			_thrustScale = 8.5f-Math.Clamp(darkness, .5f, 6f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
+			_thrustScale = (8.5f-Math.Clamp(darkness, .5f, 6f)) * (_creature.EnergyStore.Position/3000f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
 			_lastForce = _thrustForce * _thrustScale;
 			var force = angleVec * _lastForce;
 
@@ -114,30 +114,33 @@ public class CreatureBody : DrawableBase
 		{
 			var cLeft = _sim.GetLightAt((SKPoint)_leftEyePos);
 			var cRight = _sim.GetLightAt((SKPoint)_rightEyePos!);
-			var energyInput = (cLeft + cRight) / 20;
+			var energyInput = (cLeft + cRight) / 50;
 			var energyUse = (long)(_thrustScale);
 			_creature.SetInputs(cLeft, cRight, energyInput, energyUse);
-
 		}
 	}
 
 	private SKPoint? _leftEyePos;
 	private SKPoint? _rightEyePos;
 	private static float _creatureRadius = 8f;
-	private SKPaint FillL = CorePens.GetBrush(SKColor.Parse("#00F080"));
-	private SKPaint FillR = CorePens.GetBrush(SKColor.Parse("#80F000"));
-	private SKPaint White = CorePens.GetBrush(SKColor.Parse("#FFFFFF"));
-	private SKPaint Outline = CorePens.GetPen(SKColor.Parse("#F01000"), 2);
+	private SKPaint FillL = CorePens.GetBrush(SKColor.Parse("#00C080"));
+	private SKPaint FillR = CorePens.GetBrush(SKColor.Parse("#00A0F0"));
+	private SKPaint Yellow = CorePens.GetBrush(SKColor.Parse("#FFFF00"));
+	private SKPaint LightGray = CorePens.GetBrush(SKColor.Parse("#AAAAAA"));
+	private SKPaint Gray = CorePens.GetBrush(SKColor.Parse("#777777"));
+	private SKPaint Outline = CorePens.GetPen(SKColor.Parse("#C01000"), 2);
 	public override void Draw()
     {
-        var offset = _creatureRadius * -0.7f;
-
 		if (Body != null)
 		{
-			var f = _turnTotal > 0 ? FillR : FillL;
-			Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, f);
-			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, White);
-			Canvas?.DrawCircle(RightEye, _creatureRadius / 2.5f, White);
+			var e = _creature.EnergyStore;
+			var el = (byte)((e.Position / (float)e.Maximum) * 255);
+			var turningRight = _turnTotal > 0;
+			var f = turningRight ? FillR : FillL;
+			var fillAlpha = CorePens.GetBrush(new SKColor(f.Color.Red, f.Color.Green, f.Color.Blue, el));
+			Canvas?.DrawCircle(SKPoint.Empty, _creatureRadius, fillAlpha);
+			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, turningRight ? LightGray : Gray);
+			Canvas?.DrawCircle(RightEye, _creatureRadius / 2.5f, turningRight ? Gray : LightGray);
 			Canvas?.DrawCircle(LeftEye, _creatureRadius / 2.5f, Outline);
 			Canvas?.DrawCircle(RightEye, _creatureRadius / 2.5f, Outline);
 

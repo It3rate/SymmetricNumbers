@@ -88,6 +88,5 @@ public class Creature : ConceptSpace
 		EnergyStore.SetPositionAndInvoke(EnergyStore.Position + energyInput - energyUse);
 
 		Trace.WriteLine(EnergyStore.Position);
-
 	}
 }

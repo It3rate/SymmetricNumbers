@@ -17,6 +17,8 @@ public interface IMeasure : IValue
 	long ProposedPosition { get; }
 	void SetPosition(long position);
 	void SetPositionAndInvoke(long position);
+	long Minimum { get; set; }
+	long Maximum { get; set; }
 	public bool CanBeNegative { get; set; }
 	void Negate();
     //public CertaintyLevel CertaintyLevel { get; } // inherited
