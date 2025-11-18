@@ -50,7 +50,33 @@ public class MinMaxMeasure : DynamicMeasure
 		Ref.SetPositionAndInvoke(position);
 	}
 }
-
+public class MidpointMeasure : DynamicMeasure
+{
+	public IMeasure First => Ref;
+	public IMeasure Second { get; }
+	private bool _firstIsImaginary;
+	public MidpointMeasure(IMeasure first, IMeasure second, bool firstIsImaginary = true) : base(first)
+	{
+		Second = second;
+		_firstIsImaginary = firstIsImaginary;
+		Second.PositionChanged += OnUpdate;
+	}
+	public override void OnUpdate(IMeasure source)
+	{
+		base.OnUpdate(source);
+		var firstPosition = _firstIsImaginary ? -First.Position : First.Position;
+		var pos = (Second.Position - firstPosition) / 2 + firstPosition;
+		SetPosition(pos);
+	}
+	public override void Dispose()
+	{
+		base.Dispose();
+		if (Second != null)
+		{
+			Second.PositionChanged -= OnUpdate;
+		}
+	}
+}
 public class AccumulateMeasure : DynamicMeasure // these are probably just RefMeasures
 {
 	public AccumulateMeasure(IMeasure reference):base(reference)

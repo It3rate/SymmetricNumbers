@@ -97,7 +97,12 @@ public class RawNumber : INumber
 		if (leftMeasure != null) { LeftMeasure.SetPosition(leftMeasure.Position); }
 		ValueSet?.Invoke(this);
 	}
-
+	public Ratio Midpoint(Polarity polarity = Polarity.FacesRight)
+	{
+		var val = (LeftValue + RightValue) / 2f - LeftValue;
+		var denom = polarity.IsNotImaginary() ? RightUnit : LeftUnit;
+		return new Ratio(new Measure((long)(val * denom.Position)), denom, polarity);
+	}
 	public virtual void Validate() { }
 	public virtual Ratio GetRational() => new Ratio(RightMeasure, RightUnit, Polarity.FacesRight);
 	public virtual Ratio GetImaginary() => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesLeft);

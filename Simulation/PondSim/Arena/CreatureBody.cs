@@ -90,7 +90,7 @@ public class CreatureBody : DrawableBase
 			_lastForce = _thrustForce * _thrustScale;
 			var force = angleVec * _lastForce;
 
-			var dir = _creature.ThrustDirection;
+			var dir = _creature.ThrustDirection.RightValue; // this needs to be two legs at sides, and two thrusts
 			_turnTotal = Math.Abs(dir) > 0.6f ? Math.Clamp(dir * 0.38f, -1.2f, 1.2f) : 0;
 			var point = Body.GetWorldPoint(new(0, _turnTotal));
 

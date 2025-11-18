@@ -71,7 +71,7 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 		Accumulator += change;
 		SetPositionAndInvoke((long)Accumulator);
 	}
-	public void Dispose()
+	public virtual void Dispose()
 	{
 		if (Ref != null)
 		{
