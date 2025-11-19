@@ -33,22 +33,27 @@ public class MinMaxMeasure : DynamicMeasure
 {
 	// may need to accommodate multiple references?
 	// Real and imaginary side combine into minmax, but maybe imaginary is always min (even if it is greater than real)?
-	public override long Position { get => Ref.Position; }
+	//public override long Position { get => Ref.Position; }
 	public DynamicMeasure MinMeasure { get; }
 	public DynamicMeasure MaxMeasure { get; }
-	public MinMaxMeasure(IMeasure reference, float? centerForce = null, float? edgeForce = null):base(reference)
+	public MinMaxMeasure(IMeasure reference, float? centerForce = null, float? edgeForce = null) : base(reference)
 	{
 		MinMeasure = Min(reference, centerForce, edgeForce);
 		MaxMeasure = Max(reference, centerForce, edgeForce);
 	}
-	public override void SetPosition(long position)
+	public override void OnUpdate(IMeasure source)
 	{
-		Ref.SetPosition(position);
+		MinMeasure.OnUpdate(source);
+		MaxMeasure.OnUpdate(source);
 	}
-	public override void SetPositionAndInvoke(long position)
-	{
-		Ref.SetPositionAndInvoke(position);
-	}
+	//public override void SetPosition(long position)
+	//{
+	//	Ref.SetPosition(position);
+	//}
+	//public override void SetPositionAndInvoke(long position)
+	//{
+	//	Ref.SetPositionAndInvoke(position);
+	//}
 }
 public class MidpointMeasure : DynamicMeasure
 {
@@ -63,7 +68,6 @@ public class MidpointMeasure : DynamicMeasure
 	}
 	public override void OnUpdate(IMeasure source)
 	{
-		base.OnUpdate(source);
 		var firstPosition = _firstIsImaginary ? -First.Position : First.Position;
 		var pos = (Second.Position - firstPosition) / 2 + firstPosition;
 		SetPosition(pos);
@@ -75,6 +79,10 @@ public class MidpointMeasure : DynamicMeasure
 		{
 			Second.PositionChanged -= OnUpdate;
 		}
+	}
+	public override string ToString()
+	{
+		return $"b:{First.Position}:{Second.Position}~{Position}";
 	}
 }
 public class AccumulateMeasure : DynamicMeasure // these are probably just RefMeasures

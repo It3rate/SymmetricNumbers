@@ -21,6 +21,11 @@ public class Creature : ConceptSpace
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
 	public IMeasure Tick { get; } = new Measure(0, CertaintyLevel.Set, false);
 
+	// In general all values have a stimulus and a supression. You are wanting to eat and wanting to diet at the same time.
+	// This maps to complex number segments, with the start and end points being supression and stimulus.
+	// The resolution can be the diff (hunger-diet=will to eat), or the midpoint ((hunger+diet)/2=will to eat).
+	// or ratios, etc.
+
 	// inputs
 	public IMeasure MouthInput { get; }
 	public IMeasure RightEyeInput { get; }
@@ -40,6 +45,8 @@ public class Creature : ConceptSpace
 
 	// synthesis
 	public UnbalancedNumber Sight { get; }
+	public UnbalancedNumber LeftLegThrust { get; } // imaginary side is supress thrust, rational side is enhance thrust
+	public UnbalancedNumber RightLegThrust { get; }
 	public Ratio Brightness { get; }
 	public Ratio BrighterDirection { get; }
 
@@ -61,7 +68,6 @@ public class Creature : ConceptSpace
 	public DecayMeasure LeftEyeDecay;
 	public DecayMeasure RightEyeDecay;
 
-	public UnbalancedNumber LegThrust { get; }
 
 	// strap: Mouth to energy : food (light areas) intake increase energy
 	// strap: eyes to each leg : light direction to leg thrust difference
@@ -87,16 +93,18 @@ public class Creature : ConceptSpace
 	// world adaptions: need to allow warping around edges of world sim, with paths and creatures.
 
 	public Creature()
-	{ 
+	{
 		RightEyeInput = new Measure(0);
 		LeftEyeInput = new Measure(0);
-		LeftEyeDecay = new DecayMeasure(RightEyeInput, 0.08f);
-		RightEyeDecay = new DecayMeasure(LeftEyeInput, 0.08f);
+		var eyeMax = new MinMaxMeasure(LeftEyeInput);
+		RightEyeInput.PositionChanged += eyeMax.OnUpdate;
 
+		var leftEyeRatio = new Ratio(LeftEyeInput, eyeMax.MaxMeasure, Polarity.FacesLeft);
+		var rightEyeRatio = new Ratio(RightEyeInput, eyeMax.MaxMeasure, Polarity.FacesRight);
+		Sight = new ComplexNumber(LeftEyeInput, RightEyeInput, eyeMax.MaxMeasure);
 
-		var leftEyeRatio = new Ratio(LeftEyeDecay.PositionFromMinimum, LeftEyeDecay.Length, Polarity.FacesLeft);
-		var rightEyeRatio = new Ratio(RightEyeDecay.PositionFromMinimum, RightEyeDecay.Length, Polarity.FacesRight);
-		Sight = new UnbalancedNumber(leftEyeRatio, rightEyeRatio);
+		var lightAvg = new MidpointMeasure(LeftEyeInput, RightEyeInput, false);
+		Brightness = new Ratio(lightAvg, eyeMax.MaxMeasure);
 
 		// a ratio number has min and max DriftMeasures, and creates a denominator with length,
 		// and a measure with position - min. It supplies both numerator and denominator to half a number.
@@ -105,7 +113,7 @@ public class Creature : ConceptSpace
 		var LeftEyeToRightLeg = new DecayMeasure(LeftEyeInput, 1f);
 		var RighttEyeToLeftLeg = new DecayMeasure(RightEyeInput, 1f);
 		var  BrightnessRes = new Measure(255, CertaintyLevel.Set);
-		LegThrust = new UnbalancedNumber(
+		LeftLegThrust = new UnbalancedNumber(
 			RighttEyeToLeftLeg, 
 			BrightnessRes, 
 			BrightnessRes,
@@ -114,6 +122,10 @@ public class Creature : ConceptSpace
 		//TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
 		ThrustDirection = new Ratio(0, 10000);
 		EnergyStore = new Measure(2000, CertaintyLevel.Set, 0, 4000);
+
+
+		LeftEyeDecay = new DecayMeasure(RightEyeInput, 0.08f);
+		RightEyeDecay = new DecayMeasure(LeftEyeInput, 0.08f);
 	}
 
 	private Random _rnd = new Random();
@@ -134,7 +146,7 @@ public class Creature : ConceptSpace
 		ThrustDirection.Value = (float)rot;
 		//ThrustDirection = Legs.CancelledSum(1);
 
-		//Trace.WriteLine(ThrustDirection.ToString("0.###"));
+		//Trace.WriteLine(ThrustDirection.Value.ToString("0.###"));
 	}
     public void SetInputs(long leftLight, long rightLight, long energyInput, long energyUse)
     {
@@ -143,7 +155,5 @@ public class Creature : ConceptSpace
         RightEyeInput.SetPositionAndInvoke(rightLight);
 		// Add energy based on how much light is there.
 		EnergyStore.SetPositionAndInvoke(EnergyStore.Position + energyInput - energyUse);
-
-		Trace.WriteLine(EnergyStore.Position);
 	}
 }

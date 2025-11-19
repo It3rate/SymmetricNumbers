@@ -33,7 +33,10 @@ public class DynamicMeasure : Measure, IRef, IDisposable
 	/// </summary>
 	public virtual float Accumulator { get; protected set; }
 
-	protected DynamicMeasure(IMeasure reference) :base(reference.Position) { }
+	protected DynamicMeasure(IMeasure reference) :base(reference.Position) 
+	{
+		Ref = reference;
+	}
 	public DynamicMeasure(IMeasure reference, INumber diffScale, INumber bias) : base(reference.Position)
 	{
 		Ref = reference;

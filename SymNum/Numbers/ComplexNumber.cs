@@ -26,4 +26,8 @@ public class ComplexNumber : UnbalancedNumber
         LeftUnit = resolution; // this is 'negative' when interpreted in the rational perspective, but positive to itself.
         LeftMeasure = imaginaryMeasure; // +leftunit/+leftmeasure is a positive imaginary number, but negative if converted to real.
     }
+	public override string ToString()
+	{
+        return "{" + LeftValue.ToString("0.##") + "i, " + RightValue.ToString("0.##") + "}";
+	}
 }

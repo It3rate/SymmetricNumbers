@@ -68,7 +68,7 @@ public class CreatureBody : DrawableBase
 		});
     }
 
-	private float _thrustForce = 5000f; // Tune for sim scale
+	private float _thrustForce = 2000f; // Tune for sim scale
 	//private float _turnTorque = 3000f;
 	private Random _rnd = new Random();
 	private float _turnTotal = 0f;
@@ -81,21 +81,35 @@ public class CreatureBody : DrawableBase
 
         if(Body != null)
 		{
+			var c = _creature;
+			var s = c.Sight;
+
 			var speed = Body.GetLinearVelocity().Length();
 			var angle = Body.GetAngle();
             var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-			var darkness = _creature.Sight.MinValue * 6f;
-			_thrustScale = (8.5f-Math.Clamp(darkness, .5f, 6f)) * (_creature.EnergyStore.Position/3000f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
+			//var darkness = c.Sight.MinValue * 6f;
+			//_thrustScale = (8.5f - Math.Clamp(darkness, .5f, 6f)) * (c.EnergyStore.Position / 3000f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
+			_thrustScale = (((1.2f-c.Brightness.Value) * 2f)+2.5f) * (c.EnergyStore.Position / 3000f + 1f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
 			_lastForce = _thrustForce * _thrustScale;
 			var force = angleVec * _lastForce;
 
-			var dir = _creature.ThrustDirection.RightValue; // this needs to be two legs at sides, and two thrusts
-			_turnTotal = Math.Abs(dir) > 0.6f ? Math.Clamp(dir * 0.38f, -1.2f, 1.2f) : 0;
+			//var dir = c.ThrustDirection.RightValue; // this needs to be two legs at sides, and two thrusts
+			//_turnTotal = Math.Abs(dir) > 0.6f ? Math.Clamp(dir * 0.38f, -1.2f, 1.2f) : 0;
+			//_turnTotal = ((s.RightValue - s.LeftValue) / 2f - s.LeftValue) * -2f;
+			_turnTotal = (s.RightValue - s.LeftValue) * -1f;
+			var lTurn = 0.5f + (_turnTotal < 0 ? 1.3f : 0);
+			var rTurn = 0.5f + (_turnTotal > 0 ? 1.3f : 0);
 			var point = Body.GetWorldPoint(new(0, _turnTotal));
+			var ptL = Body.GetWorldPoint(new(0, -1.9f));
+			var ptR = Body.GetWorldPoint(new(0, 1.9f));
 
-			Body.ApplyForce(force, point, true);
+			Body.ApplyForce(force * lTurn, ptL, true);
+			Body.ApplyForce(force * rTurn, ptR, true);
 			// remove energy based on how much thrust expended.
+
+			Trace.WriteLine("ts: " + _thrustScale);
+			//Trace.WriteLine("eyes: " + _creature.Brightness);
 		}
 	}
 	public void OnWallHit()
@@ -114,7 +128,7 @@ public class CreatureBody : DrawableBase
 		{
 			var cLeft = _sim.GetLightAt((SKPoint)_leftEyePos);
 			var cRight = _sim.GetLightAt((SKPoint)_rightEyePos!);
-			var energyInput = (cLeft + cRight) / 50;
+			var energyInput = (cLeft + cRight) / 5;
 			var energyUse = (long)(_thrustScale);
 			_creature.SetInputs(cLeft, cRight, energyInput, energyUse);
 		}
