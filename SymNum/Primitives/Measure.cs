@@ -87,6 +87,10 @@ public abstract class MeasureBase : IMeasure
 	public virtual void SetPositionAndInvoke(long position)
 	{
 		SetPosition(position);
+		InvokePositionChanged();
+	}
+	protected void InvokePositionChanged()
+	{
 		PositionChanged?.Invoke(this);
 	}
 	public void Increment() => SetPositionAndInvoke(Position + 1);

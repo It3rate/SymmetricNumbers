@@ -44,6 +44,7 @@ public class Creature : ConceptSpace
 	public IMeasure ThrustRejuvinationFill { get; }
 
 	// synthesis
+	public Ratio EnergyRatio { get; }
 	public UnbalancedNumber Sight { get; }
 	public UnbalancedNumber LeftLegThrust { get; } // imaginary side is supress thrust, rational side is enhance thrust
 	public UnbalancedNumber RightLegThrust { get; }
@@ -94,17 +95,20 @@ public class Creature : ConceptSpace
 
 	public Creature()
 	{
+		EnergyStore = new Measure(400000, CertaintyLevel.Set, 0, 400000);
+		EnergyRatio = new Ratio(EnergyStore, new Measure(EnergyStore.Maximum));
+
 		RightEyeInput = new Measure(0);
 		LeftEyeInput = new Measure(0);
-		var eyeMax = new MinMaxMeasure(LeftEyeInput);
-		RightEyeInput.PositionChanged += eyeMax.OnUpdate;
-
-		var leftEyeRatio = new Ratio(LeftEyeInput, eyeMax.MaxMeasure, Polarity.FacesLeft);
-		var rightEyeRatio = new Ratio(RightEyeInput, eyeMax.MaxMeasure, Polarity.FacesRight);
-		Sight = new ComplexNumber(LeftEyeInput, RightEyeInput, eyeMax.MaxMeasure);
-
+		var eyeMax = new MinMaxMeasure(LeftEyeInput, RightEyeInput);
 		var lightAvg = new MidpointMeasure(LeftEyeInput, RightEyeInput, false);
-		Brightness = new Ratio(lightAvg, eyeMax.MaxMeasure);
+
+		// in fact make Sight first, and the scale is in the number. The bias is the zero point.
+		// the scale itself should be in an equation.
+		// probably can still follow/midpoint measures, just cant normally scale or offset them as you don't know the polarity.
+		var scale = new Ratio(1000f, 1);
+		Sight = new ComplexNumber(LeftEyeInput, RightEyeInput, eyeMax.MaxMeasure);
+		BrighterDirection = new Ratio(lightAvg, IMeasure.One);
 
 		// a ratio number has min and max DriftMeasures, and creates a denominator with length,
 		// and a measure with position - min. It supplies both numerator and denominator to half a number.
@@ -112,7 +116,7 @@ public class Creature : ConceptSpace
 		//Thrust = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Add, null, CertaintyLevel.Derived);
 		var LeftEyeToRightLeg = new DecayMeasure(LeftEyeInput, 1f);
 		var RighttEyeToLeftLeg = new DecayMeasure(RightEyeInput, 1f);
-		var  BrightnessRes = new Measure(255, CertaintyLevel.Set);
+		var  BrightnessRes = new Measure((long)(255 * LeftEyeInput.Position), CertaintyLevel.Set);
 		LeftLegThrust = new UnbalancedNumber(
 			RighttEyeToLeftLeg, 
 			BrightnessRes, 
@@ -120,8 +124,7 @@ public class Creature : ConceptSpace
 			LeftEyeToRightLeg);
 		// expecting the result 0 will cause an error, which is the error diff, which is the query result (isTrue, isTouching, isOverlap, isLessThan etc)
 		//TurnRatio = new BinaryExpression(Sight.GetImaginaryAsRational(), Sight.GetRational(), Ops.Subtract, RationalNumber.Zero, CertaintyLevel.Derived);
-		ThrustDirection = new Ratio(0, 10000);
-		EnergyStore = new Measure(2000, CertaintyLevel.Set, 0, 4000);
+		ThrustDirection = new Ratio(0, 10000); 
 
 
 		LeftEyeDecay = new DecayMeasure(RightEyeInput, 0.08f);

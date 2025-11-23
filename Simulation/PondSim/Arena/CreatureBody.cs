@@ -45,8 +45,8 @@ public class CreatureBody : DrawableBase
             type = BodyType.Dynamic,
             position = new Vector2(startPos.X, startPos.Y),
             angle = startRot,
-            linearDamping = 4f,
-            angularDamping = 3f,
+            linearDamping = 1f,
+            angularDamping = 1f,
             bullet = false
         };
         var body = arena.PhysicsWorld.CreateBody(bodyDef);
@@ -68,12 +68,12 @@ public class CreatureBody : DrawableBase
 		});
     }
 
-	private float _thrustForce = 2000f; // Tune for sim scale
+	//private float _thrustForce = 1f; // Tune for sim scale
 	//private float _turnTorque = 3000f;
 	private Random _rnd = new Random();
 	private float _turnTotal = 0f;
-	private float _thrustScale = 0f;
-	private float _lastForce = 0f;
+	private float _energyUse = 0f;
+	//private float _lastForce = 0f;
 	public override void Update(float deltaTime)
 	{
 		ExternalInput();
@@ -84,31 +84,25 @@ public class CreatureBody : DrawableBase
 			var c = _creature;
 			var s = c.Sight;
 
+			var ptL = Body.GetWorldPoint(new(0, -1f));
+			var ptR = Body.GetWorldPoint(new(0, 1f));
 			var speed = Body.GetLinearVelocity().Length();
 			var angle = Body.GetAngle();
             var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 
-			//var darkness = c.Sight.MinValue * 6f;
-			//_thrustScale = (8.5f - Math.Clamp(darkness, .5f, 6f)) * (c.EnergyStore.Position / 3000f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
-			_thrustScale = (((1.2f-c.Brightness.Value) * 2f)+2.5f) * (c.EnergyStore.Position / 3000f + 1f);// (darkness == 0 ? 1f : 1f/darkness) + 2f;
-			_lastForce = _thrustForce * _thrustScale;
-			var force = angleVec * _lastForce;
-
-			//var dir = c.ThrustDirection.RightValue; // this needs to be two legs at sides, and two thrusts
-			//_turnTotal = Math.Abs(dir) > 0.6f ? Math.Clamp(dir * 0.38f, -1.2f, 1.2f) : 0;
-			//_turnTotal = ((s.RightValue - s.LeftValue) / 2f - s.LeftValue) * -2f;
-			_turnTotal = (s.RightValue - s.LeftValue) * -1f;
-			var lTurn = 0.5f + (_turnTotal < 0 ? 1.3f : 0);
-			var rTurn = 0.5f + (_turnTotal > 0 ? 1.3f : 0);
-			var point = Body.GetWorldPoint(new(0, _turnTotal));
-			var ptL = Body.GetWorldPoint(new(0, -1.9f));
-			var ptR = Body.GetWorldPoint(new(0, 1.9f));
+			// todo: A complex number that shows how much you are turning (- or +) and how much you are keeping straight.
+			// A complex number that shows that shows how much thrust, and how much dampening
+			// A complex number that shows how big a light difference each eye has, and how similar they are.
+			var force = angleVec * c.EnergyRatio.Value;
+			_turnTotal = c.BrighterDirection.Value * 50f;
+			var lTurn = 2000f + (_turnTotal < 0 ? MathF.Abs(_turnTotal) : 0);
+			var rTurn = 2000f + (_turnTotal > 0 ? MathF.Abs(_turnTotal) : 0);
 
 			Body.ApplyForce(force * lTurn, ptL, true);
 			Body.ApplyForce(force * rTurn, ptR, true);
-			// remove energy based on how much thrust expended.
+			_energyUse = (lTurn + rTurn) * c.EnergyRatio.Value;
 
-			Trace.WriteLine("ts: " + _thrustScale);
+			Trace.WriteLine("ts: " + _turnTotal);
 			//Trace.WriteLine("eyes: " + _creature.Brightness);
 		}
 	}
@@ -119,7 +113,7 @@ public class CreatureBody : DrawableBase
 			var angle = Body.GetAngle();
 			var angleVec = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
 			var vec = new Vector2(angleVec.X + _rnd.NextSingle(), angleVec.Y - _rnd.NextSingle());
-			Body.ApplyForce(vec * -5000000, Body.GetWorldPoint(new(4f, 0)), true);
+			Body.ApplyForce(vec * -500000, Body.GetWorldPoint(new(4f, 0)), true);
 		}
 	}
 	private void ExternalInput()
@@ -128,9 +122,8 @@ public class CreatureBody : DrawableBase
 		{
 			var cLeft = _sim.GetLightAt((SKPoint)_leftEyePos);
 			var cRight = _sim.GetLightAt((SKPoint)_rightEyePos!);
-			var energyInput = (cLeft + cRight) / 5;
-			var energyUse = (long)(_thrustScale);
-			_creature.SetInputs(cLeft, cRight, energyInput, energyUse);
+			var energyInput = (cLeft + cRight) * 6000;
+			_creature.SetInputs(cLeft, cRight, energyInput, (long)_energyUse);
 		}
 	}
 

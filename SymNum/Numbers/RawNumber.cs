@@ -31,7 +31,7 @@ public class RawNumber : INumber
 
 	// needs to be protected to allow subclasses to enforce their constraints.
 
-	public event Action<INumber> ValueSet;
+	public event Action<INumber> ValueSetEvent;
 
 	// B | A   // A/D forms the real part, and C/B the imaginary part
 	// C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
@@ -83,11 +83,21 @@ public class RawNumber : INumber
     {
         Array.Copy(number.Measures, Measures, Measures.Length);
     }
-    public void SetWith(INumber number)
+
+	public IMeasure GetMeasureBySlot(MeasureSlot slot) => GetMeasureByIndex((int)slot);
+	public IMeasure GetMeasureByIndex(int slot) => (slot % 5) switch
+	{
+		0 => RightMeasure,
+		1 => LeftUnit,
+		2 => RightUnit,
+		3 => LeftMeasure,
+		_ => ZeroPoint,
+	};
+	public void SetWith(INumber number)
 	{
 		Array.Copy(number.Measures, Measures, Measures.Length);
 		Validate();
-		ValueSet?.Invoke(this);
+		ValueSetEvent?.Invoke(this);
 	}
 	public void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure)
 	{
@@ -95,7 +105,7 @@ public class RawNumber : INumber
 		if (leftUnit != null) { LeftUnit.SetPosition(leftUnit.Position); }
 		if (rightUnit != null) { RightUnit.SetPosition(rightUnit.Position); }
 		if (leftMeasure != null) { LeftMeasure.SetPosition(leftMeasure.Position); }
-		ValueSet?.Invoke(this);
+		ValueSetEvent?.Invoke(this);
 	}
 	public Ratio Midpoint(Polarity polarity = Polarity.FacesRight)
 	{

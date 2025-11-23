@@ -41,6 +41,17 @@ public class MinMaxMeasure : DynamicMeasure
 		MinMeasure = Min(reference, centerForce, edgeForce);
 		MaxMeasure = Max(reference, centerForce, edgeForce);
 	}
+	public MinMaxMeasure(IMeasure reference, IMeasure reference2, float? centerForce = null, float? edgeForce = null) :
+		this(reference, centerForce, edgeForce)
+	{
+		AddReferences(reference2);
+	}
+	private List<IMeasure?> _extraReferences = new List<IMeasure?>();
+	public void AddReferences(IMeasure reference)
+	{
+		_extraReferences.Add(reference);
+		reference.PositionChanged += OnUpdate;
+	}
 	public override void OnUpdate(IMeasure source)
 	{
 		MinMeasure.OnUpdate(source);
@@ -54,6 +65,17 @@ public class MinMaxMeasure : DynamicMeasure
 	//{
 	//	Ref.SetPositionAndInvoke(position);
 	//}
+	public override void Dispose()
+	{
+		base.Dispose();
+		foreach (var reference in _extraReferences)
+		{
+			if (reference != null)
+			{
+				reference.PositionChanged -= OnUpdate;
+			}
+		}
+	}
 }
 public class MidpointMeasure : DynamicMeasure
 {

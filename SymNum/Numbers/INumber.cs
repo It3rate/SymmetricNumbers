@@ -34,7 +34,7 @@ namespace SymNum.Numbers;
 // This implies than resolution for numbers has to specify how it obtains it's resolution if you want to scale those values, which makes sense.
 public interface INumber
 {
-	public event Action<INumber> ValueSet;
+	public event Action<INumber> ValueSetEvent;
 	/// <summary>
 	/// The holder for raw measure values. Can be redirected for refs.
 	/// </summary>
@@ -59,6 +59,9 @@ public interface INumber
 	/// The Observer point, defaults to zero but by no means is required. Some numbers (ratios) do not need a zero point.
 	/// </summary>
 	IMeasure ZeroPoint { get; }
+	IMeasure GetMeasureBySlot(MeasureSlot slot);
+	IMeasure GetMeasureByIndex(int slot);
+
 	void SetWith(INumber number);
 	void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure);
 	long RightMeasurePosition { get; }
@@ -108,4 +111,12 @@ public interface IPartialNumber : INumber
 {
 	bool IsRationalPart { get; }
 	bool IsImaginaryPart { get; }
+}
+public enum MeasureSlot
+{
+	RightMeasure = 0,
+	LeftUnit = 1,
+	RightUnit = 2,
+	LeftMeasure = 3,
+	ZeroPoint = 4,
 }
