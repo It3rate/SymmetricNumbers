@@ -20,5 +20,5 @@ public class EmptyValue : IValue
 	private static EmptyValue _instance = new EmptyValue();
 	public static EmptyValue Instance => _instance;
 	public CertaintyLevel Certainty => CertaintyLevel.Fixed;
-	public double Value { get => 0; }
+	public float Value { get => 0; }
 }

@@ -191,63 +191,63 @@ public class RawNumber : INumber
 		}
 		return Measures[index];
 	}
-	public ValueRef CreateValueRef(RefKind refKind) => new ValueRef(this, refKind);
-	public IValue ValueFromRefKind(RefKind refKind)
-	{
-		IValue result = EmptyValue.Instance;
-        switch (refKind)
-        {
-            case RefKind.TopRight:
-                result = RightMeasure;
-                break;
-            case RefKind.TopLeft:
-                result = LeftUnit;
-                break;
-            case RefKind.BottomRight:
-                result = RightUnit;
-                break;
-            case RefKind.BottomLeft:
-                result = LeftUnit;
-                break;
-			case RefKind.RealValue:
-				result = new ValueDouble(RightValue);
-				break;
-			case RefKind.ImaginaryValue:
-				result = new ValueDouble(LeftValue);
-				break;
-			//case RefKind.UnitAverage:
-			//	result = new ValueDouble((LeftUnit.Value + RightUnit.Value) / 2.0);
-			//	break;
-			//case RefKind.ValueAverage:
-			//	result = new ValueDouble((LeftMeasure.Value + RightMeasure.Value) / (LeftUnit.Value + RightUnit.Value));
-			//	break;
-		}
-        return result;
-	}
-    public void SetValueFromRefKind(RefKind refKind, double value)
-	{
-        switch (refKind)
-        {
-            case RefKind.TopRight:
-                RightMeasure.SetPositionAndInvoke((long)value);
-                break;
-            case RefKind.TopLeft:
-                LeftUnit.SetPositionAndInvoke((long)value);
-                break;
-            case RefKind.BottomRight:
-                RightUnit.SetPositionAndInvoke((long)value);
-                break;
-            case RefKind.BottomLeft:
-                LeftUnit.SetPositionAndInvoke((long)value);
-                break;
-			case RefKind.RealValue:
-                // need to check for locks etc.
-				break;
-			case RefKind.ImaginaryValue:
-				// need to check for locks etc.
-				break;
-		}
-	}
+	//public ValueRef CreateValueRef(RefKind refKind) => new ValueRef(this, refKind);
+	//public IValue ValueFromRefKind(RefKind refKind)
+	//{
+	//	IValue result = EmptyValue.Instance;
+ //       switch (refKind)
+ //       {
+ //           case RefKind.TopRight:
+ //               result = RightMeasure;
+ //               break;
+ //           case RefKind.TopLeft:
+ //               result = LeftUnit;
+ //               break;
+ //           case RefKind.BottomRight:
+ //               result = RightUnit;
+ //               break;
+ //           case RefKind.BottomLeft:
+ //               result = LeftUnit;
+ //               break;
+	//		case RefKind.RealValue:
+	//			result = new ValueDouble(RightValue);
+	//			break;
+	//		case RefKind.ImaginaryValue:
+	//			result = new ValueDouble(LeftValue);
+	//			break;
+	//		//case RefKind.UnitAverage:
+	//		//	result = new ValueDouble((LeftUnit.Value + RightUnit.Value) / 2.0);
+	//		//	break;
+	//		//case RefKind.ValueAverage:
+	//		//	result = new ValueDouble((LeftMeasure.Value + RightMeasure.Value) / (LeftUnit.Value + RightUnit.Value));
+	//		//	break;
+	//	}
+ //       return result;
+	//}
+ //   public void SetValueFromRefKind(RefKind refKind, double value)
+	//{
+ //       switch (refKind)
+ //       {
+ //           case RefKind.TopRight:
+ //               RightMeasure.SetPositionAndInvoke((long)value);
+ //               break;
+ //           case RefKind.TopLeft:
+ //               LeftUnit.SetPositionAndInvoke((long)value);
+ //               break;
+ //           case RefKind.BottomRight:
+ //               RightUnit.SetPositionAndInvoke((long)value);
+ //               break;
+ //           case RefKind.BottomLeft:
+ //               LeftUnit.SetPositionAndInvoke((long)value);
+ //               break;
+	//		case RefKind.RealValue:
+ //               // need to check for locks etc.
+	//			break;
+	//		case RefKind.ImaginaryValue:
+	//			// need to check for locks etc.
+	//			break;
+	//	}
+	//}
 
     //public static bool GetBool(IMeasure a, IMeasure b,)
     public static float GetValue(IMeasure numerator, IMeasure denominator)

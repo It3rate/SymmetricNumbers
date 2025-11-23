@@ -1,4 +1,5 @@
 ﻿using SymNum.Numbers;
+using SymNum.Scraps;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,12 +21,12 @@ namespace SymNum.Primitives;
 // It can have different behaviors based on direction of change, and magnitude of change.
 // It can turn on and off.
 
-public class DynamicMeasure : Measure, IRef, IDisposable 
+public class DynamicMeasure : Measure, IMeasureRef, IDisposable 
 {
 	public IMeasure Ref { get; }
 	public INumber DiffScale { get; protected set; }
 	public INumber Bias { get; protected set; }
-	private AnchorNumber _diff;
+	//private AnchorNumber _diff;
 
 	/// <summary>
 	/// Used to store the float remainder of a value. 

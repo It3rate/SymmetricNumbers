@@ -15,21 +15,21 @@ public class Measure : MeasureBase
 	{
 		return new Measure(resolution, CertaintyLevel.Set, false);
 	}
-
-	//public Measure(long position, bool inclusive = true)
-	//{
-	//	Position = position;
-	//	Inclusive = inclusive;
-	//	Direction = Direction.Unknown;
-	//}
-
-	//public Measure(bool facesRight, bool inclusive = true)
-	//{
-	//	Position = facesRight ? long.MaxValue : long.MinValue;
-	//	Inclusive = inclusive;
-	//	Direction = facesRight ? Direction.FacesRight : Direction.FacesLeft; // a measure must have at least a direction, unknown position and direction is meaningless.
-	//}
 }
+public class MeasureFromRatio : MeasureBase
+{
+	public Ratio RatioRef { get; }
+	public override long Position => (long)RatioRef.Value;
+	public override void SetPosition(long position)
+	{
+		RatioRef.Value = (float)position;
+	}
+	public MeasureFromRatio(Ratio ratio)
+	{
+		RatioRef = ratio;
+	}
+}
+
 public abstract class MeasureBase : IMeasure
 {
 	public static readonly IMeasure Unknown = new Measure(0);

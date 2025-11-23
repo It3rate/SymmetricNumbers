@@ -24,18 +24,12 @@ public class MeasureRef : MeasureRefBase
 		Ref.PositionChanged += OnUpdate;
 	}
 }
-// This is probably not a valid ref, as refs always need to be in a number.
-//public class MeasureRef : MeasureRefBase
-//{
-//	public MeasureRef(IMeasure reference, float scale = 1f, long bias = 0) : base(reference, scale, bias)
-//	{
-//	}
-//}
+
 // There is a measure and an interpretation of that measure. A light sensor reads whatever it reads,
 // but this can be scaled or shifted to otherwise use by anything that used the original measure.
 // Only Refs can do this, because you can change the input signal without changing the mechanism the generates it
 // (which can be external, or an intermediate value created deeper in the system).
-public abstract class MeasureRefBase : MeasureBase, IRef
+public abstract class MeasureRefBase : MeasureBase, IMeasureRef
 {
 	public virtual IMeasure Ref { get; }
 	public Ratio Scale { get; } // this scales the reference position and bias

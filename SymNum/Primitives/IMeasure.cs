@@ -12,12 +12,13 @@ namespace SymNum.Primitives;
 
 public interface IMeasure : IValue
 {
-	public event Action<IMeasure> PositionChanged;
 	long Position { get; }
-	long ProposedPosition { get; }
 	void SetPosition(long position);
+
+	public event Action<IMeasure> PositionChanged;
+	long ProposedPosition { get; }
 	void SetPositionAndInvoke(long position);
-	long Minimum { get; set; }
+	long Minimum { get; set; } // does measure have a min max?
 	long Maximum { get; set; }
 	public bool CanBeNegative { get; set; }
 	void Negate();

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public interface IRef : IMeasure
+public interface IMeasureRef : IMeasure
 {
     IMeasure Ref { get; }
 	//INumber Scale { get; }

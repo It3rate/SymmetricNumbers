@@ -73,12 +73,12 @@ public class BinaryExpression : IValue, IConstraint
 	}
 }
 
-public class AnchorExpression : BinaryExpression
-{
-	public AnchorNumber AnchorResult => (Result as AnchorNumber)!;
-	public AnchorExpression(INumber? first, INumber? second,  CertaintyLevel state = CertaintyLevel.Uncertain) :
-		base(first, second, Ops.Subtract, new AnchorNumber(0, first.RightUnitPosition), state)
-	{
-	}
+//public class AnchorExpression : BinaryExpression
+//{
+//	public AnchorNumber AnchorResult => (Result as AnchorNumber)!;
+//	public AnchorExpression(INumber? first, INumber? second,  CertaintyLevel state = CertaintyLevel.Uncertain) :
+//		base(first, second, Ops.Subtract, new AnchorNumber(0, first.RightUnitPosition), state)
+//	{
+//	}
 
-}
+//}

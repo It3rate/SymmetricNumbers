@@ -61,7 +61,7 @@ public class Creature : ConceptSpace
 	public IMeasure AmbientEnergyUse { get; } // external, tuned to make sim run, not based on goals or calculations
 
 	// goals
-	public AnchorNumber EnergyGoal { get; }
+	public INumber EnergyGoal { get; }
 
 	public BinaryExpression LightAndEnergyToThrust { get; set; }
 	public Ratio ThrustDirection { get; set; }
