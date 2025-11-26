@@ -1,51 +1,94 @@
-﻿using System;
+﻿using SymNum.Expressions;
+using System;
 namespace SymNum.Primitives;
 
-public class Measure : MeasureBase
+public class Measure : IMeasure
 {
-	public Measure(long position, CertaintyLevel certainty = CertaintyLevel.Uncertain, bool canBeNegative = true) : 
-		base(position, certainty, canBeNegative)
-	{ }
-	public Measure(CertaintyLevel certainty = CertaintyLevel.Uncertain) : base(0, certainty) { }
-
-	public Measure(long position, CertaintyLevel certainty, long min, long max) : 
-		base(position, certainty, min, max)
-	{ }
-	public static Measure CreateUnit(long resolution)
-	{
-		return new Measure(resolution, CertaintyLevel.Set, false);
-	}
-}
-public class MeasureFromRatio : MeasureBase
-{
-	public Ratio RatioRef { get; }
-	public override long Position => (long)RatioRef.Value;
-	public override void SetPosition(long position)
-	{
-		RatioRef.Value = (float)position;
-	}
-	public MeasureFromRatio(Ratio ratio)
-	{
-		RatioRef = ratio;
-	}
-}
-
-public abstract class MeasureBase : IMeasure
-{
-	public static readonly IMeasure Unknown = new Measure(0);
-
 	public event Action<IMeasure> PositionChanged;
 
 	public virtual long Position { get; private set; }
-    public virtual CertaintyLevel Certainty { get; set; }
-	public long Minimum { get; set; } = long.MinValue;
-	public long Maximum { get; set; } = long.MaxValue;
+	public Measure(long position)
+	{
+		SetPosition(position);
+	}
+	public virtual void SetPosition(long position)
+	{
+		Position = position;
+	}
+	public virtual void SetPositionAndInvoke(long position)
+	{
+		SetPosition(position);
+		InvokePositionChanged();
+	}
 
-	public virtual bool IsFullDefined => !IsMin && !IsMax;
-	public virtual bool IsMax => Position == long.MaxValue;
-	public virtual bool IsMin => Position == long.MinValue;
-	public virtual bool IsZero => Position == 0 && IsFullDefined;
-	public virtual bool IsCertain => Certainty.HasValue();
+	void OnUpdate(IMeasure source)
+	{
+		var change = CalculateChange(source);
+		UpdateState(change);
+	}
+	protected virtual float CalculateChange(IMeasure source)
+	{
+		var dif = source.Position - Position;
+		return dif;
+	}
+	protected virtual void UpdateState(float change)
+	{
+	}
+	protected void InvokePositionChanged()
+	{
+		PositionChanged?.Invoke(this);
+	}
+
+
+
+	public static bool operator ==(Measure a, Measure b)
+	{
+		return a.Position == b.Position;
+	}
+	public static bool operator !=(Measure a, Measure b)
+	{
+		return !(a == b);
+	}
+	public override bool Equals(object? obj)
+	{
+		if (obj is IMeasure other)
+		{
+			return this == other;
+		}
+		return false;
+	}
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(Position);
+	}
+	public override string ToString()
+	{
+		return $"m{Position}";
+	}
+}
+
+
+
+
+
+
+
+
+
+/*
+
+public abstract class MeasureBase : IMeasure
+{
+	//public static readonly IMeasure Unknown = new Measure(0);
+ //   public virtual CertaintyLevel Certainty { get; set; }
+	//public long Minimum { get; set; } = long.MinValue;
+	//public long Maximum { get; set; } = long.MaxValue;
+
+	//public virtual bool IsFullDefined => !IsMin && !IsMax;
+	//public virtual bool IsMax => Position == long.MaxValue;
+	//public virtual bool IsMin => Position == long.MinValue;
+	//public virtual bool IsZero => Position == 0 && IsFullDefined;
+	//public virtual bool IsCertain => Certainty.HasValue();
 	/// <summary>
 	/// Some measures are positive only. 
 	/// Units are positive only (imaginary units will point left, but will still be positive).
@@ -79,20 +122,6 @@ public abstract class MeasureBase : IMeasure
 		SetPosition(position);
 	}
 	public long ProposedPosition { get; private set; }
-	public virtual void SetPosition(long position)
-	{
-		ProposedPosition = position;
-		Position = long.Clamp(position, Minimum, Maximum);
-	}
-	public virtual void SetPositionAndInvoke(long position)
-	{
-		SetPosition(position);
-		InvokePositionChanged();
-	}
-	protected void InvokePositionChanged()
-	{
-		PositionChanged?.Invoke(this);
-	}
 	public void Increment() => SetPositionAndInvoke(Position + 1);
 	public void Decrement() => SetPositionAndInvoke(Position - 1);
 
@@ -157,3 +186,4 @@ public abstract class MeasureBase : IMeasure
 		return $"{posStr}";
 	}
 }
+*/

@@ -1,5 +1,4 @@
-﻿using SymNum.Expressions;
-using SymNum.Numbers;
+﻿using SymNum.Numbers;
 using SymNum.Primitives;
 using System;
 using System.Collections.Generic;
@@ -18,7 +17,7 @@ namespace SymNum.Expressions;
 ///   These constraints could also happen on multiple numbers, like area and height making volume. 
 ///   Volume is then an expression (which is a type of number), constrained by the product of area and height.
 /// </summary>
-public class BinaryExpression : IValue, IConstraint
+public class BinaryExpression 
 {
 	public INumber First { get; set; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
     public INumber Second { get; set; }
@@ -56,7 +55,6 @@ public class BinaryExpression : IValue, IConstraint
         Certainty = certaintyLevel;
     }
 
-	public void Fix() => Certainty = CertaintyLevel.Fixed;
 	public void Set() => Certainty = CertaintyLevel.Set;
 	public void Unset() => Certainty = CertaintyLevel.Uncertain;
 	public INumber Calculate()

@@ -48,11 +48,11 @@ public abstract class ConceptSpace
 
     public virtual string? Name { get; } = ""; // optional, if it matches a general category or concept.
     public List<RawNumber> ActiveInputs = new List<RawNumber>(); // you may only see the head and color of a dog, this makes 'leg count' not an input, though it can be inferred in ExpectedContstraints.
-    public List<IConstraint> ActiveConstraints = new List<IConstraint>(); // relations between inputs, or external values.
-    public List<IValue> ActiveProperties = new List<IValue>(); // can be inputs or derived from constraint results;
+    public List<IExpression> ActiveConstraints = new List<IExpression>(); // relations between inputs, or external values.
+    public List<INumber> ActiveProperties = new List<INumber>(); // can be inputs or derived from constraint results;
 
-    public List<IConstraint> ExpectedConstraints = new List<IConstraint>(); // if you guess a category, you can guess other properties. Can be generated based on context.
-    public List<IConstraint> ForwardReferences = new List<IConstraint>(); // things that use this concept as input help define it. Do not need to be stored like this.
+    //public List<IConstraint> ExpectedConstraints = new List<IConstraint>(); // if you guess a category, you can guess other properties. Can be generated based on context.
+    //public List<IConstraint> ForwardReferences = new List<IConstraint>(); // things that use this concept as input help define it. Do not need to be stored like this.
 
 	// AllPossibleConstraints are computed as much as looked up
 

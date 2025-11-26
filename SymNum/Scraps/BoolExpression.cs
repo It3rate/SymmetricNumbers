@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace SymNum.Scraps;
 
 // todo: Change evals a lot. Bool ops are equations that are all filled in and evaluated for truths. Not just true or false, but near, overlap, contain, touch etc. Akin to prepositions.
-public class BoolExpression : IValue, IConstraint
+public class BoolExpression : IConstraint
 {
     public CertaintyLevel Certainty { get; set; } = CertaintyLevel.Uncertain;
 	public virtual string Name { get; } = "";

@@ -1,4 +1,4 @@
-﻿using SymNum.Scraps;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,25 +7,24 @@ using System.Threading.Tasks;
 
 namespace SymNum.Primitives;
 
+[Flags]
 public enum CertaintyLevel
 {
-	Dormant,
-	Uncertain,
-	UnderConstrained,
-	OverConstrained,
-	Partial,
-	Derived,
 	Set,
-    Perceived,
-	Fixed,
+	ReadOnly,
+	Uncertain,
 	Error,
+
+	//Dormant,
+	//UnderConstrained,
+	//OverConstrained,
+	//Partial,
+	//Derived,
+	//Perceived,
 }
 
 public static class CertaintyLevelExtensions
 {
-	public static bool HasValue(this CertaintyLevel state) => state == CertaintyLevel.Fixed || state == CertaintyLevel.Set;
-	public static int SlotValue(this CertaintyLevel state, MultiplicativeRelation kind)
-	{
-		return state.HasValue() ? (int)kind : 0;
-	}
+	public static bool HasValue(this CertaintyLevel state) => 
+		((state & CertaintyLevel.Set) | (state & CertaintyLevel.ReadOnly)) != 0;
 }

@@ -6,4 +6,67 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Expressions\Accumulator.cs" />
+    <Compile Remove="Primitives\BiologicMeasures.cs" />
+    <Compile Remove="Primitives\DecayMeasure.cs" />
+    <Compile Remove="Scraps\Accumulator.cs" />
+    <Compile Remove="Scraps\AnchorNumber.cs" />
+    <Compile Remove="Scraps\BiologicMeasures.cs" />
+    <Compile Remove="Scraps\BoolExpression.cs" />
+    <Compile Remove="Scraps\BoolState.cs" />
+    <Compile Remove="Scraps\DecayMeasure.cs" />
+    <Compile Remove="Scraps\Extent.cs" />
+    <Compile Remove="Scraps\IConstraint.cs" />
+    <Compile Remove="Scraps\IExtent.cs" />
+    <Compile Remove="Scraps\ImaginaryNumber.cs" />
+    <Compile Remove="Scraps\MeasureMemory.cs" />
+    <Compile Remove="Scraps\Operator.cs" />
+    <Compile Remove="Scraps\OrientationNumber.cs" />
+    <Compile Remove="Scraps\PartialExtent.cs" />
+    <Compile Remove="Scraps\PartialNumber.cs" />
+    <Compile Remove="Scraps\RationalNumber.cs" />
+    <Compile Remove="Scraps\RatioNumber.cs" />
+    <Compile Remove="Scraps\RectangleNumber.cs" />
+    <Compile Remove="Scraps\RefKind.cs" />
+    <Compile Remove="Scraps\Relations.cs" />
+    <Compile Remove="Scraps\RepeatableNumber.cs" />
+    <Compile Remove="Scraps\Sample.cs" />
+    <Compile Remove="Scraps\Sequencer.cs" />
+    <Compile Remove="Scraps\TimeNumber.cs" />
+    <Compile Remove="Scraps\ValueDouble.cs" />
+    <Compile Remove="Scraps\ValueLong.cs" />
+    <Compile Remove="Scraps\ValueRef.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Scraps\Accumulator.cs" />
+    <None Include="Scraps\BiologicMeasures.cs" />
+    <None Include="Scraps\DecayMeasure.cs" />
+    <None Include="Scraps\AnchorNumber.cs" />
+    <None Include="Scraps\BoolExpression.cs" />
+    <None Include="Scraps\BoolState.cs" />
+    <None Include="Scraps\Extent.cs" />
+    <None Include="Scraps\IConstraint.cs" />
+    <None Include="Scraps\IExtent.cs" />
+    <None Include="Scraps\ImaginaryNumber.cs" />
+    <None Include="Scraps\MeasureMemory.cs" />
+    <None Include="Scraps\Operator.cs" />
+    <None Include="Scraps\OrientationNumber.cs" />
+    <None Include="Scraps\PartialExtent.cs" />
+    <None Include="Scraps\PartialNumber.cs" />
+    <None Include="Scraps\RationalNumber.cs" />
+    <None Include="Scraps\RatioNumber.cs" />
+    <None Include="Scraps\RectangleNumber.cs" />
+    <None Include="Scraps\RefKind.cs" />
+    <None Include="Scraps\Relations.cs" />
+    <None Include="Scraps\RepeatableNumber.cs" />
+    <None Include="Scraps\Sample.cs" />
+    <None Include="Scraps\Sequencer.cs" />
+    <None Include="Scraps\TimeNumber.cs" />
+    <None Include="Scraps\ValueDouble.cs" />
+    <None Include="Scraps\ValueLong.cs" />
+    <None Include="Scraps\ValueRef.cs" />
+  </ItemGroup>
+
 </Project>

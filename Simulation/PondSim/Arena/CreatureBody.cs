@@ -141,7 +141,7 @@ public class CreatureBody : DrawableBase
 		if (Body != null)
 		{
 			var e = _creature.EnergyStore;
-			var el = (byte)((e.Position / (float)e.Maximum) * 255);
+			byte el = 255;// (byte)((e.Position / (float)e.Maximum) * 255);
 			var turningRight = _turnTotal > 0;
 			var f = turningRight ? FillR : FillL;
 			var fillAlpha = CorePens.GetBrush(new SKColor(f.Color.Red, f.Color.Green, f.Color.Blue, el));

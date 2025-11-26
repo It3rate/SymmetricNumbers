@@ -6,10 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using SymNum.Numbers;
 using SymNum.Primitives;
-using SymNum.Scraps;
-namespace SymNum.Expressions;
 
-public class Accumulator : IValue
+namespace SymNum.Scraps;
+
+public class Accumulator
 {
 	private RawNumber _number;
 	public double Value => throw new NotImplementedException();

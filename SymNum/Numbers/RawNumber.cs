@@ -7,10 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using SymNum.Expressions;
 using SymNum.Primitives;
-using SymNum.Scraps;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace SymNum.Numbers;
 
+// All numbers are raw numbers, but when certain constraints are met they can be interpreted as specific types of numbers.
+// Symmetric numbers - any values are ok, interpreted as only partially constrained to the line.
+// Unbalanced numbers - the units must point in the positive and negative directions.
+// Complex numbers - the units must be the same length in opposite directions, and the measures can be any value.
+// Rational numbers - the right unit must be positive, the left measure and unit must be ignored.
+// Imaginary numbers - the left unit must be negative, the right measure and unit must be ignored.
+// Ratio - is the real or imaginary number part of a number, specifying which.
 
 /// <summary>
 /// There are many types of numbers, they just mean measures calibrated in some way. 
@@ -23,7 +29,11 @@ namespace SymNum.Numbers;
 /// </summary>
 public class RawNumber : INumber
 {
-    public static RawNumber Unknown => new RawNumber();
+	public event Action<INumber> ValueSetEvent;
+	public event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
+	public static RawNumber Unknown => new RawNumber();
+	public static RawNumber Zero => new RawNumber(0, 1, 1, 0);
+	public static RawNumber One => new RawNumber(1, 1, 1, 1);
 	// A number can be composed of multiple measures with different restrictions. 
 	// A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
 	// An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
@@ -31,50 +41,59 @@ public class RawNumber : INumber
 
 	// needs to be protected to allow subclasses to enforce their constraints.
 
-	public event Action<INumber> ValueSetEvent;
 
 	// B | A   // A/D forms the real part, and C/B the imaginary part
 	// C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
 	// zero point is E
 	public virtual IMeasure[] Measures { get; } = new IMeasure[5];
+	private IMeasure _rightMeasure => Measures[0];
+	private IMeasure _leftUnit => Measures[1];
+	private IMeasure _rightUnit => Measures[2];
+	private IMeasure _leftMeasure => Measures[3];
+
+
+	public CertaintyLevel[] Certainties { get; } = new CertaintyLevel[5];
 	public Polarity[] Directions { get; } = { Polarity.FacesRight, Polarity.FacesLeft, Polarity.FacesLeft, Polarity.FacesRight, Polarity.Zero };
+	public IMeasure Bias { get; protected set; }
 
-	public virtual IMeasure RightMeasure { get => Measures[0]; protected set => Measures[0] = value; }
-	public virtual IMeasure RightUnit { get => Measures[2]; protected set => Measures[2] = value; }
-	public virtual IMeasure LeftMeasure { get => Measures[3]; protected set => Measures[3] = value; }
-	public virtual IMeasure LeftUnit { get => Measures[1]; protected set => Measures[1] = value; }
-	public virtual IMeasure ZeroPoint { get => Measures[4]; protected set => Measures[4] = value; }
+	public virtual IRefMeasure RightMeasure { get; }
+	public virtual IRefMeasure RightUnit { get; }
+	public virtual IRefMeasure LeftMeasure { get; }
+	public virtual IRefMeasure LeftUnit { get; }
+	public Ratio LeftRatio { get; }
+	public Ratio RightRatio { get; }
 
-	public long RightMeasurePosition => RightMeasure.Position;
-	public long RightUnitPosition => RightUnit.Position;
-	public long LeftMeasurePosition => LeftMeasure.Position;
-	public long LeftUnitPosition => LeftUnit.Position;
-    public long ZeroPosition => ZeroPoint.Position;
+	public long RightMeasurePosition => _rightMeasure.Position;
+	public long RightUnitPosition => _rightUnit.Position;
+	public long LeftMeasurePosition => _leftMeasure.Position;
+	public long LeftUnitPosition => _leftUnit.Position;
 
-	public virtual bool IsFullyDefined => Measures.All(m => m.IsFullDefined);
+	public virtual bool IsFullyDefined => Certainties.All(c => c.HasValue());
 
-	public Ratio LeftRatio => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesLeft);
-	public Ratio RightRatio => new Ratio(RightMeasure, RightUnit, Polarity.FacesRight);
 
-	protected RawNumber() : this(0, 1, 1, 0, 0) { }
-	protected RawNumber(long tr, long tl, long br, long bl, long zeroPoint = 0):
-		this(new Measure(tr), new Measure(tl), new Measure(br), new Measure(bl), zeroPoint)
+	protected RawNumber() : this(0, 1, 1, 0) { }
+	protected RawNumber(long tr, long tl, long br, long bl):
+		this(new Measure(tr), new Measure(tl), new Measure(br), new Measure(bl))
     {
 	}
-	protected RawNumber(IMeasure rightMeasure, IMeasure leftUnit, IMeasure rightUnit, IMeasure leftMeasure, long zeroPoint = 0)
+	protected RawNumber(IMeasure rightMeasure, IMeasure leftUnit, IMeasure rightUnit, IMeasure leftMeasure)
 	{
-		RightMeasure = rightMeasure;
-		LeftUnit = leftUnit;
-		RightUnit = rightUnit;
-		LeftMeasure = leftMeasure;
-		ZeroPoint = new Measure(zeroPoint);
-		LeftUnit.CanBeNegative = false;
-		RightUnit.CanBeNegative = false;
-	}
-	protected RawNumber(Ratio left, Ratio right, long zeroPoint = 0) :
-		this(right.Numerator, left.Denominator, right.Denominator, left.Numerator, zeroPoint)
-	{
-	}
+		Measures[0] = rightMeasure;
+		Measures[1] = leftUnit;
+		Measures[2] = rightUnit;
+		Measures[3] = leftMeasure;
+
+		RightMeasure = new RefMeasure(MeasureSlot.RightMeasure, this);
+		LeftUnit = new RefMeasure(MeasureSlot.LeftUnit, this);
+		RightUnit = new RefMeasure(MeasureSlot.RightUnit, this);
+		LeftMeasure = new RefMeasure(MeasureSlot.LeftMeasure, this);
+
+		LeftRatio = new Ratio(LeftMeasure, LeftUnit, Polarity.FacesLeft);
+		RightRatio = new Ratio(RightMeasure, RightUnit, Polarity.FacesRight);
+}
+	protected RawNumber(Ratio left, Ratio right) :
+		this(right.Numerator, left.Denominator, right.Denominator, left.Numerator)
+	{ }
 	/// <summary>
 	/// Cast internals of another number into this type.
 	/// eg complex to rational will ignore the i values and not allow setting them, but they will be preserved if cast back.
@@ -84,14 +103,21 @@ public class RawNumber : INumber
         Array.Copy(number.Measures, Measures, Measures.Length);
     }
 
-	public IMeasure GetMeasureBySlot(MeasureSlot slot) => GetMeasureByIndex((int)slot);
-	public IMeasure GetMeasureByIndex(int slot) => (slot % 5) switch
+	public IMeasure GetMeasureBySlot(MeasureSlot slot) => (slot) switch
 	{
-		0 => RightMeasure,
-		1 => LeftUnit,
-		2 => RightUnit,
-		3 => LeftMeasure,
-		_ => ZeroPoint,
+		MeasureSlot.RightMeasure => RightMeasure,
+		MeasureSlot.LeftUnit => LeftUnit,
+		MeasureSlot.RightUnit => RightUnit,
+		MeasureSlot.LeftMeasure => LeftMeasure,
+		_ => RightMeasure,
+	};
+	public CertaintyLevel GetCertaintyBySlot(MeasureSlot slot) => (slot) switch
+	{
+		MeasureSlot.RightMeasure => Certainties[0],
+		MeasureSlot.LeftUnit => Certainties[1],
+		MeasureSlot.RightUnit => Certainties[2],
+		MeasureSlot.LeftMeasure => Certainties[3],
+		_ => CertaintyLevel.Uncertain,
 	};
 	public void SetWith(INumber number)
 	{
@@ -99,23 +125,21 @@ public class RawNumber : INumber
 		Validate();
 		ValueSetEvent?.Invoke(this);
 	}
-	public void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure)
-	{
-		if (rightMeasure != null) { RightMeasure.SetPosition(rightMeasure.Position); }
-		if (leftUnit != null) { LeftUnit.SetPosition(leftUnit.Position); }
-		if (rightUnit != null) { RightUnit.SetPosition(rightUnit.Position); }
-		if (leftMeasure != null) { LeftMeasure.SetPosition(leftMeasure.Position); }
-		ValueSetEvent?.Invoke(this);
-	}
-	public Ratio Midpoint(Polarity polarity = Polarity.FacesRight)
-	{
-		var val = (LeftValue + RightValue) / 2f - LeftValue;
-		var denom = polarity.IsNotImaginary() ? RightUnit : LeftUnit;
-		return new Ratio(new Measure((long)(val * denom.Position)), denom, polarity);
-	}
+	//public void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure)
+	//{
+	//	if (rightMeasure != null) { RightMeasure.SetPosition(rightMeasure.Position); }
+	//	if (leftUnit != null) { LeftUnit.SetPosition(leftUnit.Position); }
+	//	if (rightUnit != null) { RightUnit.SetPosition(rightUnit.Position); }
+	//	if (leftMeasure != null) { LeftMeasure.SetPosition(leftMeasure.Position); }
+	//	ValueSetEvent?.Invoke(this);
+	//}
+	//public Ratio Midpoint(Polarity polarity = Polarity.FacesRight)
+	//{
+	//	var val = (LeftValue + RightValue) / 2f - LeftValue;
+	//	var denom = polarity.IsNotImaginary() ? RightUnit : LeftUnit;
+	//	return new Ratio(new Measure((long)(val * denom.Position)), denom, polarity);
+	//}
 	public virtual void Validate() { }
-	public virtual Ratio GetRational() => new Ratio(RightMeasure, RightUnit, Polarity.FacesRight);
-	public virtual Ratio GetImaginary() => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesLeft);
 	public virtual Ratio GetImaginaryAsRational() => new Ratio(LeftMeasure, LeftUnit, Polarity.FacesRight);
 	public virtual Ratio GetRationalAsImaginary() => new Ratio(RightMeasure, RightUnit, Polarity.FacesLeft);
 	public virtual ComplexNumber GetComplex() => new ComplexNumber(LeftMeasure, RightMeasure, RightUnit);
@@ -123,30 +147,30 @@ public class RawNumber : INumber
     public virtual SymmetricNumber GetSymmetric() { throw new NotImplementedException(); }
     public void Mirror()
     {
-        var tempMeasure = RightMeasure;
-        var tempUnit = RightUnit;
-        RightMeasure = LeftMeasure;
-        RightUnit = LeftUnit;
-        LeftUnit = tempUnit;
-        LeftMeasure = tempMeasure;
+        var rightMeasure = _rightMeasure;
+        var rightUnit = _rightUnit;
+		Measures[0] = _leftMeasure;
+		Measures[1] = rightUnit;
+		Measures[2] = _leftUnit;
+		Measures[3] = rightMeasure;
 	}
 	public INumber Negate()
 	{
-		RightMeasure.Negate();
-		LeftMeasure.Negate();
+		_rightMeasure.SetPosition(-_rightMeasure.Position);
+		_leftMeasure.SetPosition(-_leftMeasure.Position);
 		return this;
 	}
 	public INumber AddTo(INumber other)
 	{
-		RightMeasure.SetPositionAndInvoke(RightMeasure.Position + other.RightMeasure.Position);
-		LeftMeasure.SetPositionAndInvoke(LeftMeasure.Position + other.LeftMeasure.Position);
+		_rightMeasure.SetPositionAndInvoke(_rightMeasure.Position + other.RightMeasurePosition);
+		_leftMeasure.SetPositionAndInvoke(_leftMeasure.Position + other.LeftMeasurePosition);
 		return this;
 	}
 
 	public INumber SubtractTo(INumber other)
 	{
-		RightMeasure.SetPositionAndInvoke(RightMeasure.Position - other.RightMeasure.Position);
-		LeftMeasure.SetPositionAndInvoke(LeftMeasure.Position - other.LeftMeasure.Position);
+		RightMeasure.SetPositionAndInvoke(RightMeasure.Position - other.RightMeasurePosition);
+		LeftMeasure.SetPositionAndInvoke(LeftMeasure.Position - other.LeftMeasurePosition);
 		return this;
 	}
 	/// <summary>
@@ -160,17 +184,17 @@ public class RawNumber : INumber
 	}
 	public INumber Add(INumber other)
 	{
-		var r = RightMeasure.Position + other.RightMeasure.Position;
-		var l = LeftMeasure.Position + other.LeftMeasure.Position;
-        return new UnbalancedNumber(r, LeftUnit.Position, RightUnit.Position, l);
+		var r = _rightMeasure.Position + other.RightMeasurePosition;
+		var l = _leftMeasure.Position + other.LeftMeasurePosition;
+        return new UnbalancedNumber(r, _leftUnit.Position, _rightUnit.Position, l);
 
 	}
 
 	public INumber Subtract(INumber other)
 	{
-		var r = RightMeasure.Position - other.RightMeasure.Position;
-		var l = LeftMeasure.Position - other.LeftMeasure.Position;
-		return new UnbalancedNumber(r, LeftUnit.Position, RightUnit.Position, l);
+		var r = _rightMeasure.Position - other.RightMeasurePosition;
+		var l = _leftMeasure.Position - other.LeftMeasurePosition;
+		return new UnbalancedNumber(r, _leftUnit.Position, _rightUnit.Position, l);
 	}
 
 	public INumber MultiplyTo(INumber other)
@@ -265,10 +289,10 @@ public class RawNumber : INumber
         }
         return result;
     }
-    public static bool SetValue(IMeasure numerator, IMeasure denominator, float value)
+    public static bool SetValue(IRefMeasure numerator, IRefMeasure denominator, float value)
     {
         var result = false;
-        if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)
+        if (denominator.Position != 0)
         {
             numerator.SetPositionAndInvoke((long)(value * denominator.Position));
             result = true;

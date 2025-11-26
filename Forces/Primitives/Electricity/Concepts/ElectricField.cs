@@ -22,6 +22,6 @@ public class ElectricField : ConceptSpace
         Power = new Power(voltage, current);
         Resistance = new Resistance(voltage, current);
 
-        ActiveConstraints.AddRange([Power, Resistance]);
+        //ActiveConstraints.AddRange([Power, Resistance]);
     }
 }

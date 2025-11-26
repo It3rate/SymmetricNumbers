@@ -1,6 +1,5 @@
 ﻿
 using SymNum.Expressions;
-using SymNum.Scraps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,6 @@ public class PropertyCharacteristics
 {
 	public PropertyUnit Unit { get; set; }
 	public Equation Relation { get; set; }
-	public Extent MinMax { get; set; }
+	//public Extent MinMax { get; set; }
 
 }

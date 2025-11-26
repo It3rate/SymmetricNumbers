@@ -13,12 +13,12 @@ public interface IValue
 	// For example in a BinaryExpression it examines which inputs are fixed and which are variable,
 	// and adjusts them as needed.
 	//public double Value { get; }
-	public CertaintyLevel Certainty { get; }
+	//public CertaintyLevel Certainty { get; }
 }
-public class EmptyValue : IValue
-{
-	private static EmptyValue _instance = new EmptyValue();
-	public static EmptyValue Instance => _instance;
-	public CertaintyLevel Certainty => CertaintyLevel.Fixed;
-	public float Value { get => 0; }
-}
+//public class EmptyValue : IValue
+//{
+//	private static EmptyValue _instance = new EmptyValue();
+//	public static EmptyValue Instance => _instance;
+//	public CertaintyLevel Certainty => CertaintyLevel.Fixed;
+//	public float Value { get => 0; }
+//}

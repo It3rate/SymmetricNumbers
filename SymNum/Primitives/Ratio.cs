@@ -1,5 +1,4 @@
 ﻿using SymNum.Numbers;
-using SymNum.Scraps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +17,11 @@ namespace SymNum.Primitives;
 // They map all the way when solved, and the equations required to acheive this are the intelligence.
 // The goal of prediction is the align two units with each other somehow.
 
-public class Ratio : RawNumber, IPartialNumber
+public class Ratio : RawNumber
 {
 	// Q. Could have one of numerator, denomonator or Value being calculated. Allows storing float as source of truth.
-	public IMeasure Numerator => IsImaginaryPart ? LeftMeasure : RightMeasure;
-	public IMeasure Denominator => IsImaginaryPart ? LeftUnit : RightUnit;
+	public IRefMeasure Numerator => IsImaginaryPart ? LeftMeasure : RightMeasure;
+	public IRefMeasure Denominator => IsImaginaryPart ? LeftUnit : RightUnit;
 	public Polarity Polarity { get; }
 	public float Value
 	{
@@ -35,34 +34,33 @@ public class Ratio : RawNumber, IPartialNumber
 	public float ValueOrOne => Denominator.Position != 0 && Numerator.Position != 0 ? Value : 1f;
 	public void MapToValue(float value) => Numerator.SetPositionAndInvoke((long)(value * Denominator.Position));
 	public float ValueForPolarity(Polarity polarity) => Polarity.IsMirror(polarity) ? -Value : Value;
-	public Ratio(IMeasure numerator, IMeasure denominator, Polarity polarity = Polarity.FacesRight)
+	public Ratio(IRefMeasure numerator, IRefMeasure denominator, Polarity polarity = Polarity.FacesRight)
 		: base(
 			polarity.IsNotImaginary() ? numerator : IMeasure.Zero,
 			polarity.IsNotImaginary() ? IMeasure.Zero : denominator,
 			polarity.IsNotImaginary() ? denominator : IMeasure.Zero,
-			polarity.IsNotImaginary() ? IMeasure.Zero : numerator,
-			0
+			polarity.IsNotImaginary() ? IMeasure.Zero : numerator
 		)
 	{
 		Polarity = polarity;
 	}
-	public Ratio(long numerator, long denominator, Polarity polarity = Polarity.FacesRight):
-		this(new Measure(numerator), new Measure(denominator), polarity)
-	{
-	}
-	public Ratio(float value, long resolution, Polarity polarity = Polarity.FacesRight):
-		this(new Measure(0), new Measure(resolution), polarity)
-	{
-		Value = value;
-	}
+	//public Ratio(long numerator, long denominator, Polarity polarity = Polarity.FacesRight):
+	//	this(new Measure(numerator), new Measure(denominator), polarity)
+	//{
+	//}
+	//public Ratio(float value, long resolution, Polarity polarity = Polarity.FacesRight):
+	//	this(new Measure(0), new Measure(resolution), polarity)
+	//{
+	//	Value = value;
+	//}
 	public void InvertPolarity()
 	{
 		Mirror();
 	}
 	private static long _highRes = 0x10000;
-	public static Ratio Zero => new Ratio(0, _highRes);
-	public static Ratio One => new Ratio(_highRes, _highRes);
-	public static Ratio HighResNumber(float num, Polarity polarity = Polarity.FacesRight) => new Ratio((long)(_highRes * num), _highRes, polarity);
+	//public static Ratio Zero => new Ratio(0, _highRes);
+	//public static Ratio One => new Ratio(_highRes, _highRes);
+	//public static Ratio HighResNumber(float num, Polarity polarity = Polarity.FacesRight) => new Ratio((long)(_highRes * num), _highRes, polarity);
 
 	//public static float GetValue(IMeasure numerator, IMeasure denominator)
 	//{

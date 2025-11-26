@@ -22,10 +22,10 @@ public class SymmetricNumber : RawNumber
     public long BottomRight { get => RightUnit.Position; protected set => RightUnit.SetPositionAndInvoke(value); }
     public long BottomLeft { get => LeftMeasure.Position; protected set => LeftMeasure.SetPositionAndInvoke(value); }
 
-    public bool HasTR => RightMeasure.IsFullDefined;
-    public bool HasTL => LeftUnit.IsFullDefined;
-    public bool HasBR => RightUnit.IsFullDefined;
-    public bool HasBL => LeftMeasure.IsFullDefined;
+    public bool HasTR => RightMeasure.Certainty.HasValue();
+    public bool HasTL => LeftUnit.Certainty.HasValue();
+    public bool HasBR => RightUnit.Certainty.HasValue();
+    public bool HasBL => LeftMeasure.Certainty.HasValue();
     private int _totalNonZero => (HasTR ? 1 : 0) + (HasTL ? 1 : 0) + (HasBR ? 1 : 0) + (HasBL ? 1 : 0);
 
     public bool IsHalt => _totalNonZero == 0; // empty
@@ -60,18 +60,18 @@ public class SymmetricNumber : RawNumber
     public long MinResolution => Math.Min(RightResolution, LeftResolution);
     public long MaxResolution => Math.Max(RightResolution, LeftResolution);
 
-	public SymmetricNumber(long tr, long tl, long br, long bl)
-	{
-		RightMeasure = new Measure(tr);
-		LeftUnit = new Measure(tl);
-		RightUnit = new Measure(br);
-		LeftMeasure = new Measure(bl);
-	}
+    public SymmetricNumber(long tr, long tl, long br, long bl)
+    {
+        Measures[0] = new Measure(tr);
+        Measures[1] = new Measure(tl);
+        Measures[2] = new Measure(br);
+        Measures[3] = new Measure(bl);
+    }
 	public SymmetricNumber(IMeasure tr, IMeasure tl, IMeasure br, IMeasure bl)
 	{
-		RightMeasure = tr;
-		LeftUnit = tl;
-		RightUnit = br;
-		LeftMeasure = bl;
+		Measures[0] = tr;
+		Measures[1] = tl;
+		Measures[2] = br;
+		Measures[3] = bl;
 	}
 }

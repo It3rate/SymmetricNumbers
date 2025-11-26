@@ -145,38 +145,38 @@ public class Simulator : DrawableBase
             if (_creatureBodies.Count > 0 && _creatureBodies[0]._creature != null)
             {
                 var c = _creatureBodies[0]._creature;
-                var dml = c.LeftEyeDecay;
-                var dmr = c.RightEyeDecay;
+                //var dml = c.LeftEyeDecay;
+                //var dmr = c.RightEyeDecay;
                 var lineWidth = 255 * 2;
                 var offset = 50;
                 var y = 20;
-				Canvas.DrawLine(
-					new(offset + dml.Minimum.Position * 2, y - 5),
-					new(offset + dml.Maximum.Position * 2, y - 5),
-					Pens.SegPen2);
+				//Canvas.DrawLine(
+				//	new(offset + dml.Minimum.Position * 2, y - 5),
+				//	new(offset + dml.Maximum.Position * 2, y - 5),
+				//	Pens.SegPen2);
 
-				Canvas.DrawLine( // left current actual to follow position
-					new(offset + dml.Position * 2, y - 5),
-					new(offset + dml.Ref.Position * 2, y - 5),
-					Pens.GrayPen);
-				Canvas.DrawLine(
-					new(offset + dml.Position * 2, y - 5),
-					new(offset + dml.Position * 2, y - 5),
-					Pens.SegPen1);
+				//Canvas.DrawLine( // left current actual to follow position
+				//	new(offset + dml.Position * 2, y - 5),
+				//	new(offset + dml.Ref.Position * 2, y - 5),
+				//	Pens.GrayPen);
+				//Canvas.DrawLine(
+				//	new(offset + dml.Position * 2, y - 5),
+				//	new(offset + dml.Position * 2, y - 5),
+				//	Pens.SegPen1);
 
-				Canvas.DrawLine(
-					new(offset + dmr.Minimum.Position * 2, y),
-					new(offset + dmr.Maximum.Position * 2, y),
-					Pens.SegPen2);
+				//Canvas.DrawLine(
+				//	new(offset + dmr.Minimum.Position * 2, y),
+				//	new(offset + dmr.Maximum.Position * 2, y),
+				//	Pens.SegPen2);
 
-				Canvas.DrawLine( // right current actual to follow position
-					new(offset + dmr.Position * 2, y - 0),
-					new(offset + dmr.Ref.Position * 2, y - 0),
-					Pens.GrayPen);
-				Canvas.DrawLine(
-					new(offset + dmr.Position * 2, y - 0),
-					new(offset + dmr.Position * 2, y - 0),
-					Pens.SegPen3);
+				//Canvas.DrawLine( // right current actual to follow position
+				//	new(offset + dmr.Position * 2, y - 0),
+				//	new(offset + dmr.Ref.Position * 2, y - 0),
+				//	Pens.GrayPen);
+				//Canvas.DrawLine(
+				//	new(offset + dmr.Position * 2, y - 0),
+				//	new(offset + dmr.Position * 2, y - 0),
+				//	Pens.SegPen3);
 
 				Canvas.DrawLine(new(offset, 0), new(offset, y), Pens.TickBoldPen);
 				Canvas.DrawLine(new(offset + lineWidth / 2f, 0), new(offset + lineWidth/2f, y), Pens.TickBoldPen);

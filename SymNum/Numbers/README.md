@@ -5,12 +5,21 @@ Any number has a calibrated start state and a calibrated end state. Calibrated s
 Our numbers always assume a start state of zero, with the start unit being a mirror of the regular unit in the opposite direction. The regular unit is always considered to be '1'. Therefore our numbers only require one measure to be specified.
 
 A fifth unit is possible, which is the zero point. This always has the value of zero, but it can be anywhere, and does not need to be derived from any of the four measures. Changing the zero point does not change the thing being measured, but it can change resulting number. Adjusting the zero point on a segment will change the start and end values, but it will not change the segment itself, nor the resolution.
+## Structure
+All numbers are raw numbers, but when certain constraints are met they can be interpreted as specific types of numbers.
+- Symmetric numbers: any values are ok, interpreted as only partially constrained to the line.
+- Unbalanced numbers: the units must point in the positive and negative directions.
+- Complex numbers: the units must be the same length in opposite directions, and the measures can be any value.
+- Rational numbers: the right unit must be positive, the left measure and unit must be ignored.
+- Imaginary numbers: the left unit must be negative, the right measure and unit must be ignored.
+- Ratio: is the real or imaginary number part of a number, specifying which.
+- Biologic numbers: are numbers that are volitile, changing over time according to some internal or external process.
 
 ## Number Types
 The order of measures in number encoding is as follows:
 > B | A  
 > D | C  
-> (E is zero point)
+> (E is the bias or zero point)
 
 The ABCD choices are so our rational numbers can be read as fractions on the right (A/C), and the whole mechanism can be rotated 180 to invert the perspective. Think home team and away team in football, there are two directions in this number system depending who has the ball. The 30 yard line changes physical location when the other team goes on offence.
 

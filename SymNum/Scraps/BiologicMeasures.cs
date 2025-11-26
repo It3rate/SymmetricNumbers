@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Primitives;
+namespace SymNum.Scraps;
 
 // Biologic numbers are dynamic, not fixed values. They have a natural decay rate and can be refreshed over time.
 // They often follow an input moving according to the target value. At minimum it needs a clock for ticks, which could even be internal.
@@ -50,12 +50,12 @@ public class MinMaxMeasure : DynamicMeasure
 	public void AddReferences(IMeasure reference)
 	{
 		_extraReferences.Add(reference);
-		reference.PositionChanged += OnUpdate;
+		reference.PositionChanged += OnExternalUpdate;
 	}
-	public override void OnUpdate(IMeasure source)
+	public override void OnExternalUpdate(IMeasure source)
 	{
-		MinMeasure.OnUpdate(source);
-		MaxMeasure.OnUpdate(source);
+		MinMeasure.OnExternalUpdate(source);
+		MaxMeasure.OnExternalUpdate(source);
 	}
 	//public override void SetPosition(long position)
 	//{
@@ -72,7 +72,7 @@ public class MinMaxMeasure : DynamicMeasure
 		{
 			if (reference != null)
 			{
-				reference.PositionChanged -= OnUpdate;
+				reference.PositionChanged -= OnExternalUpdate;
 			}
 		}
 	}
@@ -86,9 +86,9 @@ public class MidpointMeasure : DynamicMeasure
 	{
 		Second = second;
 		_firstIsImaginary = firstIsImaginary;
-		Second.PositionChanged += OnUpdate;
+		Second.PositionChanged += OnExternalUpdate;
 	}
-	public override void OnUpdate(IMeasure source)
+	public override void OnExternalUpdate(IMeasure source)
 	{
 		var firstPosition = _firstIsImaginary ? -First.Position : First.Position;
 		var pos = (Second.Position - firstPosition) / 2 + firstPosition;
@@ -99,7 +99,7 @@ public class MidpointMeasure : DynamicMeasure
 		base.Dispose();
 		if (Second != null)
 		{
-			Second.PositionChanged -= OnUpdate;
+			Second.PositionChanged -= OnExternalUpdate;
 		}
 	}
 	public override string ToString()
@@ -112,7 +112,7 @@ public class AccumulateMeasure : DynamicMeasure // these are probably just RefMe
 	public AccumulateMeasure(IMeasure reference):base(reference)
 	{
 	}
-	public override void OnUpdate(IMeasure source)
+	public override void OnExternalUpdate(IMeasure source)
 	{
 		SetPositionAndInvoke(Position + source.Position);
 	}

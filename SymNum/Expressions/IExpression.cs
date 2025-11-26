@@ -23,6 +23,12 @@ namespace SymNum.Expressions;
 // It does however obey whatever rules cause it to be less than random,
 // and these rules are fixed across all domains by their own definition. Addition is addition regardless of what you add.
 
+// Note: the higher the values of a thing, the more certain we are of it. Values can drift and disappear even,
+// but as the numerator and denominator accumulate to higher values (2/3 -> 200/300), the stability increases.
+// As measures are useful they increase, and as they drift to zero (not useful) they die and a new pairing is created.
+// These expressions are like 'straps' between other values, and processing them in certain ways can increase understanding,
+// and utility. So it is important that they are not only tuned, but they are operationally useful, and they connect useful measures.
+// These higher accumulated values also can suggest focus and preferences.
 public interface IExpression
 {
 }

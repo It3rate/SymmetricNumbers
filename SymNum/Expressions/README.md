@@ -46,3 +46,11 @@
 - Sometimes you want relative information (light will be outside, touching, near current range)
 - Sometimes you want 16 bool options (prediction and actual have no overlap)
 - A number can represent all of these, and subtracting (or other op) the prediction from the actual gives you this number.
+
+
+## Minimum ops
+note that making a fraction larger can be increasing the numerator or decreasing the denominator, which affects resolution
+- boolean clamping: used in addition, subtraction, min/max, comparisons etc
+- interpolation: used in multiplication, division, midpoint, drift, follow, average, min/max discovery
+- repetition: used in powers, sequences, curves
+

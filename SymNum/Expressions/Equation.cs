@@ -1,5 +1,4 @@
 ﻿using SymNum.Numbers;
-using SymNum.Scraps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,8 +32,8 @@ namespace SymNum.Expressions;
 
 public class Equation : RawNumber
 {
-    public Sequencer? Sequence { get; set; }
-    public RepeatableNumber? RepetitionPattern { get; set; }
+    //public Sequencer? Sequence { get; set; }
+    //public RepeatableNumber? RepetitionPattern { get; set; }
 }
 public enum Operations
 {

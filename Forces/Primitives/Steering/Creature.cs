@@ -3,7 +3,6 @@ using SymNum.Concepts;
 using SymNum.Expressions;
 using SymNum.Numbers;
 using SymNum.Primitives;
-using SymNum.Scraps;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,7 +18,7 @@ public class Creature : ConceptSpace
 	// For now it is all manual to get the feel of it.
 	// The whole creature is a concept space, but light is also a concept space, as is brightness.
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
-	public IMeasure Tick { get; } = new Measure(0, CertaintyLevel.Set, false);
+	public IMeasure Tick { get; } = new Measure(0);
 
 	// In general all values have a stimulus and a supression. You are wanting to eat and wanting to diet at the same time.
 	// This maps to complex number segments, with the start and end points being supression and stimulus.
@@ -66,8 +65,8 @@ public class Creature : ConceptSpace
 	public BinaryExpression LightAndEnergyToThrust { get; set; }
 	public Ratio ThrustDirection { get; set; }
 
-	public DecayMeasure LeftEyeDecay;
-	public DecayMeasure RightEyeDecay;
+	//public DecayMeasure LeftEyeDecay;
+	//public DecayMeasure RightEyeDecay;
 
 
 	// strap: Mouth to energy : food (light areas) intake increase energy
@@ -95,6 +94,7 @@ public class Creature : ConceptSpace
 
 	public Creature()
 	{
+		/*
 		EnergyStore = new Measure(400000, CertaintyLevel.Set, 0, 400000);
 		EnergyRatio = new Ratio(EnergyStore, new Measure(EnergyStore.Maximum));
 
@@ -129,6 +129,7 @@ public class Creature : ConceptSpace
 
 		LeftEyeDecay = new DecayMeasure(RightEyeInput, 0.08f);
 		RightEyeDecay = new DecayMeasure(LeftEyeInput, 0.08f);
+		*/
 	}
 
 	private Random _rnd = new Random();
@@ -137,7 +138,7 @@ public class Creature : ConceptSpace
 	private long _leftInc = 4;
 	public void OnTick()
 	{
-		Tick.Increment();
+		//Tick.Increment();
 		// calculate internal reactions to input
 		var left = Sight.LeftValue;
 		var right = Sight.RightValue;

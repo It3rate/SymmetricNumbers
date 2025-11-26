@@ -35,6 +35,7 @@ namespace SymNum.Numbers;
 public interface INumber
 {
 	public event Action<INumber> ValueSetEvent;
+	event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
 	/// <summary>
 	/// The holder for raw measure values. Can be redirected for refs.
 	/// </summary>
@@ -42,43 +43,77 @@ public interface INumber
 	/// <summary>
 	/// A positive right measured number of ticks.
 	/// </summary>
-	IMeasure RightMeasure { get; }
+	IRefMeasure RightMeasure { get; }
 	/// <summary>
 	/// A positive right resolution in ticks.
 	/// </summary>
-	IMeasure RightUnit { get; }
+	IRefMeasure RightUnit { get; }
 	/// <summary>
 	/// A positive left measured number of ticks.
 	/// </summary>
-	IMeasure LeftMeasure { get; }
+	IRefMeasure LeftMeasure { get; }
 	/// <summary>
 	/// A positive left resolution in ticks.
 	/// </summary>
-	IMeasure LeftUnit { get; }
-	/// <summary>
-	/// The Observer point, defaults to zero but by no means is required. Some numbers (ratios) do not need a zero point.
-	/// </summary>
-	IMeasure ZeroPoint { get; }
-	IMeasure GetMeasureBySlot(MeasureSlot slot);
-	IMeasure GetMeasureByIndex(int slot);
+	IRefMeasure LeftUnit { get; }
+	CertaintyLevel[] Certainties { get; }
+	IMeasure Bias { get; } 
+	IMeasure GetMeasureBySlot(MeasureSlot slot) => (slot) switch
+	{ 
+		MeasureSlot.RightMeasure => Measures[0], 
+		MeasureSlot.RightUnit => Measures[1], 
+		MeasureSlot.LeftMeasure => Measures[2],
+		MeasureSlot.LeftUnit => Measures[3], 
+		_ => IMeasure.Zero 
+	};
+	IMeasure SetMeasureBySlot(IMeasure measure, MeasureSlot slot) => (slot) switch
+	{ 
+		MeasureSlot.RightMeasure => Measures[0] = measure,
+		MeasureSlot.RightUnit => Measures[1] = measure,
+		MeasureSlot.LeftMeasure => Measures[2] = measure,
+		MeasureSlot.LeftUnit => Measures[3] = measure,
+		_ => measure  //throw new ArgumentOutOfRangeException(nameof(slot), "Invalid MeasureSlot value")
+	};
+	Polarity GetPolarityBySlot(MeasureSlot slot) => (slot) switch
+	{
+		MeasureSlot.RightMeasure or MeasureSlot.RightUnit => Polarity.FacesRight,
+		MeasureSlot.LeftMeasure or MeasureSlot.LeftUnit => Polarity.FacesLeft,
+		_ => Polarity.Unknown
+	};
+	CertaintyLevel GetCertaintyBySlot(MeasureSlot slot) => (slot) switch
+	{
+		MeasureSlot.RightMeasure => Certainties[0],
+		MeasureSlot.RightUnit => Certainties[1],
+		MeasureSlot.LeftMeasure => Certainties[2],
+		MeasureSlot.LeftUnit => Certainties[3],
+		_ => CertaintyLevel.Uncertain
+	};
+	CertaintyLevel SetCertaintyBySlot(CertaintyLevel certainty, MeasureSlot slot)=>(slot)switch
+	{
+		MeasureSlot.RightMeasure => Certainties[0] = certainty,
+		MeasureSlot.RightUnit => Certainties[1] = certainty,
+		MeasureSlot.LeftMeasure => Certainties[2] = certainty,
+		MeasureSlot.LeftUnit => Certainties[3] = certainty,
+		_ => certainty // throw new ArgumentOutOfRangeException(nameof(slot), "Invalid MeasureSlot value")
+	};
+	//float GetScaleBySlot(MeasureSlot slot) => slot.IsLeft() ? Scale.LeftValue : Scale.RightValue;
 
 	void SetWith(INumber number);
-	void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure);
+	//void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure);
 	long RightMeasurePosition { get; }
 	long RightUnitPosition { get; }
 	long LeftMeasurePosition { get; }
 	long LeftUnitPosition { get; }
-	long ZeroPosition { get; }
-	bool IsFullyDefined { get; }
 
 	Ratio LeftRatio { get; }
 	Ratio RightRatio { get; }
 	float LeftValue { get; }
 	float RightValue { get; }
 
+
+
+	bool IsFullyDefined { get; }
 	void Validate();
-	Ratio GetRational();
-	Ratio GetImaginary();
 	ComplexNumber GetComplex();
 	UnbalancedNumber GetUnbalanced();
 	SymmetricNumber GetSymmetric();
@@ -105,18 +140,4 @@ public interface INumber
 	// Transform
 	// 16 bool ops
 	// adjust resolution
-}
-
-public interface IPartialNumber : INumber
-{
-	bool IsRationalPart { get; }
-	bool IsImaginaryPart { get; }
-}
-public enum MeasureSlot
-{
-	RightMeasure = 0,
-	LeftUnit = 1,
-	RightUnit = 2,
-	LeftMeasure = 3,
-	ZeroPoint = 4,
 }

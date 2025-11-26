@@ -1,7 +1,4 @@
-﻿using SymNum.Expressions;
-using SymNum.Numbers;
-using SymNum.Primitives;
-using SymNum.Scraps;
+﻿using SymNum.Numbers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,24 +9,54 @@ using System.Threading.Tasks;
 namespace SymNum.Primitives;
 
 // A MeasureRef is always inside a number, so things like polarity and min max are derived from the number, not inherent in the measure.
-public class MeasureRef : MeasureRefBase
+public class RefMeasure : Measure, IRefMeasure
 {
-	public override IMeasure Ref => Number.GetMeasureBySlot(Slot);
-	public INumber Number { get; }
+	public INumber NumberRef { get; }
 	public MeasureSlot Slot { get; }
-	public MeasureRef(int index, INumber num, float scale = 1f, long bias = 0) : base(scale, bias)
+	public IMeasure Ref => NumberRef.GetMeasureBySlot(Slot);
+	public CertaintyLevel Certainty => NumberRef.GetCertaintyBySlot(Slot);
+	public bool IsCertain => Certainty.HasValue();
+	public Polarity Polarity => NumberRef.GetPolarityBySlot(Slot);
+	public IMeasure Bias => NumberRef.Bias;
+
+	public RefMeasure(MeasureSlot slot, INumber num) : base(0)
 	{
-		Number = num;
-		Slot = (MeasureSlot)(index % 5);
-		Ref.PositionChanged += OnUpdate;
+		NumberRef = num;
+		Slot = slot;
+		SetPosition(Ref.Position);
+		NumberRef.MeasureChange += OnMeasureChange;
+		Ref.PositionChanged += OnExternalUpdate;
 	}
+
+	private void OnMeasureChange(IMeasure from, IMeasure to, MeasureSlot slot)
+	{
+		if(slot == Slot )
+		{
+			from.PositionChanged -= OnExternalUpdate;
+			to.PositionChanged += OnExternalUpdate;
+		}
+	}
+
+	public virtual void OnExternalUpdate(IMeasure source)
+	{
+	}
+	public virtual void Dispose()
+	{
+		if (Ref != null)
+		{
+			Ref.PositionChanged -= OnExternalUpdate;
+		}
+	}
+
 }
 
+
+/*
 // There is a measure and an interpretation of that measure. A light sensor reads whatever it reads,
 // but this can be scaled or shifted to otherwise use by anything that used the original measure.
 // Only Refs can do this, because you can change the input signal without changing the mechanism the generates it
 // (which can be external, or an intermediate value created deeper in the system).
-public abstract class MeasureRefBase : MeasureBase, IMeasureRef
+public abstract class MeasureRefBase : IRefMeasure
 {
 	public virtual IMeasure Ref { get; }
 	public Ratio Scale { get; } // this scales the reference position and bias
@@ -78,3 +105,4 @@ public abstract class MeasureRefBase : MeasureBase, IMeasureRef
 	//public static MeasureRef MirroredRef(IMeasure measure) => new(measure, -1); 
 
 }
+*/

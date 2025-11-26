@@ -21,10 +21,10 @@ public class ComplexNumber : UnbalancedNumber
     { }
     public ComplexNumber(IMeasure imaginaryMeasure, IMeasure rationalMeasure, IMeasure resolution) 
     {
-        RightUnit = resolution;
-        RightMeasure = rationalMeasure;
-        LeftUnit = resolution; // this is 'negative' when interpreted in the rational perspective, but positive to itself.
-        LeftMeasure = imaginaryMeasure; // +leftunit/+leftmeasure is a positive imaginary number, but negative if converted to real.
+        Measures[0] = rationalMeasure;
+		Measures[1] = resolution; // this is 'negative' when interpreted in the rational perspective, but positive to itself.
+		Measures[2] = imaginaryMeasure; // +leftunit/+leftmeasure is a positive imaginary number, but negative if converted to real.
+		Measures[3] = resolution;  
     }
 	public override string ToString()
 	{

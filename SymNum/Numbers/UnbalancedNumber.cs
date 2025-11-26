@@ -4,7 +4,6 @@ using System;
 using System.Data;
 using Microsoft.VisualBasic;
 using SymNum.Primitives;
-using SymNum.Scraps;
 
 // **** perhaps there is no unbalanced version of complex numbers as they may not share a zero point.
 
@@ -21,8 +20,8 @@ using SymNum.Scraps;
 /// </summary>
 public class UnbalancedNumber : RawNumber
 {
-    protected float _rationalValue => GetRational().Value;
-    protected float _imaginaryValue => GetImaginary().Value;
+    protected float _rationalValue => RightRatio.Value;
+    protected float _imaginaryValue => LeftRatio.Value;
     public bool RealIsCertain => RightMeasure.IsCertain && RightUnit.IsCertain;
     public bool ImaginaryIsCertain => LeftMeasure.IsCertain && LeftUnit.IsCertain;
 
@@ -32,22 +31,18 @@ public class UnbalancedNumber : RawNumber
     protected UnbalancedNumber() { }
     public UnbalancedNumber(long? rational, long? imaginaryResolution, long? rationalResolution, long? imaginary)
     {
-        RightMeasure = new Measure(rational ?? 0,
-            (rational == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
-        LeftUnit = new Measure(imaginaryResolution ?? 0,
-            (imaginaryResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
-        RightUnit = new Measure(rationalResolution ?? 0,
-            (rationalResolution == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
-        LeftMeasure = new Measure(imaginary ?? 0,
-            (imaginary == null) ? CertaintyLevel.Uncertain : CertaintyLevel.Set);
+        Measures[0] = new Measure(rational ?? 0);
+		Measures[1] = new Measure(imaginaryResolution ?? 0);
+		Measures[2] = new Measure(rationalResolution ?? 0);
+		Measures[3] = new Measure(imaginary ?? 0);
         Initialize();
     }
     public UnbalancedNumber(IMeasure rational, IMeasure imaginaryResolution, IMeasure rationalResolution, IMeasure imaginary) :
-        base(rational, imaginaryResolution, rationalResolution, imaginary, 0)
+        base(rational, imaginaryResolution, rationalResolution, imaginary)
     {
         Initialize();
 	}
-	public UnbalancedNumber(Ratio left, Ratio right, long zeroPoint = 0) : base(left, right, zeroPoint)
+	public UnbalancedNumber(Ratio left, Ratio right) : base(left, right)
 	{
 		Initialize();
 	}
@@ -77,11 +72,10 @@ public class UnbalancedNumber : RawNumber
     // Need to allow setting by area or ratio by fixing real or imaginary parts.
     // Mimics setting voltage and power by knowing current and resistance,
     // or setting width and aspect ratio by knowing area and length, etc.
-    public RationalNumber Area => new RationalNumber((long)(_rationalValue * _imaginaryValue * MinResolution), MinResolution);
-    public RationalNumber RatioReal => new RationalNumber((long)((_rationalValue / _imaginaryValue) * MinResolution), MinResolution);
-    public RationalNumber RatioImaginary => new RationalNumber((long)((_rationalValue / _imaginaryValue) * MinResolution), MinResolution);
-    public static UnbalancedNumber Zero => new UnbalancedNumber(0, 1, 1, 0);
-	public static UnbalancedNumber One => new UnbalancedNumber(1, 1, 1, 1);
+    //public Ratio Area => new Ratio((long)(_rationalValue * _imaginaryValue * MinResolution), MinResolution);
+    //public Ratio RatioReal => new Ratio((long)((_rationalValue / _imaginaryValue) * MinResolution), MinResolution);
+    //public Ratio RatioImaginary => new Ratio((long)((_rationalValue / _imaginaryValue) * MinResolution), MinResolution);
+
 }
 
 

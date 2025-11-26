@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SymNum.Primitives;
+namespace SymNum.Numbers.Common;
 
-public class IVolitileMeasure
+public class SinCosNumber
 {
 }
