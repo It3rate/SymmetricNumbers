@@ -22,10 +22,10 @@ public class SymmetricNumber : RawNumber
     public long BottomRight { get => RightUnit.Position; protected set => RightUnit.SetPositionAndInvoke(value); }
     public long BottomLeft { get => LeftMeasure.Position; protected set => LeftMeasure.SetPositionAndInvoke(value); }
 
-    public bool HasTR => RightMeasure.Certainty.HasValue();
-    public bool HasTL => LeftUnit.Certainty.HasValue();
-    public bool HasBR => RightUnit.Certainty.HasValue();
-    public bool HasBL => LeftMeasure.Certainty.HasValue();
+    public bool HasTR => RightMeasure.Certainty.IsInput();
+    public bool HasTL => LeftUnit.Certainty.IsInput();
+    public bool HasBR => RightUnit.Certainty.IsInput();
+    public bool HasBL => LeftMeasure.Certainty.IsInput();
     private int _totalNonZero => (HasTR ? 1 : 0) + (HasTL ? 1 : 0) + (HasBR ? 1 : 0) + (HasBL ? 1 : 0);
 
     public bool IsHalt => _totalNonZero == 0; // empty

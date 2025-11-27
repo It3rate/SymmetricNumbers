@@ -22,8 +22,8 @@ public class UnbalancedNumber : RawNumber
 {
     protected float _rationalValue => RightRatio.Value;
     protected float _imaginaryValue => LeftRatio.Value;
-    public bool RealIsCertain => RightMeasure.IsCertain && RightUnit.IsCertain;
-    public bool ImaginaryIsCertain => LeftMeasure.IsCertain && LeftUnit.IsCertain;
+    public bool RealIsCertain => RightMeasure.IsInput && RightUnit.IsInput;
+    public bool ImaginaryIsCertain => LeftMeasure.IsInput && LeftUnit.IsInput;
 
     public long MinResolution => Math.Min(LeftUnitPosition, RightUnitPosition);
     public long MaxResolution => Math.Max(LeftUnitPosition, RightUnitPosition);

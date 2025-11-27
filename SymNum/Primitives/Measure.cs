@@ -4,7 +4,7 @@ namespace SymNum.Primitives;
 
 public class Measure : IMeasure
 {
-	public event Action<IMeasure> PositionChanged;
+	public event Action<IMeasure>? PositionChanged;
 
 	public virtual long Position { get; private set; }
 	public Measure(long position)

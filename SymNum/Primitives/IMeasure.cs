@@ -10,6 +10,10 @@ namespace SymNum.Primitives;
 //    There are a lot of types on numbers amidst these, but that is the general trend.
 //    All of these can be represented by four Measures, a zero, and reptition (and primitive ops)
 
+// Q: Should there be a type with two measures (a focal/span?). There are ratios, but those are numbers.
+// there is a symmetry with this, 1:measure, 2:span, 4:number, 8:expression, 16:plane
+// some critical equations happen on two measures, such as n/d, midpoint, length
+
 /// <summary>
 /// This is a measure not accessed from a number, 
 /// so it doesn't have access to things like certainty, scale, bias, min/max values, etc.

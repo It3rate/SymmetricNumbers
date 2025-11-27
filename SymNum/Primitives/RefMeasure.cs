@@ -14,8 +14,12 @@ public class RefMeasure : Measure, IRefMeasure
 	public INumber NumberRef { get; }
 	public MeasureSlot Slot { get; }
 	public IMeasure Ref => NumberRef.GetMeasureBySlot(Slot);
+	public override long Position => Ref.Position;
+	override public void SetPosition(long position) => Ref.SetPosition(position);
+	override public void SetPositionAndInvoke(long position) => Ref.SetPositionAndInvoke(position);
+
 	public CertaintyLevel Certainty => NumberRef.GetCertaintyBySlot(Slot);
-	public bool IsCertain => Certainty.HasValue();
+	public bool IsInput => Certainty.IsInput();
 	public Polarity Polarity => NumberRef.GetPolarityBySlot(Slot);
 	public IMeasure Bias => NumberRef.Bias;
 
@@ -25,7 +29,6 @@ public class RefMeasure : Measure, IRefMeasure
 		Slot = slot;
 		SetPosition(Ref.Position);
 		NumberRef.MeasureChange += OnMeasureChange;
-		Ref.PositionChanged += OnExternalUpdate;
 	}
 
 	private void OnMeasureChange(IMeasure from, IMeasure to, MeasureSlot slot)

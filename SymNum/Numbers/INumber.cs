@@ -32,31 +32,28 @@ namespace SymNum.Numbers;
 // With thresholds you can get one sided ranges. If 0 is greater than zero and less than 1, then 3/0 is just greater than 3.
 // The issue with thresholds is it requires a +0 and -0. There are two edges between -1 and 1, but only one node.
 // This implies than resolution for numbers has to specify how it obtains it's resolution if you want to scale those values, which makes sense.
+
+// Internal ops for numbers:
+// left and right values, extract i and r Numbers
+// length, midpoint and perhaps double
+// Min/max numerators, denominators, values, all
+// normalize
+// offbeat calcs - add/subtract numerators, cross and dot products, average all, OR/AND all, etc
+// need an internal ops to create this, and different number types are mostly defined by these (plus contraints)
+
 public interface INumber
 {
-	public event Action<INumber> ValueSetEvent;
+	public event Action<INumber> OnValueChanged;
 	event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
-	/// <summary>
-	/// The holder for raw measure values. Can be redirected for refs.
-	/// </summary>
 	IMeasure[] Measures { get; }
-	/// <summary>
-	/// A positive right measured number of ticks.
-	/// </summary>
+
 	IRefMeasure RightMeasure { get; }
-	/// <summary>
-	/// A positive right resolution in ticks.
-	/// </summary>
 	IRefMeasure RightUnit { get; }
-	/// <summary>
-	/// A positive left measured number of ticks.
-	/// </summary>
 	IRefMeasure LeftMeasure { get; }
-	/// <summary>
-	/// A positive left resolution in ticks.
-	/// </summary>
 	IRefMeasure LeftUnit { get; }
+
 	CertaintyLevel[] Certainties { get; }
+	bool IsInput => Certainties.Any(c => c.IsInput());
 	IMeasure Bias { get; } 
 	IMeasure GetMeasureBySlot(MeasureSlot slot) => (slot) switch
 	{ 
@@ -78,7 +75,7 @@ public interface INumber
 	{
 		MeasureSlot.RightMeasure or MeasureSlot.RightUnit => Polarity.FacesRight,
 		MeasureSlot.LeftMeasure or MeasureSlot.LeftUnit => Polarity.FacesLeft,
-		_ => Polarity.Unknown
+		_ => Polarity.Zero
 	};
 	CertaintyLevel GetCertaintyBySlot(MeasureSlot slot) => (slot) switch
 	{

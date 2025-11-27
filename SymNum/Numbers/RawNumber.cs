@@ -29,7 +29,7 @@ namespace SymNum.Numbers;
 /// </summary>
 public class RawNumber : INumber
 {
-	public event Action<INumber> ValueSetEvent;
+	public event Action<INumber> OnValueChanged;
 	public event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
 	public static RawNumber Unknown => new RawNumber();
 	public static RawNumber Zero => new RawNumber(0, 1, 1, 0);
@@ -68,7 +68,7 @@ public class RawNumber : INumber
 	public long LeftMeasurePosition => _leftMeasure.Position;
 	public long LeftUnitPosition => _leftUnit.Position;
 
-	public virtual bool IsFullyDefined => Certainties.All(c => c.HasValue());
+	public virtual bool IsFullyDefined => Certainties.All(c => c.IsInput());
 
 
 	protected RawNumber() : this(0, 1, 1, 0) { }
@@ -123,7 +123,7 @@ public class RawNumber : INumber
 	{
 		Array.Copy(number.Measures, Measures, Measures.Length);
 		Validate();
-		ValueSetEvent?.Invoke(this);
+		OnValueChanged?.Invoke(this);
 	}
 	//public void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure)
 	//{

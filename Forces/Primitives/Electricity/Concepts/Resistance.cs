@@ -15,7 +15,7 @@ public class Resistance : BinaryExpression
     public INumber Current => Second;
     public override string Name => "Resistance";
     public Resistance(INumber voltage, INumber current) :
-        base(voltage, current, Ops.DivideTo, null, CertaintyLevel.Set)
+        base(voltage, current, Ops.DivideTo, null, CertaintyLevel.Output)
     { }
     //public Resistance(SymmetricNumber voltageCurrent) :
     //    base( voltageCurrent.RightRatio(), voltageCurrent.LeftRation(), Ops.DivideTo, null)

@@ -10,11 +10,13 @@ namespace SymNum.Primitives;
 [Flags]
 public enum CertaintyLevel
 {
-	Set,
-	ReadOnly,
+	Input,
+	Output,
 	Uncertain,
 	Error,
 
+	//Calibration,
+	//ReadOnly,
 	//Dormant,
 	//UnderConstrained,
 	//OverConstrained,
@@ -25,6 +27,6 @@ public enum CertaintyLevel
 
 public static class CertaintyLevelExtensions
 {
-	public static bool HasValue(this CertaintyLevel state) => 
-		((state & CertaintyLevel.Set) | (state & CertaintyLevel.ReadOnly)) != 0;
+	public static bool IsInput(this CertaintyLevel state) => 
+		(state & CertaintyLevel.Input) != 0;
 }

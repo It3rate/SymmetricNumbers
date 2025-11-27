@@ -14,11 +14,13 @@ public interface IRefMeasure : IMeasure, IDisposable
     IMeasure Ref { get; }
 
 	CertaintyLevel Certainty { get; }
-	bool IsCertain { get; }
+	bool IsInput { get; }
 	Polarity Polarity { get; }
 	IMeasure Bias { get; }
 
 	void OnExternalUpdate(IMeasure source);
+
+	long PositionAs(Polarity polarity) => polarity == Polarity ? Position : -Position;
 
 	// unary ops
 	//public void Increment();

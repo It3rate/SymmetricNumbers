@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace SymNum.Primitives;
 
-public enum Polarity { Unknown, Zero, FacesRight, FacesLeft };//, Zero, Max }
+public enum Polarity 
+{ 
+	FacesLeft = -1,
+	Zero = 0, 
+	FacesRight = 1,
+	//Unknown,
+};
 
 public static class PolarityExtension
 {

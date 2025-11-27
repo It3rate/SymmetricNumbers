@@ -35,12 +35,12 @@ public class Creature : ConceptSpace
 	public IMeasure LeftLegOuput { get; }
 
 	// stores
-	public IMeasure EnergyStore { get; }
-	public IMeasure LightMin { get; }
-	public IMeasure LightMax { get; }
-	public IMeasure LightSlowFollow { get; }
-	public IMeasure LightFastFollow { get; }
-	public IMeasure ThrustRejuvinationFill { get; }
+	public INumber EnergyStore { get; }
+	//public IMeasure LightMin { get; }
+	//public IMeasure LightMax { get; }
+	//public IMeasure LightSlowFollow { get; }
+	//public IMeasure LightFastFollow { get; }
+	//public IMeasure ThrustRejuvinationFill { get; }
 
 	// synthesis
 	public Ratio EnergyRatio { get; }
@@ -94,8 +94,12 @@ public class Creature : ConceptSpace
 
 	public Creature()
 	{
+		MouthInput = new Measure(0);
+		LeftEyeInput = new Measure(0);
+		RightEyeInput = new Measure(0);
+
+		EnergyStore = new UnbalancedNumber(1000,1,1,0);
 		/*
-		EnergyStore = new Measure(400000, CertaintyLevel.Set, 0, 400000);
 		EnergyRatio = new Ratio(EnergyStore, new Measure(EnergyStore.Maximum));
 
 		RightEyeInput = new Measure(0);
@@ -157,7 +161,8 @@ public class Creature : ConceptSpace
 		// Q. Should all updates happen on tick, or should they be independent of clock?
         LeftEyeInput.SetPositionAndInvoke(leftLight);
         RightEyeInput.SetPositionAndInvoke(rightLight);
+		MouthInput.SetPosition(energyInput);
 		// Add energy based on how much light is there.
-		EnergyStore.SetPositionAndInvoke(EnergyStore.Position + energyInput - energyUse);
+		//EnergyStore.SetPositionAndInvoke(EnergyStore.Position + energyInput - energyUse);
 	}
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SymNum.Numbers;
+using SymNum.Primitives;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +31,29 @@ namespace SymNum.Expressions;
 // These expressions are like 'straps' between other values, and processing them in certain ways can increase understanding,
 // and utility. So it is important that they are not only tuned, but they are operationally useful, and they connect useful measures.
 // These higher accumulated values also can suggest focus and preferences.
-public interface IExpression
+public interface IExpression : INumber
 {
+	// Q.perhaps expressions always apply to IMeasures?
+	// If it is to a number value you need to do the n/d division as an op?
+	// Q. Or there are expressions for for the IMeasure level, and expression for the INumber level?
+	// In this case, the expressions may always be computed as doubles and then returned to fractions.
+	// In a bool segment sense there are the bool ops, then addition is bool appends to each end. Scaling is bool ratios.
+	
+	// A. No, these must be INumbers, because a single IMeasure is not a segment, so bool ops don't work
+	// As numbers, the denominators are used in the ratios, and bools ops happen on the segments
+	// That said, there are a number of ops that happen within a number,
+	// basically any measures can op with each other in ways that make sense (n/d, d/n, length, midpoint, norm, etc)
+	// these are not expressions, more Number interpretations.
+
+	// Each op moves input or not, adjusts or replaces output, (can it create new output?)
+	// Q. always 2 inputs and 1 output? To adjust, one input is the same as the output?
+	// move would be 1 input to 1 output, no op?
+
+
+	INumber InputA { get; }
+	INumber InputB { get; }
+	INumber Output { get; }
+
+	BinaryOp Op { get; }
+	void Calculate();
 }

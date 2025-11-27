@@ -35,7 +35,7 @@ public class BinaryExpression
 	private INumber _value;
 	public CertaintyLevel Certainty { get; set; }
     public virtual string Name { get; } = "";
-	public bool IsSet => Certainty.HasValue();
+	public bool IsSet => Certainty.IsInput();
 	public BinaryExpression(INumber? first, INumber? second, BinaryOp op, INumber? result, CertaintyLevel state = CertaintyLevel.Uncertain)
 	{
 		First = first ?? RawNumber.Unknown;
@@ -55,7 +55,7 @@ public class BinaryExpression
         Certainty = certaintyLevel;
     }
 
-	public void Set() => Certainty = CertaintyLevel.Set;
+	public void Set() => Certainty = CertaintyLevel.Output;
 	public void Unset() => Certainty = CertaintyLevel.Uncertain;
 	public INumber Calculate()
 	{
