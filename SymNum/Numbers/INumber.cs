@@ -47,6 +47,7 @@ public interface INumber
 	event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
 	IMeasure[] Measures { get; }
 
+	IRefMeasure Bias { get; }
 	IRefMeasure RightMeasure { get; }
 	IRefMeasure RightUnit { get; }
 	IRefMeasure LeftMeasure { get; }
@@ -54,45 +55,17 @@ public interface INumber
 
 	CertaintyLevel[] Certainties { get; }
 	bool IsInput => Certainties.Any(c => c.IsInput());
-	IMeasure Bias { get; } 
-	IMeasure GetMeasureBySlot(MeasureSlot slot) => (slot) switch
-	{ 
-		MeasureSlot.RightMeasure => Measures[0], 
-		MeasureSlot.RightUnit => Measures[1], 
-		MeasureSlot.LeftMeasure => Measures[2],
-		MeasureSlot.LeftUnit => Measures[3], 
-		_ => IMeasure.Zero 
-	};
-	IMeasure SetMeasureBySlot(IMeasure measure, MeasureSlot slot) => (slot) switch
-	{ 
-		MeasureSlot.RightMeasure => Measures[0] = measure,
-		MeasureSlot.RightUnit => Measures[1] = measure,
-		MeasureSlot.LeftMeasure => Measures[2] = measure,
-		MeasureSlot.LeftUnit => Measures[3] = measure,
-		_ => measure  //throw new ArgumentOutOfRangeException(nameof(slot), "Invalid MeasureSlot value")
-	};
-	Polarity GetPolarityBySlot(MeasureSlot slot) => (slot) switch
-	{
-		MeasureSlot.RightMeasure or MeasureSlot.RightUnit => Polarity.FacesRight,
-		MeasureSlot.LeftMeasure or MeasureSlot.LeftUnit => Polarity.FacesLeft,
-		_ => Polarity.Zero
-	};
-	CertaintyLevel GetCertaintyBySlot(MeasureSlot slot) => (slot) switch
-	{
-		MeasureSlot.RightMeasure => Certainties[0],
-		MeasureSlot.RightUnit => Certainties[1],
-		MeasureSlot.LeftMeasure => Certainties[2],
-		MeasureSlot.LeftUnit => Certainties[3],
-		_ => CertaintyLevel.Uncertain
-	};
-	CertaintyLevel SetCertaintyBySlot(CertaintyLevel certainty, MeasureSlot slot)=>(slot)switch
-	{
-		MeasureSlot.RightMeasure => Certainties[0] = certainty,
-		MeasureSlot.RightUnit => Certainties[1] = certainty,
-		MeasureSlot.LeftMeasure => Certainties[2] = certainty,
-		MeasureSlot.LeftUnit => Certainties[3] = certainty,
-		_ => certainty // throw new ArgumentOutOfRangeException(nameof(slot), "Invalid MeasureSlot value")
-	};
+	IMeasure GetMeasureBySlot(MeasureSlot slot) =>
+		slot.IsSingleValue() ? Measures[(int)slot] : IMeasure.Zero;
+	IMeasure SetMeasureBySlot(IMeasure measure, MeasureSlot slot) =>
+		slot.IsSingleValue() ? Measures[(int)slot] = measure : measure;
+	Polarity GetPolarityBySlot(MeasureSlot slot) =>
+		slot.IsLeft() ? Polarity.FacesLeft : slot.IsRight() ? Polarity.FacesRight : Polarity.Zero;
+	CertaintyLevel GetCertaintyBySlot(MeasureSlot slot) =>
+		slot.IsSingleValue() ? Certainties[(int)slot] : CertaintyLevel.Uncertain;
+	CertaintyLevel SetCertaintyBySlot(CertaintyLevel certainty, MeasureSlot slot) =>
+		slot.IsSingleValue() ? Certainties[(int)slot] = certainty : certainty;
+
 	//float GetScaleBySlot(MeasureSlot slot) => slot.IsLeft() ? Scale.LeftValue : Scale.RightValue;
 
 	void SetWith(INumber number);

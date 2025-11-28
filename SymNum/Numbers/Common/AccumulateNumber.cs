@@ -10,17 +10,18 @@ namespace SymNum.Numbers.Common;
 public class AccumulateNumber : RawNumber, IDisposable
 {
 	public IMeasure Ref;
-	public IMeasure RationalTotal => Measures[0];
-	public IMeasure ImaginaryCount => Measures[1];
-	public IMeasure RationalCount => Measures[2];
-	public IMeasure ImaginaryTotal => Measures[3];
+	public IMeasure RationalTotal => Measures[1];
+	public IMeasure ImaginaryCount => Measures[2];
+	public IMeasure RationalCount => Measures[3];
+	public IMeasure ImaginaryTotal => Measures[4];
 	public AccumulateNumber(IMeasure reference)
 	{
 		Ref = reference;
-		Measures[0] = new Measure(0); // rational total
-		Measures[1] = new Measure(0); // imaginary count
-		Measures[2] = new Measure(0); // rational count
-		Measures[3] = new Measure(0); // imaginary total
+		Measures[0] = new Measure(0); // bias
+		Measures[1] = new Measure(0); // rational total
+		Measures[2] = new Measure(0); // imaginary count
+		Measures[3] = new Measure(0); // rational count
+		Measures[4] = new Measure(0); // imaginary total
 
 		Ref.PositionChanged += OnReferenceUpdate;
 	}

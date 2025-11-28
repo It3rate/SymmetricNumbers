@@ -17,6 +17,8 @@ public class Expression : RawNumber, IExpression, IDisposable
 	public INumber Output => this;
 
 	public BinaryOp Op { get; }
+	
+
 	public Expression(INumber inputA, INumber inputB, BinaryOp op)
 	{
 		InputA = inputA;

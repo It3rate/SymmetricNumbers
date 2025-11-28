@@ -58,7 +58,7 @@
     <None Include="Scraps\RationalNumber.cs" />
     <None Include="Scraps\RatioNumber.cs" />
     <None Include="Scraps\RectangleNumber.cs" />
-    <None Include="Scraps\RefKind.cs" />
+    <None Include="Numbers\RefKind.cs" />
     <None Include="Scraps\Relations.cs" />
     <None Include="Scraps\RepeatableNumber.cs" />
     <None Include="Scraps\Sample.cs" />

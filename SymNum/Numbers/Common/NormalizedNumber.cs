@@ -28,22 +28,23 @@ public class NormalizedNumber : RawNumber, IDisposable
 	public NormalizedNumber(IMeasure reference, 
 		INumber? minTracking = null, INumber? maxTracking = null, INumber? centerTracking = null)
 	{
-		Measures[0] = reference;
-		Measures[1] = new DynamicMeasure(0, this, minTracking ?? _minTracking, null);
-		Measures[2] = new DynamicMeasure(0, this, maxTracking ?? _maxTracking, null);
-		Measures[3] = reference;
+		Measures[0] = new DynamicMeasure(0, this, centerTracking ?? _centerTracking, null);
 
-		Bias = new DynamicMeasure(0, this, centerTracking ?? _centerTracking, null);
+		Measures[1] = reference;
+		Measures[2] = new DynamicMeasure(0, this, minTracking ?? _minTracking, null);
+		Measures[3] = new DynamicMeasure(0, this, maxTracking ?? _maxTracking, null);
+		Measures[4] = reference;
+
 		reference.PositionChanged += OnReferenceUpdate;
 	}
 	public NormalizedNumber(IMeasure reference, IMeasure center, IMeasure minimum, IMeasure maximum)
 	{
-		Measures[0] = reference;
-		Measures[1] = minimum;
-		Measures[2] = maximum;
-		Measures[3] = reference;
+		Measures[0] = center;
+		Measures[1] = reference;
+		Measures[2] = minimum;
+		Measures[3] = maximum;
+		Measures[4] = reference;
 
-		Bias = center;
 		reference.PositionChanged += OnReferenceUpdate;
 	}
 

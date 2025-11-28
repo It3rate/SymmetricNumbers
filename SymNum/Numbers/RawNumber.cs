@@ -46,16 +46,17 @@ public class RawNumber : INumber
 	// C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
 	// zero point is E
 	public virtual IMeasure[] Measures { get; } = new IMeasure[5];
-	private IMeasure _rightMeasure => Measures[0];
-	private IMeasure _leftUnit => Measures[1];
-	private IMeasure _rightUnit => Measures[2];
-	private IMeasure _leftMeasure => Measures[3];
+	private IMeasure _bias => Measures[0]; // (int)MeasureSlot.Zero
+	private IMeasure _rightMeasure => Measures[1]; //(int) MeasureSlot.RightMeasure
+	private IMeasure _leftUnit => Measures[2]; //(int) MeasureSlot.LeftUnit
+	private IMeasure _rightUnit => Measures[3]; //(int) MeasureSlot.RightUnit
+	private IMeasure _leftMeasure => Measures[4]; //(int) MeasureSlot.LeftMeasure
 
 
 	public CertaintyLevel[] Certainties { get; } = new CertaintyLevel[5];
-	public Polarity[] Directions { get; } = { Polarity.FacesRight, Polarity.FacesLeft, Polarity.FacesLeft, Polarity.FacesRight, Polarity.Zero };
-	public IMeasure Bias { get; protected set; }
-
+	public Polarity[] Directions { get; } = {Polarity.Zero, 
+		Polarity.FacesRight, Polarity.FacesLeft, Polarity.FacesLeft, Polarity.FacesRight };
+	public virtual IRefMeasure Bias { get; }
 	public virtual IRefMeasure RightMeasure { get; }
 	public virtual IRefMeasure RightUnit { get; }
 	public virtual IRefMeasure LeftMeasure { get; }
@@ -63,6 +64,7 @@ public class RawNumber : INumber
 	public Ratio LeftRatio { get; }
 	public Ratio RightRatio { get; }
 
+	public long BiasPosition => _bias.Position;
 	public long RightMeasurePosition => _rightMeasure.Position;
 	public long RightUnitPosition => _rightUnit.Position;
 	public long LeftMeasurePosition => _leftMeasure.Position;
@@ -78,11 +80,13 @@ public class RawNumber : INumber
 	}
 	protected RawNumber(IMeasure rightMeasure, IMeasure leftUnit, IMeasure rightUnit, IMeasure leftMeasure)
 	{
-		Measures[0] = rightMeasure;
-		Measures[1] = leftUnit;
-		Measures[2] = rightUnit;
-		Measures[3] = leftMeasure;
+		Measures[0] = new Measure(0);
+		Measures[1] = rightMeasure;
+		Measures[2] = leftUnit;
+		Measures[3] = rightUnit;
+		Measures[4] = leftMeasure;
 
+		Bias = new RefMeasure(MeasureSlot.Zero, this);
 		RightMeasure = new RefMeasure(MeasureSlot.RightMeasure, this);
 		LeftUnit = new RefMeasure(MeasureSlot.LeftUnit, this);
 		RightUnit = new RefMeasure(MeasureSlot.RightUnit, this);
@@ -105,6 +109,7 @@ public class RawNumber : INumber
 
 	public IMeasure GetMeasureBySlot(MeasureSlot slot) => (slot) switch
 	{
+		MeasureSlot.Zero => Bias,
 		MeasureSlot.RightMeasure => RightMeasure,
 		MeasureSlot.LeftUnit => LeftUnit,
 		MeasureSlot.RightUnit => RightUnit,
@@ -113,10 +118,11 @@ public class RawNumber : INumber
 	};
 	public CertaintyLevel GetCertaintyBySlot(MeasureSlot slot) => (slot) switch
 	{
-		MeasureSlot.RightMeasure => Certainties[0],
-		MeasureSlot.LeftUnit => Certainties[1],
-		MeasureSlot.RightUnit => Certainties[2],
-		MeasureSlot.LeftMeasure => Certainties[3],
+		MeasureSlot.Zero => Certainties[0],
+		MeasureSlot.RightMeasure => Certainties[1],
+		MeasureSlot.LeftUnit => Certainties[2],
+		MeasureSlot.RightUnit => Certainties[3],
+		MeasureSlot.LeftMeasure => Certainties[4],
 		_ => CertaintyLevel.Uncertain,
 	};
 	public void SetWith(INumber number)
@@ -149,10 +155,11 @@ public class RawNumber : INumber
     {
         var rightMeasure = _rightMeasure;
         var rightUnit = _rightUnit;
-		Measures[0] = _leftMeasure;
-		Measures[1] = rightUnit;
-		Measures[2] = _leftUnit;
-		Measures[3] = rightMeasure;
+		Measures[0] = _bias;
+		Measures[1] = _leftMeasure;
+		Measures[2] = rightUnit;
+		Measures[3] = _leftUnit;
+		Measures[4] = rightMeasure;
 	}
 	public INumber Negate()
 	{
@@ -689,17 +696,4 @@ public class RawNumber : INumber
 	//}
 	#endregion
 
-}
-
-public class AnnotatedFloat
-{
-    public float Value { get; set; }
-    public float Resolution { get; set; }
-    public bool IsPositiveRight { get; set; }
-    public AnnotatedFloat(float value, float resolution, bool isPositiveRight)
-    {
-        Value = value;
-        Resolution = resolution;
-        IsPositiveRight = isPositiveRight;
-    }
 }
