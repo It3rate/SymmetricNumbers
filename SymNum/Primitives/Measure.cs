@@ -20,7 +20,8 @@ public class Measure : IMeasure
 		SetPosition(position);
 		InvokePositionChanged();
 	}
-
+	public (float, float) ValueRange => (0, Position);
+	public (long, long) PositionRange => (0, Position);
 	void OnUpdate(IMeasure source)
 	{
 		var change = CalculateChange(source);
@@ -39,6 +40,7 @@ public class Measure : IMeasure
 		PositionChanged?.Invoke(this);
 	}
 
+	public IOrderable CombineWith(IOrderable other, BinaryOp op)) => Expression.CreateBinary(this, other, op);
 
 
 	public static bool operator ==(Measure a, Measure b)

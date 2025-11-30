@@ -14,6 +14,18 @@ namespace SymNum.Primitives;
 // there is a symmetry with this, 1:measure, 2:span, 4:number, 8:expression, 16:plane
 // some critical equations happen on two measures, such as n/d, midpoint, length
 
+// One consideration is there are two ways to convert measure(s) to ratios.
+// First is to split the measure with a zero point that isn't on the end point. This creates a positive and negative side,
+// or a positive polarity and negative polarity. This is more about interpolation, comparisions and bool ops than ratios.
+// The second way is to have two measures and combine them with an operation. This gives a numerator and denominator, or 
+// a subtracted difference, etc. This is more about the relations of two numbers in a result than a simple interpolation.
+// The splitting is natural within the number, the combining of measures is driven externally.
+// It seems this internal/external expansion is true all the way up the scales, and seems significant.
+// Maybe this is like bool ops vs math ops.  Bool ops split a segment into parts, math ops combine two segments together.
+// The bool ops modify something in it's existing level, math ops create elements in a higher layer.
+//  bool ops can create + and - sections, but only if using the true and false results:
+//       a segment from 3->2 'and' >7 results in 7->12 (the second segment is the 'not', 3->7)
+
 /// <summary>
 /// This is a measure not accessed from a number, 
 /// so it doesn't have access to things like certainty, scale, bias, min/max values, etc.
@@ -21,7 +33,7 @@ namespace SymNum.Primitives;
 /// Ultimately types come from primary inputs, like distance/time -> speed. 
 /// Km or miles is an equation, speed is the primarires.
 /// </summary>
-public interface IMeasure 
+public interface IMeasure : IOrderable
 {
 	event Action<IMeasure> PositionChanged;
 	long Position { get; }

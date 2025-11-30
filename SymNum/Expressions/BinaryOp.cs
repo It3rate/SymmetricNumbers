@@ -9,6 +9,9 @@ using SymNum.Numbers;
 
 namespace SymNum.Expressions;
 
+// Operations can happen on any two IOrderable values. The possible operations grow just as the numeric complexity does.
+// 
+
 public delegate INumber BinaryOp(INumber left, INumber right);
 public static class Ops
 {
