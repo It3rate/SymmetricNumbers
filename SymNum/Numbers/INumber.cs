@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SymNum.Expressions;
 using SymNum.Primitives;
 namespace SymNum.Numbers;
 
@@ -41,7 +42,7 @@ namespace SymNum.Numbers;
 // offbeat calcs - add/subtract numerators, cross and dot products, average all, OR/AND all, etc
 // need an internal ops to create this, and different number types are mostly defined by these (plus contraints)
 
-public interface INumber
+public interface INumber //: IOrderable
 {
 	public event Action<INumber> OnValueChanged;
 	event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
@@ -87,6 +88,7 @@ public interface INumber
 	ComplexNumber GetComplex();
 	UnbalancedNumber GetUnbalanced();
 	SymmetricNumber GetSymmetric();
+
     void Mirror();
 	INumber Negate();
 

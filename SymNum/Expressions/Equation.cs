@@ -30,7 +30,7 @@ namespace SymNum.Expressions;
 
 // all of these are equations, and can be represented with numbers and operations (plus, minus, multiply, divide, repeat/exponent, state referential, dynamic follower etc)
 
-public class Equation : RawNumber
+public class Equation : Number
 {
     //public Sequencer? Sequence { get; set; }
     //public RepeatableNumber? RepetitionPattern { get; set; }

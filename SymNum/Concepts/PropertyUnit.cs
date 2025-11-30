@@ -27,7 +27,7 @@ public class PropertyUnit
 	/// This is specifically a number, not an extent, and a type needs to include its opposite, in that everything is defined against something.
 	/// This allows happy/sad, happy/angry and happy/meh to all cooexist.
 	/// </summary>
-	public RawNumber? Denominator;
+	public Number? Denominator;
 	/// <summary>
 	/// Not sure how this works, but we have more than one calibration for a concept, and we can translate them roughly.
 	/// I don't think there is a universal 'dollar' or 'temperature' that canadian dollars and celcius get converted to,

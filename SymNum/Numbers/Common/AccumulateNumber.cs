@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SymNum.Numbers.Common;
 
-public class AccumulateNumber : RawNumber, IDisposable
+public class AccumulateNumber : Number, IDisposable
 {
 	public IMeasure Ref;
 	public IMeasure RationalTotal => Measures[1];

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SymNum.Expressions;
 
-public class Expression : RawNumber, IExpression, IDisposable
+public class Expression : Number, IExpression, IDisposable
 {
 	public INumber InputA { get; }
 

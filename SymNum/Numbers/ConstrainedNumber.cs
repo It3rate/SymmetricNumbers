@@ -14,7 +14,7 @@ namespace SymNum.Numbers;
 /// but you do know the height for whatever the width is set to and vice versa.
 /// This fact can be be expressed with a new constraint number, or derived from the area constraint (a=wh) in fact.
 /// </summary>
-public class ConstrainedNumber : RawNumber
+public class ConstrainedNumber : Number
 {
 	/// <summary>
 	/// Values are constrained by equations that must be true.

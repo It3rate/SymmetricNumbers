@@ -18,6 +18,13 @@ namespace SymNum.Numbers;
 // Imaginary numbers - the left unit must be negative, the right measure and unit must be ignored.
 // Ratio - is the real or imaginary number part of a number, specifying which.
 
+// to unify them, there needs to be constraints and access to equations that are normal for each type.
+// the constraints may be enforcable by listening for changes to measures and adjusting other measures as needed.
+// eg a unit change in a complex number adjusts to opposite unit to match, a rational number doesn't update the imaginary part etc.
+// converting from one to the other is a matter of adjusting listeners.
+// The equations are less clear. Any number can use any equation, just they are common or meaningful in the specialized case.
+// eg a rational number can use the left polarity , but everything will be zero.
+
 /// <summary>
 /// There are many types of numbers, they just mean measures calibrated in some way. 
 /// Left units and measures are positive left, so do not negate them unless pointing right.
@@ -27,13 +34,13 @@ namespace SymNum.Numbers;
 /// Note that these can describe any non random pattern, but have no information about what the pattern represents.
 /// This requires some kind of unit tied to the number. Numbers themselves are pure patterns.
 /// </summary>
-public class RawNumber : INumber
+public class Number : INumber
 {
 	public event Action<INumber> OnValueChanged;
 	public event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
-	public static RawNumber Unknown => new RawNumber();
-	public static RawNumber Zero => new RawNumber(0, 1, 1, 0);
-	public static RawNumber One => new RawNumber(1, 1, 1, 1);
+	public static Number Unknown => new Number();
+	public static Number Zero => new Number(0, 1, 1, 0);
+	public static Number One => new Number(1, 1, 1, 1);
 	// A number can be composed of multiple measures with different restrictions. 
 	// A simple number has a numerator and denominator, where a position in 3D space has 12 measures (6 extents, 3 numbers).
 	// An equation (eg a sinewave, bezier curve, color curve of heating) can be arbitrarily complex, 
@@ -73,12 +80,12 @@ public class RawNumber : INumber
 	public virtual bool IsFullyDefined => Certainties.All(c => c.IsInput());
 
 
-	protected RawNumber() : this(0, 1, 1, 0) { }
-	protected RawNumber(long tr, long tl, long br, long bl):
+	protected Number() : this(0, 1, 1, 0) { }
+	protected Number(long tr, long tl, long br, long bl):
 		this(new Measure(tr), new Measure(tl), new Measure(br), new Measure(bl))
     {
 	}
-	protected RawNumber(IMeasure rightMeasure, IMeasure leftUnit, IMeasure rightUnit, IMeasure leftMeasure)
+	protected Number(IMeasure rightMeasure, IMeasure leftUnit, IMeasure rightUnit, IMeasure leftMeasure)
 	{
 		Measures[0] = new Measure(0);
 		Measures[1] = rightMeasure;
@@ -95,14 +102,14 @@ public class RawNumber : INumber
 		LeftRatio = new Ratio(LeftMeasure, LeftUnit, Polarity.FacesLeft);
 		RightRatio = new Ratio(RightMeasure, RightUnit, Polarity.FacesRight);
 }
-	protected RawNumber(Ratio left, Ratio right) :
+	protected Number(Ratio left, Ratio right) :
 		this(right.Numerator, left.Denominator, right.Denominator, left.Numerator)
 	{ }
 	/// <summary>
 	/// Cast internals of another number into this type.
 	/// eg complex to rational will ignore the i values and not allow setting them, but they will be preserved if cast back.
 	/// </summary>
-	public RawNumber(RawNumber number)
+	public Number(Number number)
     {
         Array.Copy(number.Measures, Measures, Measures.Length);
     }

@@ -30,8 +30,8 @@ public class DynamicMeasure : RefMeasure, IDynamicMeasure
 
 	public DynamicMeasure(MeasureSlot slot, INumber num, INumber? driftScale, INumber? driftOffset) : base(slot, num)
 	{
-		DriftScale = driftScale ?? RawNumber.One;
-		DriftOffset = driftOffset ?? RawNumber.Zero;
+		DriftScale = driftScale ?? Number.One;
+		DriftOffset = driftOffset ?? Number.Zero;
 
 		Accumulator = Ref.Position;
 	}

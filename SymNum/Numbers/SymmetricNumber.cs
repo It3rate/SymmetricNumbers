@@ -15,7 +15,7 @@ namespace SymNum.Numbers;
 /// a concept requiring the existance of some 'y' dimension, but fully describable in the 1D 'x' dimension.
 /// See: https://x.com/debreuil/status/1876646280451051933
 /// </summary>
-public class SymmetricNumber : RawNumber
+public class SymmetricNumber : Number
 {
     public long TopRight { get => RightMeasure.Position; protected set => RightMeasure.SetPositionAndInvoke(value); }
     public long TopLeft { get => LeftUnit.Position; protected set => LeftUnit.SetPositionAndInvoke(value); }

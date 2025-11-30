@@ -17,7 +17,7 @@ namespace SymNum.Primitives;
 // They map all the way when solved, and the equations required to acheive this are the intelligence.
 // The goal of prediction is the align two units with each other somehow.
 
-public class Ratio : RawNumber
+public class Ratio : Number
 {
 	// Q. Could have one of numerator, denomonator or Value being calculated. Allows storing float as source of truth.
 	public IRefMeasure Numerator => IsImaginaryPart ? LeftMeasure : RightMeasure;

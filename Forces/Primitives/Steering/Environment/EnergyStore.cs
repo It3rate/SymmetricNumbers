@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Forces.Primitives.Steering.Environment;
 
-public class EnergyStore : RawNumber
+public class EnergyStore : Number
 {
 	// left side if food store, right side is energy store, zero is current state
 	public IMeasure Energy => Measures[0];

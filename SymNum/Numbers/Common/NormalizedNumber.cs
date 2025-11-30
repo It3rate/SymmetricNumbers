@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace SymNum.Numbers.Common;
 
-public class NormalizedNumber : RawNumber, IDisposable
+public class NormalizedNumber : Number, IDisposable
 {
 	public IMeasure Ref => Measures[0];
 	public IMeasure Minimum => Measures[1];

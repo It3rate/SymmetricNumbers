@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SymNum.Numbers.Common;
 
-public class InterpolatedNumber : RawNumber, IDisposable
+public class InterpolatedNumber : Number, IDisposable
 {
 	public IMeasure LeftWeight => Measures[1];
 	public IMeasure RightWeight => Measures[2];

@@ -18,7 +18,7 @@ using SymNum.Primitives;
 /// An UnbalancedNumber is a complex number where the two units do no need to be the same resolution.
 /// They still need to point in opposite directions, and the right side is still the real part.
 /// </summary>
-public class UnbalancedNumber : RawNumber
+public class UnbalancedNumber : Number
 {
     protected float _rationalValue => RightRatio.Value;
     protected float _imaginaryValue => LeftRatio.Value;

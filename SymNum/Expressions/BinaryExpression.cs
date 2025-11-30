@@ -38,8 +38,8 @@ public class BinaryExpression
 	public bool IsSet => Certainty.IsInput();
 	public BinaryExpression(INumber? first, INumber? second, BinaryOp op, INumber? result, CertaintyLevel state = CertaintyLevel.Uncertain)
 	{
-		First = first ?? RawNumber.Unknown;
-		Second = second ?? RawNumber.Unknown;
+		First = first ?? Number.Unknown;
+		Second = second ?? Number.Unknown;
 		Op = op;
         Result = result ?? new UnbalancedNumber(0,0,0,0);
         Calculate();
@@ -65,7 +65,7 @@ public class BinaryExpression
         }
         else
         {
-            Result = RawNumber.Unknown;
+            Result = Number.Unknown;
         }
         return Result;
 	}
