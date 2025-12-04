@@ -24,8 +24,8 @@ public class DecayMeasure : DynamicMeasure
 	// 2) have a clamped min/max on the measure, and the inverse is max-value.
 
 	#region MinMax
-	public IMeasure Minimum { get; set; }
-	public IMeasure Maximum { get; set; }
+	public Measure Minimum { get; set; }
+	public Measure Maximum { get; set; }
 	public long DistanceFromMinimum { get; }
 	public long DistanceFromMaximum { get; }
 	public long MinMaxLength { get; }
@@ -34,7 +34,7 @@ public class DecayMeasure : DynamicMeasure
 	#endregion
 
 	//public RationalNumber Scale { get; set; } = RationalNumber.One;
-	//   private IMeasure _position;
+	//   private Measure _position;
 	//   public override long Position
 	//   {
 	//       get => (long)(_position.Position * Scale.FloatValue) + Bias;
@@ -52,7 +52,7 @@ public class DecayMeasure : DynamicMeasure
 		Maximum = DynamicMeasure.Max(slot, num);
 		Ref.PositionChanged += OnUpdate;
 	}
-	public DecayMeasure(IMeasure reference, float decayRate, IMeasure minimum, IMeasure maximum)
+	public DecayMeasure(Measure reference, float decayRate, Measure minimum, Measure maximum)
 	{
 		Ref = reference;
 		SetPosition(reference.Position);// new Measure(pos,  CertaintyLevel.Set);
@@ -63,7 +63,7 @@ public class DecayMeasure : DynamicMeasure
 	}
 	public float Norm() => (float)(Position - Minimum.Position) / (Maximum.Position - Minimum.Position);
 	public float InvNorm => 1f - Norm();
-    public void OnUpdate(IMeasure source)
+    public void OnUpdate(Measure source)
 	{
 		// all sub refs have now updated
 		SetPositionAndInvoke(long.Clamp(Decay.Position, Minimum.Position, Maximum.Position));

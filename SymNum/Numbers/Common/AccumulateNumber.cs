@@ -9,12 +9,12 @@ namespace SymNum.Numbers.Common;
 
 public class AccumulateNumber : Number, IDisposable
 {
-	public IMeasure Ref;
-	public IMeasure RationalTotal => Measures[1];
-	public IMeasure ImaginaryCount => Measures[2];
-	public IMeasure RationalCount => Measures[3];
-	public IMeasure ImaginaryTotal => Measures[4];
-	public AccumulateNumber(IMeasure reference)
+	public Measure Ref;
+	public Measure RationalTotal => Measures[1];
+	public Measure ImaginaryCount => Measures[2];
+	public Measure RationalCount => Measures[3];
+	public Measure ImaginaryTotal => Measures[4];
+	public AccumulateNumber(Measure reference)
 	{
 		Ref = reference;
 		Measures[0] = new Measure(0); // bias
@@ -26,7 +26,7 @@ public class AccumulateNumber : Number, IDisposable
 		Ref.PositionChanged += OnReferenceUpdate;
 	}
 
-	private void OnReferenceUpdate(IMeasure measure)
+	private void OnReferenceUpdate(IMeasure<long> measure)
 	{
 		if(measure.Position >= Bias.Position)
 		{

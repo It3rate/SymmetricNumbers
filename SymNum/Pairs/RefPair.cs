@@ -12,8 +12,8 @@ namespace SymNum.Span;
 /// </summary>
 public class RefPair
 {
-	public IRefMeasure A { get; }
-	public IRefMeasure B { get; }
+	public RefMeasure A { get; }
+	public RefMeasure B { get; }
 	public Polarity Polarity { get; }
 
 	public long APos => A.PositionAs(Polarity);
@@ -26,7 +26,7 @@ public class RefPair
 	public float Ratio => APos / BPos;
 	public float Reciprocal => BPos / APos;
 
-	public RefPair(IRefMeasure a, IRefMeasure b, Polarity asPolarity)
+	public RefPair(RefMeasure a, RefMeasure b, Polarity asPolarity)
 	{
 		A = a;
 		B = b;

@@ -7,20 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public interface IRefMeasure : IMeasure, IDisposable
+public interface IRefMeasure<T> : IMeasure<T>, IDisposable
 {
 	INumber NumberRef { get; }
 	MeasureSlot Slot { get; }
-    IMeasure Ref { get; }
+	IMeasure<T> Ref { get; }
 
 	CertaintyLevel Certainty { get; }
 	bool IsInput { get; }
 	Polarity Polarity { get; }
-	IMeasure Bias { get; }
+	IMeasure<T> Bias { get; }
 
-	void OnExternalUpdate(IMeasure source);
+	void OnExternalUpdate(IMeasure<long> source);
 
-	long PositionAs(Polarity polarity) => polarity == Polarity ? Position : -Position;
+	T PositionAs(Polarity polarity);
 
 	// unary ops
 	//public void Increment();

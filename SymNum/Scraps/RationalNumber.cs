@@ -56,7 +56,7 @@ public class RationalNumber : RawNumber, IPartialNumber
          this(new Measure(value), new Measure(resolution))
     { }
     public RationalNumber(float value, long resolution) : this((long)(value * resolution), resolution) { }
-    public RationalNumber(IMeasure measure, IMeasure unit)
+    public RationalNumber(Measure measure, Measure unit)
     {
         RightMeasure = measure;
         RightUnit = unit;

@@ -19,7 +19,7 @@ public class ComplexNumber : UnbalancedNumber
     public ComplexNumber(float startPosition, float endPosition, long resolution) :
         this((long)(startPosition * resolution), (long)(endPosition * resolution), resolution)
     { }
-    public ComplexNumber(IMeasure imaginaryMeasure, IMeasure rationalMeasure, IMeasure resolution) 
+    public ComplexNumber(Measure imaginaryMeasure, Measure rationalMeasure, Measure resolution) 
     {
         Measures[0] = rationalMeasure;
 		Measures[1] = resolution; // this is 'negative' when interpreted in the rational perspective, but positive to itself.

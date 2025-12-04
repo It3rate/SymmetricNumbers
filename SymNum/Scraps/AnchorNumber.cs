@@ -35,7 +35,7 @@ namespace SymNum.Scraps
         public override void Validate()
         {
         }
-        private void OnMeasureChanged(IMeasure obj)
+        private void OnMeasureChanged(Measure obj)
         {
             bool isRight = _polarity == Polarity.FacesRight;
             var rightPos = isRight && _position > 0 ? _position : !isRight && _position < 0 ? -_position : 0;

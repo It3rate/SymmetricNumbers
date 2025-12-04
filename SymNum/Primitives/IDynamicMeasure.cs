@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace SymNum.Primitives;
 
-public interface IDynamicMeasure : IRefMeasure
+public interface IDynamicMeasure<T> : IRefMeasure<T>
 {
 	long ProposedPosition { get; }
 	/// <summary>
@@ -15,11 +15,11 @@ public interface IDynamicMeasure : IRefMeasure
 	/// </summary>
 	float Accumulator { get; }
 
-	//float CalculateChange(IMeasure source);
+	//float CalculateChange(Measure source);
 	//void UpdateState(float change);
 
-	public static IMeasure Min(IMeasure a, IMeasure b) => a.Position < b.Position ? a : b;
-	public static IMeasure Max(IMeasure a, IMeasure b) => a.Position >= b.Position ? a : b;
-	public static long MinPosition(IMeasure a, IMeasure b) => Math.Min(a.Position, b.Position);
-	public static long MaxPosition(IMeasure a, IMeasure b) => Math.Max(a.Position, b.Position);
+	public static Measure Min(Measure a, Measure b) => a.Position < b.Position ? a : b;
+	public static Measure Max(Measure a, Measure b) => a.Position >= b.Position ? a : b;
+	public static long MinPosition(Measure a, Measure b) => Math.Min(a.Position, b.Position);
+	public static long MaxPosition(Measure a, Measure b) => Math.Max(a.Position, b.Position);
 }

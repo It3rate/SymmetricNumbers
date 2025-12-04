@@ -18,7 +18,7 @@ public class Creature : ConceptSpace
 	// For now it is all manual to get the feel of it.
 	// The whole creature is a concept space, but light is also a concept space, as is brightness.
 	// Concepts are a blend of increasing abstraction starting from a number, to equations, to concepts, evironments, and ultimately worlds.
-	public IMeasure Tick { get; } = new Measure(0);
+	public Measure Tick { get; } = new Measure(0);
 
 	// In general all values have a stimulus and a supression. You are wanting to eat and wanting to diet at the same time.
 	// This maps to complex number segments, with the start and end points being supression and stimulus.
@@ -26,21 +26,21 @@ public class Creature : ConceptSpace
 	// or ratios, etc.
 
 	// inputs
-	public IMeasure MouthInput { get; }
-	public IMeasure RightEyeInput { get; }
-	public IMeasure LeftEyeInput { get; }
+	public Measure MouthInput { get; }
+	public Measure RightEyeInput { get; }
+	public Measure LeftEyeInput { get; }
 
 	// outputs
-	public IMeasure RightLegOuput { get; }
-	public IMeasure LeftLegOuput { get; }
+	public Measure RightLegOuput { get; }
+	public Measure LeftLegOuput { get; }
 
 	// stores
 	public INumber EnergyStore { get; }
-	//public IMeasure LightMin { get; }
-	//public IMeasure LightMax { get; }
-	//public IMeasure LightSlowFollow { get; }
-	//public IMeasure LightFastFollow { get; }
-	//public IMeasure ThrustRejuvinationFill { get; }
+	//public Measure LightMin { get; }
+	//public Measure LightMax { get; }
+	//public Measure LightSlowFollow { get; }
+	//public Measure LightFastFollow { get; }
+	//public Measure ThrustRejuvinationFill { get; }
 
 	// synthesis
 	public Ratio EnergyRatio { get; }
@@ -57,7 +57,7 @@ public class Creature : ConceptSpace
 	public Ratio SpeedToSatisfactionScale { get; }
 	public Ratio FoodConversionScale { get; } // external, tuned to make sim run, not based on goals or calculations
 	public Ratio MuscleBurnScale { get; } // external, tuned to make sim run, not based on goals or calculations
-	public IMeasure AmbientEnergyUse { get; } // external, tuned to make sim run, not based on goals or calculations
+	public Measure AmbientEnergyUse { get; } // external, tuned to make sim run, not based on goals or calculations
 
 	// goals
 	public INumber EnergyGoal { get; }
@@ -112,7 +112,7 @@ public class Creature : ConceptSpace
 		// probably can still follow/midpoint measures, just cant normally scale or offset them as you don't know the polarity.
 		var scale = new Ratio(1000f, 1);
 		Sight = new ComplexNumber(LeftEyeInput, RightEyeInput, eyeMax.MaxMeasure);
-		BrighterDirection = new Ratio(lightAvg, IMeasure.One);
+		BrighterDirection = new Ratio(lightAvg, Measure.One);
 
 		// a ratio number has min and max DriftMeasures, and creates a denominator with length,
 		// and a measure with position - min. It supplies both numerator and denominator to half a number.

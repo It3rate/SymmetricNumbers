@@ -10,27 +10,27 @@ namespace SymNum.Numbers.Common;
 
 public class InterpolatedNumber : Number, IDisposable
 {
-	public IMeasure LeftWeight => Measures[1];
-	public IMeasure RightWeight => Measures[2];
+	public Measure LeftWeight => Measures[1];
+	public Measure RightWeight => Measures[2];
 
 	// these are calculated measures that can be used externally in other numbers
-	public IMeasure InterpolatedRational { get; } = new Measure(0);
-	public IMeasure InterpolatedImaginary { get; } = new Measure(0);
+	public Measure InterpolatedRational { get; } = new Measure(0);
+	public Measure InterpolatedImaginary { get; } = new Measure(0);
 
-	public InterpolatedNumber(IMeasure rightMeasure, IMeasure leftWeight, IMeasure rightWeight, IMeasure leftMeasure) :
+	public InterpolatedNumber(Measure rightMeasure, Measure leftWeight, Measure rightWeight, Measure leftMeasure) :
 		base(rightMeasure, leftWeight, rightWeight, leftMeasure)
 	{
 		rightMeasure.PositionChanged += OnReferenceUpdate;
 		leftMeasure.PositionChanged += OnReferenceUpdate;
 	}
-	public InterpolatedNumber(IMeasure rightMeasure, long leftWeight, long rightWeight, IMeasure leftMeasure) :
+	public InterpolatedNumber(Measure rightMeasure, long leftWeight, long rightWeight, Measure leftMeasure) :
 		base(rightMeasure, new Measure(leftWeight), new Measure(rightWeight), leftMeasure)
 	{
 		rightMeasure.PositionChanged += OnReferenceUpdate;
 		leftMeasure.PositionChanged += OnReferenceUpdate;
 	}
 
-	private void OnReferenceUpdate(IMeasure measure)
+	private void OnReferenceUpdate(IMeasure<long> measure)
 	{
 		var wlen = (-LeftWeight.Position + RightWeight.Position);
 		var ratio = -LeftWeight.Position / (float)wlen;

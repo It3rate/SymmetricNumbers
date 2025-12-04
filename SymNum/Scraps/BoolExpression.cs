@@ -15,8 +15,8 @@ public class BoolExpression : IConstraint
     public CertaintyLevel Certainty { get; set; } = CertaintyLevel.Uncertain;
 	public virtual string Name { get; } = "";
 
-	public IMeasure First { get; set; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
-	public IMeasure Second { get; set; }
+	public Measure First { get; set; } // this is optionally a long value, a pointer to a Number and the measure, or a different ValueSample
+	public Measure Second { get; set; }
 	public TwoMeasureOp Op { get; set; }
 
 	// This can not set its own value, as the value is calculated.
@@ -28,7 +28,7 @@ public class BoolExpression : IConstraint
 	public bool BoolValue => false; // todo: Check if the result is a potential subset of the expression result
 	private bool _boolValue;
 	public bool IsSet => Certainty.HasValue();
-	public BoolExpression(IMeasure first, IMeasure second, TwoMeasureOp op, CertaintyLevel state = CertaintyLevel.Uncertain)
+	public BoolExpression(Measure first, Measure second, TwoMeasureOp op, CertaintyLevel state = CertaintyLevel.Uncertain)
 	{
 		First = first;
 		Second = second;

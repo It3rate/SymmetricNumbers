@@ -56,7 +56,7 @@ public class ImaginaryNumber : RawNumber, IPartialNumber
     { }
     public ImaginaryNumber(float value, long resolution) : this((long)(value * resolution), resolution) { }
 
-    public ImaginaryNumber(IMeasure measure, IMeasure unit)
+    public ImaginaryNumber(Measure measure, Measure unit)
     {
         LeftMeasure = measure;
         LeftUnit = unit;

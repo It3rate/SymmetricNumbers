@@ -20,7 +20,7 @@ namespace SymNum.Primitives;
 // It can have different behaviors based on direction of change, and magnitude of change.
 // It can turn on and off.
 
-public class DynamicMeasure : RefMeasure, IDynamicMeasure
+public class DynamicMeasure : RefMeasure, IDynamicMeasure<long>
 {
 	public INumber DriftScale { get; protected set; }
 	public INumber DriftOffset { get; protected set; }
@@ -35,12 +35,12 @@ public class DynamicMeasure : RefMeasure, IDynamicMeasure
 
 		Accumulator = Ref.Position;
 	}
-	public override void OnExternalUpdate(IMeasure source)
+	public override void OnExternalUpdate(IMeasure<long> source)
 	{
 		var change = CalculateChange(source);
 		UpdateState(change);
 	}
-	protected override float CalculateChange(IMeasure source)
+	protected override float CalculateChange(IMeasure<long> source)
 	{
 		var dif = source.Position - Position;
 		var change = 0f;

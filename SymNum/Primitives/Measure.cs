@@ -2,11 +2,12 @@
 using System;
 namespace SymNum.Primitives;
 
-public class Measure : IMeasure
+public class Measure : IMeasure<long>
 {
-	public event Action<IMeasure>? PositionChanged;
+	public event Action<IMeasure<long>>? PositionChanged;
 
 	public virtual long Position { get; private set; }
+	public long NegativePosition => -Position;
 	public Measure(long position)
 	{
 		SetPosition(position);
@@ -20,14 +21,17 @@ public class Measure : IMeasure
 		SetPosition(position);
 		InvokePositionChanged();
 	}
-	public (float, float) ValueRange => (0, Position);
-	public (long, long) PositionRange => (0, Position);
-	void OnUpdate(IMeasure source)
+	public virtual int Dimensions => 1;
+	public virtual int Direction => Math.Sign(Position);
+
+	//public (float, float) ValueRange => (0, Position);
+	//public (long, long) PositionRange => (0, Position);
+	void OnUpdate(IMeasure<long> source)
 	{
 		var change = CalculateChange(source);
 		UpdateState(change);
 	}
-	protected virtual float CalculateChange(IMeasure source)
+	protected virtual float CalculateChange(IMeasure<long> source)
 	{
 		var dif = source.Position - Position;
 		return dif;
@@ -40,8 +44,22 @@ public class Measure : IMeasure
 		PositionChanged?.Invoke(this);
 	}
 
-	public IOrderable CombineWith(IOrderable other, BinaryOp op)) => Expression.CreateBinary(this, other, op);
-
+	// +-*/^,mod ,bools, ==,!=,<,>,<=,>=
+	public virtual int CompareTo(object? other)
+	{
+		if (other is IMeasure<long> otherMeasure)
+		{
+			return Position.CompareTo(otherMeasure.Position);
+		}
+		else if (other is IOrderable orderedMeasure)
+		{
+			return Dimensions.CompareTo(orderedMeasure?.Dimensions);
+		}
+		else
+		{
+			throw new ArgumentException("Object is not a Measure or IOrderable");
+		}
+	}
 
 	public static bool operator ==(Measure a, Measure b)
 	{
@@ -53,7 +71,7 @@ public class Measure : IMeasure
 	}
 	public override bool Equals(object? obj)
 	{
-		if (obj is IMeasure other)
+		if (obj is IMeasure<long> other)
 		{
 			return this == other;
 		}
@@ -67,6 +85,11 @@ public class Measure : IMeasure
 	{
 		return $"m{Position}";
 	}
+
+
+
+	public static Measure Zero => new Measure(0);
+	public static Measure One => new Measure(1);
 }
 
 
@@ -79,9 +102,9 @@ public class Measure : IMeasure
 
 /*
 
-public abstract class MeasureBase : IMeasure
+public abstract class MeasureBase : Measure
 {
-	//public static readonly IMeasure Unknown = new Measure(0);
+	//public static readonly Measure Unknown = new Measure(0);
  //   public virtual CertaintyLevel Certainty { get; set; }
 	//public long Minimum { get; set; } = long.MinValue;
 	//public long Maximum { get; set; } = long.MaxValue;
@@ -131,23 +154,23 @@ public abstract class MeasureBase : IMeasure
     {
         SetPositionAndInvoke(-Position);
     }
-    public static IMeasure MaxDown()
+    public static Measure MaxDown()
 	{
-		return IMeasure.CreateExtreme(true);
+		return Measure.CreateExtreme(true);
 	}
-	public static IMeasure MinUp()
+	public static Measure MinUp()
 	{
-		return IMeasure.CreateExtreme(true);
+		return Measure.CreateExtreme(true);
 	}
-	public static IMeasure ZeroDown()
-	{
-		return new Measure(0);
-	}
-	public static IMeasure ZeroUnknown()
+	public static Measure ZeroDown()
 	{
 		return new Measure(0);
 	}
-	public static IMeasure ZeroUp()
+	public static Measure ZeroUnknown()
+	{
+		return new Measure(0);
+	}
+	public static Measure ZeroUp()
 	{
 		return new Measure(0);
 	}
@@ -160,10 +183,10 @@ public abstract class MeasureBase : IMeasure
 		return !(a == b);
 	}
 
-	public static IMeasure Min(IMeasure a, IMeasure b) => a.Position < b.Position ? a : b;
-	public static IMeasure Max(IMeasure a, IMeasure b) => a.Position >= b.Position ? a : b;
-	public static long MinPosition(IMeasure a, IMeasure b) => Math.Min(a.Position, b.Position);
-	public static long MaxPosition(IMeasure a, IMeasure b) => Math.Max(a.Position, b.Position);
+	public static Measure Min(Measure a, Measure b) => a.Position < b.Position ? a : b;
+	public static Measure Max(Measure a, Measure b) => a.Position >= b.Position ? a : b;
+	public static long MinPosition(Measure a, Measure b) => Math.Min(a.Position, b.Position);
+	public static long MaxPosition(Measure a, Measure b) => Math.Max(a.Position, b.Position);
 	//Unary operators: +, -, !, ~, ++, --, true, false. The true and false operators must be overloaded together.
 	//Binary operators: +, -, *, /, %, &, |, ^, <<, >>, >>>. These can be overloaded to perform custom operations on user-defined types.
 	//Equality and comparison operators: ==, !=, <, >, <=, >=. These must be overloaded in pairs (e.g., == and !=, < and >, <= and >=).
@@ -172,7 +195,7 @@ public abstract class MeasureBase : IMeasure
 
 	public override bool Equals(object? obj)
 	{
-		if (obj is IMeasure other)
+		if (obj is Measure other)
 		{
 			return this == other;
 		}

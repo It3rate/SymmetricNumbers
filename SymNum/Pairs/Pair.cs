@@ -8,24 +8,32 @@ using System.Threading.Tasks;
 namespace SymNum.Pairs;
 
 /// <summary>
-/// A Pair is two reference measures evaluated directly, disregarding their polarity or and value adjustments within a Number.
-/// This can be used as Numerator/Denominator pairs for part of numbers with the same polarity, but is more for use 'pre-numbers'.
+/// A pair is two points that are aware of each other. Internally they know their length, and they can start to end, or end to start.
+/// They don't internally know their direction, as that is calibrated relative to an external + or -, depending where they are.
 /// </summary>
-public class Pair
+public class Pair : IPair<Measure>
 {
-	public IMeasure A { get; }
-	public IMeasure B { get; }
+	public Measure A { get; }
+	public Measure B { get; }
+	public Measure Length => new Measure(BPos - APos);
 	public long APos => A.Position;
 	public long BPos => B.Position;
 	public (long, long) Positions => (A.Position, B.Position);
-	public int Direction => (APos > BPos) ? 1 : (APos < BPos) ? -1 : 0;
-	public long Length => BPos - APos;
-	public long Midpoint => (BPos + APos) / 2;
-	public float Ratio => APos / (float)BPos;
-	public float Reciprocal => BPos / (float)APos;
-	public Pair(IMeasure a, IMeasure b)
+
+
+	//public int Direction => (APos > BPos) ? 1 : (APos < BPos) ? -1 : 0;
+	//public long Midpoint => (BPos + APos) / 2;
+	//public float Ratio => APos / (float)BPos;
+	//public float Reciprocal => BPos / (float)APos;
+	public Pair(Measure a, Measure b)
 	{
 		A = a;
 		B = b;
+	}
+	public void Invert()
+	{
+		var atemp = A.Position;
+		A.SetPosition(B.Position);
+		B.SetPosition(atemp);
 	}
 }

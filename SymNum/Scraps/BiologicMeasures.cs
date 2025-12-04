@@ -36,23 +36,23 @@ public class MinMaxMeasure : DynamicMeasure
 	//public override long Position { get => Ref.Position; }
 	public DynamicMeasure MinMeasure { get; }
 	public DynamicMeasure MaxMeasure { get; }
-	public MinMaxMeasure(IMeasure reference, float? centerForce = null, float? edgeForce = null) : base(reference)
+	public MinMaxMeasure(Measure reference, float? centerForce = null, float? edgeForce = null) : base(reference)
 	{
 		MinMeasure = Min(reference, centerForce, edgeForce);
 		MaxMeasure = Max(reference, centerForce, edgeForce);
 	}
-	public MinMaxMeasure(IMeasure reference, IMeasure reference2, float? centerForce = null, float? edgeForce = null) :
+	public MinMaxMeasure(Measure reference, Measure reference2, float? centerForce = null, float? edgeForce = null) :
 		this(reference, centerForce, edgeForce)
 	{
 		AddReferences(reference2);
 	}
-	private List<IMeasure?> _extraReferences = new List<IMeasure?>();
-	public void AddReferences(IMeasure reference)
+	private List<Measure?> _extraReferences = new List<Measure?>();
+	public void AddReferences(Measure reference)
 	{
 		_extraReferences.Add(reference);
 		reference.PositionChanged += OnExternalUpdate;
 	}
-	public override void OnExternalUpdate(IMeasure source)
+	public override void OnExternalUpdate(Measure source)
 	{
 		MinMeasure.OnExternalUpdate(source);
 		MaxMeasure.OnExternalUpdate(source);
@@ -79,16 +79,16 @@ public class MinMaxMeasure : DynamicMeasure
 }
 public class MidpointMeasure : DynamicMeasure
 {
-	public IMeasure First => Ref;
-	public IMeasure Second { get; }
+	public Measure First => Ref;
+	public Measure Second { get; }
 	private bool _firstIsImaginary;
-	public MidpointMeasure(IMeasure first, IMeasure second, bool firstIsImaginary = true) : base(first)
+	public MidpointMeasure(Measure first, Measure second, bool firstIsImaginary = true) : base(first)
 	{
 		Second = second;
 		_firstIsImaginary = firstIsImaginary;
 		Second.PositionChanged += OnExternalUpdate;
 	}
-	public override void OnExternalUpdate(IMeasure source)
+	public override void OnExternalUpdate(Measure source)
 	{
 		var firstPosition = _firstIsImaginary ? -First.Position : First.Position;
 		var pos = (Second.Position - firstPosition) / 2 + firstPosition;
@@ -109,10 +109,10 @@ public class MidpointMeasure : DynamicMeasure
 }
 public class AccumulateMeasure : DynamicMeasure // these are probably just RefMeasures
 {
-	public AccumulateMeasure(IMeasure reference):base(reference)
+	public AccumulateMeasure(Measure reference):base(reference)
 	{
 	}
-	public override void OnExternalUpdate(IMeasure source)
+	public override void OnExternalUpdate(Measure source)
 	{
 		SetPositionAndInvoke(Position + source.Position);
 	}
@@ -131,16 +131,16 @@ public class SinCosMeasure : DynamicMeasure
 	public float Sin => throw new NotImplementedException();
 	public float Cos => throw new NotImplementedException();
 	
-	public IMeasure SpeedMeasure { get; }
+	public Measure SpeedMeasure { get; }
 	public MinMaxMeasure MinMaxPosition { get; }
 	public MinMaxMeasure MinMaxSpeed { get; }
-	public SinCosMeasure(IMeasure reference) : base(reference)
+	public SinCosMeasure(Measure reference) : base(reference)
 	{
 		MinMaxPosition = new MinMaxMeasure(this, centerForce: 0, edgeForce: 1);
 		SpeedMeasure = new Measure(0);
 		MinMaxSpeed = new MinMaxMeasure(SpeedMeasure, centerForce: 0, edgeForce: 1);
 	}
-	public static SinCosMeasure CreateWithSpeed(IMeasure reference, RawNumber bias, float speed)
+	public static SinCosMeasure CreateWithSpeed(Measure reference, RawNumber bias, float speed)
 	{
 		var result = new SinCosMeasure(reference);
 		result.Bias = bias;
@@ -148,7 +148,7 @@ public class SinCosMeasure : DynamicMeasure
 		result.SetPosition(0);
 		return result;
 	}
-	public static SinCosMeasure CreateWithStartPosition(IMeasure reference, RawNumber bias, long startPosition)
+	public static SinCosMeasure CreateWithStartPosition(Measure reference, RawNumber bias, long startPosition)
 	{
 		var result = new SinCosMeasure(reference);
 		result.Bias = bias;

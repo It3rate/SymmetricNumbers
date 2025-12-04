@@ -15,7 +15,7 @@ using SymNum.Primitives;
 /// </summary>
 public class OrientationNumber : UnbalancedNumber
 {
-    public OrientationNumber(IMeasure rightward, IMeasure leftward, IMeasure rightDegreeResolution, IMeasure leftDegreeResolution) 
+    public OrientationNumber(Measure rightward, Measure leftward, Measure rightDegreeResolution, Measure leftDegreeResolution) 
         : base(rightward, leftward, rightDegreeResolution, leftDegreeResolution)
     {
     }

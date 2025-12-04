@@ -69,8 +69,8 @@ public class Extent : IExtent // essentially a segment on an uncalibrated line
     public bool IsInteriorFacing { get; protected set; } = true;
     public bool IsExteriorFacing => !IsInteriorFacing;
 
-    protected IMeasure EndMeasure { get; private set; }
-    protected IMeasure StartMeasure { get; private set; }
+    protected Measure EndMeasure { get; private set; }
+    protected Measure StartMeasure { get; private set; }
 
     public long StartPosition => StartMeasure.Position;
     public long EndPosition => EndMeasure.Position;
@@ -100,7 +100,7 @@ public class Extent : IExtent // essentially a segment on an uncalibrated line
     public long AbsLengthInTicks => Math.Abs(LengthInTicks);
     public long NonZeroLength => LengthInTicks == 0 ? 1 : LengthInTicks;
 
-    public Extent(IMeasure start, IMeasure end)
+    public Extent(Measure start, Measure end)
     {
         StartMeasure = start;
         EndMeasure = end;
@@ -110,7 +110,7 @@ public class Extent : IExtent // essentially a segment on an uncalibrated line
         StartMeasure = extent.StartMeasure;
         EndMeasure = extent.EndMeasure;
     }
-    public virtual void Reset(IMeasure start, IMeasure end)
+    public virtual void Reset(Measure start, Measure end)
     {
         StartMeasure = start;
         EndMeasure = end;
@@ -139,14 +139,14 @@ public class Extent : IExtent // essentially a segment on an uncalibrated line
 
     public bool Touches(Extent q) => Touches(this, q);
 
-    public IMeasure MinMeasure => MeasureBase.Min(StartMeasure, EndMeasure);
-    public IMeasure MaxMeasure => MeasureBase.Max(StartMeasure, EndMeasure);
+    public Measure MinMeasure => MeasureBase.Min(StartMeasure, EndMeasure);
+    public Measure MaxMeasure => MeasureBase.Max(StartMeasure, EndMeasure);
     public long MinPosition => MeasureBase.MinPosition(StartMeasure, EndMeasure);
     public long MaxPosition => MeasureBase.MaxPosition(StartMeasure, EndMeasure);
-    public static IMeasure MinStartMeasure(Extent p, Extent q) => MeasureBase.Min(p.StartMeasure, q.StartMeasure);
-    public static IMeasure MaxStartMeasure(Extent p, Extent q) => MeasureBase.Max(p.StartMeasure, q.StartMeasure);
-    public static IMeasure MinEndMeasure(Extent p, Extent q) => MeasureBase.Min(p.EndMeasure, q.EndMeasure);
-    public static IMeasure MaxEndMeasure(Extent p, Extent q) => MeasureBase.Max(p.EndMeasure, q.EndMeasure);
+    public static Measure MinStartMeasure(Extent p, Extent q) => MeasureBase.Min(p.StartMeasure, q.StartMeasure);
+    public static Measure MaxStartMeasure(Extent p, Extent q) => MeasureBase.Max(p.StartMeasure, q.StartMeasure);
+    public static Measure MinEndMeasure(Extent p, Extent q) => MeasureBase.Min(p.EndMeasure, q.EndMeasure);
+    public static Measure MaxEndMeasure(Extent p, Extent q) => MeasureBase.Max(p.EndMeasure, q.EndMeasure);
     public static long MinExtentPosition(Extent p, Extent q) => Math.Min(p.MinPosition, q.MinPosition);
     public static long MaxExtentPosition(Extent p, Extent q) => Math.Max(p.MaxPosition, q.MaxPosition);
     public static long MinStartPosition(Extent p, Extent q) => MeasureBase.MinPosition(p.StartMeasure, q.StartMeasure);

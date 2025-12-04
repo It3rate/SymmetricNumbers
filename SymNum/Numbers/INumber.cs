@@ -45,20 +45,20 @@ namespace SymNum.Numbers;
 public interface INumber //: IOrderable
 {
 	public event Action<INumber> OnValueChanged;
-	event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
-	IMeasure[] Measures { get; }
+	event Action<Measure, Measure, MeasureSlot> MeasureChange;
+	Measure[] Measures { get; }
 
-	IRefMeasure Bias { get; }
-	IRefMeasure RightMeasure { get; }
-	IRefMeasure RightUnit { get; }
-	IRefMeasure LeftMeasure { get; }
-	IRefMeasure LeftUnit { get; }
+	RefMeasure Bias { get; }
+	RefMeasure RightMeasure { get; }
+	RefMeasure RightUnit { get; }
+	RefMeasure LeftMeasure { get; }
+	RefMeasure LeftUnit { get; }
 
 	CertaintyLevel[] Certainties { get; }
 	bool IsInput => Certainties.Any(c => c.IsInput());
-	IMeasure GetMeasureBySlot(MeasureSlot slot) =>
-		slot.IsSingleValue() ? Measures[(int)slot] : IMeasure.Zero;
-	IMeasure SetMeasureBySlot(IMeasure measure, MeasureSlot slot) =>
+	Measure GetMeasureBySlot(MeasureSlot slot) =>
+		slot.IsSingleValue() ? Measures[(int)slot] : Measure.Zero;
+	Measure SetMeasureBySlot(Measure measure, MeasureSlot slot) =>
 		slot.IsSingleValue() ? Measures[(int)slot] = measure : measure;
 	Polarity GetPolarityBySlot(MeasureSlot slot) =>
 		slot.IsLeft() ? Polarity.FacesLeft : slot.IsRight() ? Polarity.FacesRight : Polarity.Zero;
@@ -70,7 +70,7 @@ public interface INumber //: IOrderable
 	//float GetScaleBySlot(MeasureSlot slot) => slot.IsLeft() ? Scale.LeftValue : Scale.RightValue;
 
 	void SetWith(INumber number);
-	//void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure);
+	//void SetMeasures(Measure? rightMeasure, Measure? leftUnit, Measure? rightUnit, Measure? leftMeasure);
 	long RightMeasurePosition { get; }
 	long RightUnitPosition { get; }
 	long LeftMeasurePosition { get; }

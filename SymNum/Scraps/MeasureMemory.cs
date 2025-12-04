@@ -10,7 +10,7 @@ namespace SymNum.Scraps;
 public class MeasureMemory : Measure, IDisposable
 {
     public MemoryKind Kind { get; set; }
-    public IMeasure Ref { get; }
+    public Measure Ref { get; }
     public override long Position => GetPostionByKind(Kind);
     public override void SetPosition(long position)
     {
@@ -34,7 +34,7 @@ public class MeasureMemory : Measure, IDisposable
 
     private bool _isFirst = true;
 
-    public MeasureMemory(IMeasure measure, MemoryKind kind, long initialValue, int maxHistory = 5)
+    public MeasureMemory(Measure measure, MemoryKind kind, long initialValue, int maxHistory = 5)
     {
         Ref = measure;
         Kind = kind;
@@ -42,7 +42,7 @@ public class MeasureMemory : Measure, IDisposable
         SetPositionAndInvoke(initialValue);
         Ref.PositionChanged += OnUpdate;
     }
-    public void OnUpdate(IMeasure source)
+    public void OnUpdate(Measure source)
     {
         SetPositionAndInvoke(source.Position);
     }

@@ -9,15 +9,15 @@ namespace SymNum.Numbers.Common;
 
 public class NormalizedNumber : Number, IDisposable
 {
-	public IMeasure Ref => Measures[0];
-	public IMeasure Minimum => Measures[1];
-	public IMeasure Maximum => Measures[2];
-	public IMeasure LeftRef => Measures[3];
+	public Measure Ref => Measures[0];
+	public Measure Minimum => Measures[1];
+	public Measure Maximum => Measures[2];
+	public Measure LeftRef => Measures[3];
 
 	// these are calculated measures that can be used externally in other numbers
-	public IMeasure DistanceFromMinimum { get; } = new Measure(0);
-	public IMeasure DistanceFromMaximum { get; } = new Measure(0);
-	public IMeasure MinMaxLength { get; } = new Measure(0);
+	public Measure DistanceFromMinimum { get; } = new Measure(0);
+	public Measure DistanceFromMaximum { get; } = new Measure(0);
+	public Measure MinMaxLength { get; } = new Measure(0);
 
 	public bool IsMax => Ref.Position >= Maximum.Position;
 	public bool IsMin => Ref.Position <= Minimum.Position;
@@ -25,7 +25,7 @@ public class NormalizedNumber : Number, IDisposable
 	private static ComplexNumber _minTracking = new ComplexNumber(10, 0, 10);
 	private static ComplexNumber _maxTracking = new ComplexNumber(0, 10, 10);
 	private static ComplexNumber _centerTracking = new ComplexNumber(1, 1, 100);
-	public NormalizedNumber(IMeasure reference, 
+	public NormalizedNumber(Measure reference, 
 		INumber? minTracking = null, INumber? maxTracking = null, INumber? centerTracking = null)
 	{
 		Measures[0] = new DynamicMeasure(0, this, centerTracking ?? _centerTracking, null);
@@ -37,7 +37,7 @@ public class NormalizedNumber : Number, IDisposable
 
 		reference.PositionChanged += OnReferenceUpdate;
 	}
-	public NormalizedNumber(IMeasure reference, IMeasure center, IMeasure minimum, IMeasure maximum)
+	public NormalizedNumber(Measure reference, Measure center, Measure minimum, Measure maximum)
 	{
 		Measures[0] = center;
 		Measures[1] = reference;
@@ -48,7 +48,7 @@ public class NormalizedNumber : Number, IDisposable
 		reference.PositionChanged += OnReferenceUpdate;
 	}
 
-	private void OnReferenceUpdate(IMeasure obj)
+	private void OnReferenceUpdate(IMeasure<long> obj)
 	{
 		DistanceFromMinimum.SetPosition(Ref.Position - Minimum.Position);
 		DistanceFromMaximum.SetPosition(Maximum.Position - Ref.Position);

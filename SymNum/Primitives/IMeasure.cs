@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using SymNum.Expressions;
 namespace SymNum.Primitives;
 
-// Requirement: Groupings of 'IMeasure' need to be able to smoothly move between bools, enums, ints, floats, complex nums, symmetric numbs, equations, and probabilities.
+// Requirement: Groupings of 'Measure' need to be able to smoothly move between bools, enums, ints, floats, complex nums, symmetric numbs, equations, and probabilities.
 //    There are a lot of types on numbers amidst these, but that is the general trend.
 //    All of these can be represented by four Measures, a zero, and reptition (and primitive ops)
 
@@ -26,19 +26,32 @@ namespace SymNum.Primitives;
 //  bool ops can create + and - sections, but only if using the true and false results:
 //       a segment from 3->2 'and' >7 results in 7->12 (the second segment is the 'not', 3->7)
 
+// another take
+// 1 point, no location, motion, direction, length - just a point
+// 2 points gives a segment with direction and length
+// now min extra information is internally duplicate the length, to get a third point.
+//    Lengths are equal, so will be additive, like counting. Order is direction of build.
+//    Each chain can grow from either end, but only knows its seg count, it has no way of recording its direction preference (both are valid and equal)
+// if you have 2 segments (external, not required to be the same), you can attach to create a comparison (four points).
+//    This ratio is the basis of multiplication. It records a ratio by impling a new point, but can't solve for it.
+
 /// <summary>
 /// This is a measure not accessed from a number, 
 /// so it doesn't have access to things like certainty, scale, bias, min/max values, etc.
 /// Essentially it is used as a first level input and isn't manipulated directly.
+/// It is more like an unset memory location than a typed value. It has no value, but a layer above can set it's value.
 /// Ultimately types come from primary inputs, like distance/time -> speed. 
 /// Km or miles is an equation, speed is the primarires.
 /// </summary>
-public interface IMeasure : IOrderable
+public interface IMeasure<T> : IOrderable
 {
-	event Action<IMeasure> PositionChanged;
-	long Position { get; }
-	void SetPosition(long position);
-	void SetPositionAndInvoke(long position);
+	event Action<IMeasure<T>> PositionChanged;
+	T Position { get; }
+	T NegativePosition { get; }
+
+	// While the position is correct, it is calibrated externally. Internally, an Measure has no idea where it is, because it has no dimension.
+	//void SetPosition(T position);
+	//void SetPositionAndInvoke(T position);
 
 
 
@@ -46,26 +59,24 @@ public interface IMeasure : IOrderable
 
 
 
-	public static IMeasure Zero => new Measure(0);
-	public static IMeasure One => new Measure(1);
-	//public static IMeasure operator -(IMeasure a) => new Measure(-a.Position);
-	//public static IMeasure operator ++(IMeasure a) => new Measure(a.Position + 1);
-	//public static IMeasure operator --(IMeasure a) => new Measure(a.Position - 1);
-	//public abstract static bool operator ==(IMeasure a, IMeasure b);
-	//public abstract static bool operator !=(IMeasure a, IMeasure b);
+	//public static Measure operator -(Measure a) => new Measure(-a.Position);
+	//public static Measure operator ++(Measure a) => new Measure(a.Position + 1);
+	//public static Measure operator --(Measure a) => new Measure(a.Position - 1);
+	//public abstract static bool operator ==(Measure a, Measure b);
+	//public abstract static bool operator !=(Measure a, Measure b);
 
-	//public static bool operator >(IMeasure a, IMeasure b) =>  a.Position > b.Position;
-	//public static bool operator <(IMeasure a, IMeasure b) => a.Position < b.Position;
-	//public static bool operator >=(IMeasure a, IMeasure b) => a.Position >= b.Position;
-	//public static bool operator <=(IMeasure a, IMeasure b) => a.Position <= b.Position;
+	//public static bool operator >(Measure a, Measure b) =>  a.Position > b.Position;
+	//public static bool operator <(Measure a, Measure b) => a.Position < b.Position;
+	//public static bool operator >=(Measure a, Measure b) => a.Position >= b.Position;
+	//public static bool operator <=(Measure a, Measure b) => a.Position <= b.Position;
 
-	//public static IMeasure operator +(IMeasure a, IMeasure b) => new Measure(a.Position + b.Position);
+	//public static Measure operator +(Measure a, Measure b) => new Measure(a.Position + b.Position);
 
-	//public static IMeasure operator -(IMeasure a, IMeasure b) => new Measure(a.Position - b.Position);
+	//public static Measure operator -(Measure a, Measure b) => new Measure(a.Position - b.Position);
 
-	//public static IMeasure operator *(IMeasure a, IMeasure b) => new Measure(a.Position * b.Position);
+	//public static Measure operator *(Measure a, Measure b) => new Measure(a.Position * b.Position);
 
-	//public static IMeasure operator /(IMeasure a, IMeasure b)
+	//public static Measure operator /(Measure a, Measure b)
 	//{
 	//	if (b.Position == 0)
 	//	{

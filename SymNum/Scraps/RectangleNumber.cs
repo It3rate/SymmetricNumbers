@@ -11,7 +11,7 @@ namespace SymNum.Scraps;
 public class RectangleNumber : ComplexNumber
 {
     private INumber _numberRef;
-    public override IMeasure[] Measures => _numberRef.Measures;
+    public override Measure[] Measures => _numberRef.Measures;
     Ratio Length => _numberRef.LeftRation();
     Ratio Width => _numberRef.RightRatio();
     public BinaryExpression? Area { get; }

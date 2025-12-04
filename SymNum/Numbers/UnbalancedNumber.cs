@@ -37,7 +37,7 @@ public class UnbalancedNumber : Number
 		Measures[3] = new Measure(imaginary ?? 0);
         Initialize();
     }
-    public UnbalancedNumber(IMeasure rational, IMeasure imaginaryResolution, IMeasure rationalResolution, IMeasure imaginary) :
+    public UnbalancedNumber(Measure rational, Measure imaginaryResolution, Measure rationalResolution, Measure imaginary) :
         base(rational, imaginaryResolution, rationalResolution, imaginary)
     {
         Initialize();

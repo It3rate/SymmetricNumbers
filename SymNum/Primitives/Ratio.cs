@@ -20,8 +20,8 @@ namespace SymNum.Primitives;
 public class Ratio : Number
 {
 	// Q. Could have one of numerator, denomonator or Value being calculated. Allows storing float as source of truth.
-	public IRefMeasure Numerator => IsImaginaryPart ? LeftMeasure : RightMeasure;
-	public IRefMeasure Denominator => IsImaginaryPart ? LeftUnit : RightUnit;
+	public RefMeasure Numerator => IsImaginaryPart ? LeftMeasure : RightMeasure;
+	public RefMeasure Denominator => IsImaginaryPart ? LeftUnit : RightUnit;
 	public Polarity Polarity { get; }
 	public float Value
 	{
@@ -34,12 +34,12 @@ public class Ratio : Number
 	public float ValueOrOne => Denominator.Position != 0 && Numerator.Position != 0 ? Value : 1f;
 	public void MapToValue(float value) => Numerator.SetPositionAndInvoke((long)(value * Denominator.Position));
 	public float ValueForPolarity(Polarity polarity) => Polarity.IsMirror(polarity) ? -Value : Value;
-	public Ratio(IRefMeasure numerator, IRefMeasure denominator, Polarity polarity = Polarity.FacesRight)
+	public Ratio(RefMeasure numerator, RefMeasure denominator, Polarity polarity = Polarity.FacesRight)
 		: base(
-			polarity.IsNotImaginary() ? numerator : IMeasure.Zero,
-			polarity.IsNotImaginary() ? IMeasure.Zero : denominator,
-			polarity.IsNotImaginary() ? denominator : IMeasure.Zero,
-			polarity.IsNotImaginary() ? IMeasure.Zero : numerator
+			polarity.IsNotImaginary() ? numerator : Measure.Zero,
+			polarity.IsNotImaginary() ? Measure.Zero : denominator,
+			polarity.IsNotImaginary() ? denominator : Measure.Zero,
+			polarity.IsNotImaginary() ? Measure.Zero : numerator
 		)
 	{
 		Polarity = polarity;
@@ -62,7 +62,7 @@ public class Ratio : Number
 	//public static Ratio One => new Ratio(_highRes, _highRes);
 	//public static Ratio HighResNumber(float num, Polarity polarity = Polarity.FacesRight) => new Ratio((long)(_highRes * num), _highRes, polarity);
 
-	//public static float GetValue(IMeasure numerator, IMeasure denominator)
+	//public static float GetValue(Measure numerator, Measure denominator)
 	//{
 	//	var result = 0f;
 	//	// todo: Need to apply the math of uncertaintly to generate a range or probability distribution.
@@ -76,7 +76,7 @@ public class Ratio : Number
 	//	}
 	//	return result;
 	//}
-	//public static bool SetValue(IMeasure numerator, IMeasure denominator, float value)
+	//public static bool SetValue(Measure numerator, Measure denominator, float value)
 	//{
 	//	var result = false;
 	//	if (numerator.IsFullDefined && denominator.IsFullDefined && denominator.Position != 0)

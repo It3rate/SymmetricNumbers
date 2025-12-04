@@ -11,10 +11,10 @@ namespace Forces.Primitives.Steering.Environment;
 public class EnergyStore : Number
 {
 	// left side if food store, right side is energy store, zero is current state
-	public IMeasure Energy => Measures[0];
-	public IMeasure FoodMax => Measures[1];
-	public IMeasure EnergyMax => Measures[2];
-	public IMeasure Food => Measures[3];
+	public Measure Energy => Measures[0];
+	public Measure FoodMax => Measures[1];
+	public Measure EnergyMax => Measures[2];
+	public Measure Food => Measures[3];
 	public EnergyStore(long foodMax, long energyMax)
 	{
 		Measures[0] = new Measure(energyMax / 2); // energy

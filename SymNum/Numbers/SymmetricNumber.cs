@@ -67,7 +67,7 @@ public class SymmetricNumber : Number
         Measures[2] = new Measure(br);
         Measures[3] = new Measure(bl);
     }
-	public SymmetricNumber(IMeasure tr, IMeasure tl, IMeasure br, IMeasure bl)
+	public SymmetricNumber(Measure tr, Measure tl, Measure br, Measure bl)
 	{
 		Measures[0] = tr;
 		Measures[1] = tl;

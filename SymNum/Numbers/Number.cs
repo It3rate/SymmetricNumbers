@@ -37,7 +37,7 @@ namespace SymNum.Numbers;
 public class Number : INumber
 {
 	public event Action<INumber> OnValueChanged;
-	public event Action<IMeasure, IMeasure, MeasureSlot> MeasureChange;
+	public event Action<Measure, Measure, MeasureSlot> MeasureChange;
 	public static Number Unknown => new Number();
 	public static Number Zero => new Number(0, 1, 1, 0);
 	public static Number One => new Number(1, 1, 1, 1);
@@ -52,22 +52,22 @@ public class Number : INumber
 	// B | A   // A/D forms the real part, and C/B the imaginary part
 	// C | D   // this is so the whole quad can be rotated 180 and show the same values for the i perspective.
 	// zero point is E
-	public virtual IMeasure[] Measures { get; } = new IMeasure[5];
-	private IMeasure _bias => Measures[0]; // (int)MeasureSlot.Zero
-	private IMeasure _rightMeasure => Measures[1]; //(int) MeasureSlot.RightMeasure
-	private IMeasure _leftUnit => Measures[2]; //(int) MeasureSlot.LeftUnit
-	private IMeasure _rightUnit => Measures[3]; //(int) MeasureSlot.RightUnit
-	private IMeasure _leftMeasure => Measures[4]; //(int) MeasureSlot.LeftMeasure
+	public virtual Measure[] Measures { get; } = new Measure[5];
+	private Measure _bias => Measures[0]; // (int)MeasureSlot.Zero
+	private Measure _rightMeasure => Measures[1]; //(int) MeasureSlot.RightMeasure
+	private Measure _leftUnit => Measures[2]; //(int) MeasureSlot.LeftUnit
+	private Measure _rightUnit => Measures[3]; //(int) MeasureSlot.RightUnit
+	private Measure _leftMeasure => Measures[4]; //(int) MeasureSlot.LeftMeasure
 
 
 	public CertaintyLevel[] Certainties { get; } = new CertaintyLevel[5];
 	public Polarity[] Directions { get; } = {Polarity.Zero, 
 		Polarity.FacesRight, Polarity.FacesLeft, Polarity.FacesLeft, Polarity.FacesRight };
-	public virtual IRefMeasure Bias { get; }
-	public virtual IRefMeasure RightMeasure { get; }
-	public virtual IRefMeasure RightUnit { get; }
-	public virtual IRefMeasure LeftMeasure { get; }
-	public virtual IRefMeasure LeftUnit { get; }
+	public virtual RefMeasure Bias { get; }
+	public virtual RefMeasure RightMeasure { get; }
+	public virtual RefMeasure RightUnit { get; }
+	public virtual RefMeasure LeftMeasure { get; }
+	public virtual RefMeasure LeftUnit { get; }
 	public Ratio LeftRatio { get; }
 	public Ratio RightRatio { get; }
 
@@ -85,7 +85,7 @@ public class Number : INumber
 		this(new Measure(tr), new Measure(tl), new Measure(br), new Measure(bl))
     {
 	}
-	protected Number(IMeasure rightMeasure, IMeasure leftUnit, IMeasure rightUnit, IMeasure leftMeasure)
+	protected Number(Measure rightMeasure, Measure leftUnit, Measure rightUnit, Measure leftMeasure)
 	{
 		Measures[0] = new Measure(0);
 		Measures[1] = rightMeasure;
@@ -114,7 +114,7 @@ public class Number : INumber
         Array.Copy(number.Measures, Measures, Measures.Length);
     }
 
-	public IMeasure GetMeasureBySlot(MeasureSlot slot) => (slot) switch
+	public Measure GetMeasureBySlot(MeasureSlot slot) => (slot) switch
 	{
 		MeasureSlot.Zero => Bias,
 		MeasureSlot.RightMeasure => RightMeasure,
@@ -138,7 +138,7 @@ public class Number : INumber
 		Validate();
 		OnValueChanged?.Invoke(this);
 	}
-	//public void SetMeasures(IMeasure? rightMeasure, IMeasure? leftUnit, IMeasure? rightUnit, IMeasure? leftMeasure)
+	//public void SetMeasures(Measure? rightMeasure, Measure? leftUnit, Measure? rightUnit, Measure? leftMeasure)
 	//{
 	//	if (rightMeasure != null) { RightMeasure.SetPosition(rightMeasure.Position); }
 	//	if (leftUnit != null) { LeftUnit.SetPosition(leftUnit.Position); }
@@ -221,7 +221,7 @@ public class Number : INumber
         throw new NotImplementedException();
     }
 
-    public IMeasure MeasureFromIndex(int index)
+    public Measure MeasureFromIndex(int index)
 	{
 		if (index < 0 || index >= Measures.Length)
 		{
@@ -287,8 +287,8 @@ public class Number : INumber
 	//	}
 	//}
 
-    //public static bool GetBool(IMeasure a, IMeasure b,)
-    public static float GetValue(IMeasure numerator, IMeasure denominator)
+    //public static bool GetBool(Measure a, Measure b,)
+    public static float GetValue(Measure numerator, Measure denominator)
     {
         var result = 0f;
         // todo: Need to apply the math of uncertaintly to generate a range or probability distribution.
@@ -303,7 +303,7 @@ public class Number : INumber
         }
         return result;
     }
-    public static bool SetValue(IRefMeasure numerator, IRefMeasure denominator, float value)
+    public static bool SetValue(RefMeasure numerator, RefMeasure denominator, float value)
     {
         var result = false;
         if (denominator.Position != 0)
