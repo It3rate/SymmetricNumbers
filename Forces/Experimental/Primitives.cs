@@ -8,16 +8,99 @@ using System.Threading.Tasks;
 
 namespace Forces.Experimental;
 
-public interface Level<TSelf, T>
-	where TSelf : Level<TSelf, T>
+public interface ILevel0<TSelf, T> // point with no internal information
+	where TSelf : ILevel0<TSelf, T>
 {
-	delegate T Transform(T b, T a);
-	record TransformRecord(TSelf self, Transform Transform);
+	int[] Type {get;} // [0]->scalar, [0,0]scalar expression [0,A]->scaled unit [A,A]->acceleration [A,B]->area [A,B,C]->volume
+	T Zero { get; }
+	TSelf Self { get; }
+}
+public interface ILevel1<TSelf, T> : ILevel0<TSelf, T>// A zero based segment made from a point with a zero relation
+	where TSelf : ILevel1<TSelf, T>
+{
+	T Length { get; }
+	// can invert
+	delegate T UnaryTransform(T a); // transforms probably have a count based on the unit count, rather than unary and binary?
+	record UnaryTransformRecord(TSelf self, UnaryTransform Transform);
+	T ApplyTransform(UnaryTransformRecord record, int count = 1); // A transform is always a loss, as it combines two inputs into one
+	(TSelf, TSelf) Decompose(T combo);// this needs to also handle repeats, that is probably on the unit. This clarifies the loss when compared with original input.
+}
+public interface ILevel2<TSelf, T> : ILevel1<TSelf, T>// A ratio or area, formed by a segment with another segment relation
+	where TSelf : ILevel2<TSelf, T>
+{
+	T Numerator { get; }
+	// attached at zeros (otherwise is just Level1 repeat, which is addition and subtraction)
+	// can be orthogonal area (b*a), or parallel ratio (b/a)
+	delegate T BinaryTransform(T a);
+	record BinaryTransformRecord(TSelf self, BinaryTransform Transform);
+	T ApplyBinaryTransform(BinaryTransformRecord record, int count = 1);
+}
+class L0 
+{
+	public long Position { get; protected set; } // random position
+	public L0 Self => this;
+}
+class L1 : ILevel1<L1, L0>
+{
+	private class L0_1 : L0
+	{
+		public L0_1(long position) {  Position = position; }
+		public void SetPosition(long position) { Position = position; }
+	}
+	public L0 Zero { get; }
+	public L0 Length => _length;
+
+	private L0_1 _length;
+	public long LengthValue
+	{
+		get => _length.Position - Zero.Position;
+		protected set => new L0_1(value + Zero.Position);
+	}
+	public L1 Self => this;
+	public L1(L0 zero, long position)
+	{
+		Zero = zero;
+		LengthValue = position;
+	}
+
+	public L0 ApplyTransform(ILevel1<L1, L0>.UnaryTransformRecord record, int count = 1)
+	{
+		throw new NotImplementedException();
+	}
+}
+class L2 : ILevel2<L2, L1>
+{
+	public L1 Numerator => throw new NotImplementedException();
+
+	public L1 Length => throw new NotImplementedException();
+
+	public L1 Zero => throw new NotImplementedException();
+
+	public L2 Self => throw new NotImplementedException();
+
+	public L1 ApplyBinaryTransform(ILevel2<L2, L1>.BinaryTransformRecord record, int count = 1)
+	{
+		throw new NotImplementedException();
+	}
+
+	public L1 ApplyTransform(ILevel1<L2, L1>.UnaryTransformRecord record, int count = 1)
+	{
+		throw new NotImplementedException();
+	}
+}
+public interface ILevel<TSelf, T>
+	where TSelf : ILevel<TSelf, T>
+{
+	delegate T UnaryTransform(T a);
+	delegate T BinaryTransform(T b, T a);
+	record TransformRecord(TSelf self, BinaryTransform Transform);
 	T A { get; }
 	T B { get; }
 	TSelf Self { get; }
+	T ApplyTransform(TransformRecord record);
+	T ApplyTransform(TransformRecord record, int count);
 }
-public interface IInvertable<TSelf, T> : Level<TSelf, T>
+public interface IInvertable<TSelf, T> : ILevel<TSelf, T>
 	where TSelf : IInvertable<TSelf, T>
 {
 	TSelf Inverse { get; }
@@ -60,7 +143,7 @@ public interface Level1 : IDiffable<Level1, Level0>
 	//Level0 B { get; }
 	//TransformRecord Diff => new(B, A, Subtract);
 	//Level0 DiffCalc => Subtract(B, A);
-	//Level1 Reverse();
+	//Level1 Inverse();
 	//Level0 Subtract(Level0 b, Level0 a);
 }
 public interface Level1Series : Level1
