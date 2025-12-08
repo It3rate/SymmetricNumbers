@@ -8,6 +8,13 @@ using System.Threading.Tasks;
 
 namespace Forces.Experimental;
 
+// Q. are transforms new at each level, or is there conceptual continuity?
+// Like length vs area vs volume, is this all 'space filling'?
+// Is multiplication a subset of 'projection'? Like on a segment, project start to end point, and
+// an area just projection of one segment onto another (where an acceleration is that same, just using identical units, or ratio using scalars)?
+// If so, what are the primitive transforms, and are there transforms that disprove this idea?
+// compose/decompose, repeat, invert, collect, project
+
 public interface ILevel0<TSelf, T> // point with no internal information
 	where TSelf : ILevel0<TSelf, T>
 {
@@ -23,7 +30,7 @@ public interface ILevel1<TSelf, T> : ILevel0<TSelf, T>// A zero based segment ma
 	delegate T UnaryTransform(T a); // transforms probably have a count based on the unit count, rather than unary and binary?
 	record UnaryTransformRecord(TSelf self, UnaryTransform Transform);
 	T ApplyTransform(UnaryTransformRecord record, int count = 1); // A transform is always a loss, as it combines two inputs into one
-	(TSelf, TSelf) Decompose(T combo);// this needs to also handle repeats, that is probably on the unit. This clarifies the loss when compared with original input.
+	T[] Decompose();// this needs to also handle repeats, that is probably on the unit. This clarifies the loss when compared with original input.
 }
 public interface ILevel2<TSelf, T> : ILevel1<TSelf, T>// A ratio or area, formed by a segment with another segment relation
 	where TSelf : ILevel2<TSelf, T>
@@ -42,6 +49,7 @@ class L0
 }
 class L1 : ILevel1<L1, L0>
 {
+	public int[] Type { get; }
 	private class L0_1 : L0
 	{
 		public L0_1(long position) {  Position = position; }
@@ -57,6 +65,7 @@ class L1 : ILevel1<L1, L0>
 		protected set => new L0_1(value + Zero.Position);
 	}
 	public L1 Self => this;
+
 	public L1(L0 zero, long position)
 	{
 		Zero = zero;
@@ -67,9 +76,15 @@ class L1 : ILevel1<L1, L0>
 	{
 		throw new NotImplementedException();
 	}
+
+	public L0[] Decompose()
+	{
+		throw new NotImplementedException();
+	}
 }
 class L2 : ILevel2<L2, L1>
 {
+	public int[] Type { get; }
 	public L1 Numerator => throw new NotImplementedException();
 
 	public L1 Length => throw new NotImplementedException();
@@ -84,6 +99,10 @@ class L2 : ILevel2<L2, L1>
 	}
 
 	public L1 ApplyTransform(ILevel1<L2, L1>.UnaryTransformRecord record, int count = 1)
+	{
+		throw new NotImplementedException();
+	}
+	public L1[] Decompose()
 	{
 		throw new NotImplementedException();
 	}
