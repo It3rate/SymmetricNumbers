@@ -9,7 +9,7 @@ namespace Forces.Experimental;
 public interface Measure
 {
 	Op Operation { get; } // project, decompose, invert
-	Type Type { get; }
+	TypeInfo Type { get; }
 	int Unit { get; }
 	//int Repeat;
 	//int Param; // the parameter is just a repeat count of the unit, a power is the repeat count of the op 
@@ -35,7 +35,7 @@ public interface Op
 	// alternately, if you collect elements together without composing them
 	Measure Compose(params Measure[] measures);// if inverted decompose
 }
-public interface Type
+public interface TypeInfo
 {
 	// A type is always 'one' thing, if part of it moves, all of it moves. When combined with a second thing, it becomes a new 'one' thing.
 	// the combination can increase the type count (decompose), decrease it (compose), or keep it the same (+,-, invert) 
@@ -96,6 +96,7 @@ scalars can be considered the same type (add) or different (multiply) - they hav
  - the difference doesn't have to be specified for the equation to work though, so it can be assumed I guess? It is implied in the result type, except in scalar mult.
  - perhaps there needs to be a marker, or the combine has an 'as the same type' indicator.
  - or a scalar*scalar results in the type scalars per scalar, or scalar^2. It might make sense to track that for interpretation.
+ - you can only multiply a scalar with a unit, not add. So maybe multiplying 2 scalars is just addition to a power (repeated) vs multiply
 Q. if constructed via duplication it has to add, if separate found/created things, it multiplies.
 accelleration is m/s^2 - the seconds here are distinct as the 1st is the elapsed seconds and the 2nd is the measured second. It allows non zero measure points.
 
@@ -110,5 +111,54 @@ complex numbers are 4 unconsolidated types. All the math is done without ever co
  
 Similar things are similar across levels. Like 2m and 2m are more similar than 3m and 2m, because the unit (L2) is the same in both, but the length (L1) is different in the latter.
 L0 same position, L1 same lengths, L2 same ratio/areas. Assuming a pair of L2s, areas the same, but lw is different. Or lw same but position different.
+
+Any algebraic equation is a numbering system. The rule is it can't be further broken down or added to without becoming something else.
+A numbering system is 'at least' one free variable, and a new result whenever it changes. 
+Rational numbers are A/B, both can change, they can be squared etc, but the equation doesn't change.
+Complex numbers are Ai/B + Cr/B (Q. is this the same numbers as quadrant math? Should be, just i is vertical and areas have polarity, A. yes, but no subtract in the multiply)
+
+Like properties can multiply, but they must be distinguishable. This is often a spatial or temporal distinction. But there are others.
+ - m^2 is spatial (directional)
+ - ms^2 is temporal (a sequence, one calculation based on the previous calculation)
+ - countable objects can not be merged, so you can imagine 3 apples times 4 apples being a grid of 12 apples (this is actually repeated addition though)
+ - ranges pulled from a higher dimension are the same 'stuff' but can be multiplied. 
+		A color space is 3D, but a color range is 1D, so you can multiply ranges to get areas. E.g. a blend of blue to white can mix with
+		a blend of red to yellow, and create an area of possible color.The ranges are 1D paths through the 3D color space. They are the same type,
+		with different paths. Perhaps this could be considered different locations, but ultimately location diff is always sub parts of a higher dimensional space.
+		Q. So perhaps the only way two 'like' types can multiply is if it is done by the higher space?
+
+Properties can always be merged, but in the countable case, the definition relies on properties being in certain ranges, so it will destroy the definition.
+1+1 apples does not make a larger apple, but it could. If you smush them together as applesauce, you get more applesauce with each apple you add.
+Merging is always 1<->1=1, and splitting is always 1=1<->1. We define objects by ranges of their unmerged properties.
+Apples are red on the outside and white on the inside. You can merge those in the full range of the skin to core space, but you'll no longer have an apple.
+
+Addition is 1+1=1, multiplication is 1x1=1, subtraction is 1=1+1, division is 1=1*1. lines merged with lines create a single thing, whether an area or a longer line.
+These are all the same op, and only with units (denominators) can you get values. 
+7m/1m is scalar 7, but 'seven meters' as we think of it is the uncomposed 7m/1m. The 1m is essential to determine the 7ness of the compared length.
+That's why measures need to be rational numbers, they always have a numerator and denominator of the same type, and they can't be composed.
+Number systems need to be algebraic expressions that are not composable, otherwise they lose their meaning.
+The denominator type has to be in the numerator type somewhere, otherwise the result it null. 
+Dividing a type by a scalar is null, only scalar/scalar is ok.
+
+
+A case to consider, two perpendicular lines can be an 'L' path or an area, depending if they are added or multiplied. 
+For paths, they are tip to tail, for areas they are connected at the start point.
+In this system, the path version would have to be the same type, therefore only 'addable'. Areas would be different types.
+Addable lines would potentially need to move to align, whereas areas would need to both move and rotate.
+If the lines were curved, they would probably also need to be straightend for area. 
+This is because area is combining lengths, it isn't a geometry thing. Multiplication combines two continuous properties, so it isn't rotating etc, it is just extracting a property..
+Addition combines two discrete objects, so there is no transform. Really you are adding lengths as well (the reason a line isn't two points is it defines a length, not points).
+So the idea that the lines are curved means they are viewed and encoded in a higher dimensional space. 
+If they are just lengths defined by two points, they don't know about their curvature, and can only interpret themselves as lengths.
+Any adding or multiplying is done in the space they exist in, which is length only.
+To say a connection of two points is anything more than a length is just an error, as that requires more than two points.
+There are number systems that handle curves (with more points) and they have addition and multiplication rules of their own.
+(Q. symmetric numbers feel like the fit here, but can those work intuitively as areas too? 
+Maybe human intuition requires a crude transformation to familiar spaces to be useful.)
+
+If you join orthogonal points tip to tail (add) for each, you get a rectangle (area) when attaching the zero points.
+You get a volume by attaching two mirrored rects at the zero point if one is rotated 90 degrees.
+These both allow the start point and end point to be in mirrored corrdinate systems.
+This seems right, as every space needs a start and end to exist in it's wrapper space, regardless of it's complexity.
 
  */
