@@ -161,4 +161,54 @@ You get a volume by attaching two mirrored rects at the zero point if one is rot
 These both allow the start point and end point to be in mirrored corrdinate systems.
 This seems right, as every space needs a start and end to exist in it's wrapper space, regardless of it's complexity.
 
+Area defines the space, but to create shapes in it you need multiple segments in it. 
+These segments only create an enclosed area when satisfy certain constraints. 
+Q How can these be defined to always have a valid area? Or does this matter? Like total vertical and horizontal motion must equal zero?
+
+Also, how can these measures be 'smarter'? A good start might be to always heal into an enclosed area.
+
+What if.
+When you create a space, you combine to elements in an existing space, but use variables instead of merging them. (Ai+B)
+* This isn't something that creates a line/area/volume -- it allows you to define points in this new space.
+* These points you define are ordered, and they have new levels of metadata.
+So two points become a line space. This allows positioning a point on the line, and the point is 'weighted' base on how much line is on each side.
+Segments in a complex line are positioned at their midpoint, and the length determines their 'strength' or weight, or certainty etc.
+Areas in 2D complex grids are diamond shaped, but again, this is the 'weight' of the center point, not the area. Same with volumes.
+The advantage of this is there are now many ways to define the same point. 
+This makes 'smart' points possible, because they can make choices without changing locations, and their values are flexible based on other input.
+** You can not have a smart point if it has only one possible configuration in its required position.
+This could also allow bezier style acceleration and curves, based on the weight of the points.
+This could make shapes always be valid, as the shape is defined as the enclosing of the points, 
+and that happens automatically when point count >- shape dimension, because the points are ordered so there is no abiguity.
+
+todo: Check if contraditions in spaces map to contratictions in symmetric numbers causing new dimensions.
+e.g. tip to tail is addition, but a line that is defined with two start points (impossible), or start and end in the same spot (can be forbidden?)
+would mean it breaks into a new dimension. Like two resaturants in the same location on a map suggests a multi story building.
+in complex numbers this could be when e.g. both units are positive. Maybe the symmetric breaking cases need to look at polarity of units for the break.
+
+You don't use the complex plane to create rectangles. Those rectangles help isolate a location with metadata, but it is still a location.
+A location in 3D always has a volume, in 2D always has an area, and 1D always has a length. It can be small, but not zero (or it would be a lower dimension)
+
+When creating points in a space by statistical centers (midpoint, center of area, 4 point volumes, etc), the excess data gives
+flexibility and choice to the layer's object. 
+Intelligence needs redundancy to give it room to move.
+This metadata can also come from above or below, like an area space trying to align 3 shapes.
+The negotiation of properties from all these forces will adjust the element, and then the new pressures are calculated and iterated.
+* You can precisely precalculate things, or you can loosely iterate with intelligence, but you can't have both.
+
+Every layer space can create/record elements in its space, but it can also have opinions about the pattern those should be in.
+A line can create segments, but it can also want those segments to be evenly spaced.
+This pattern ultimately comes from experience, as it tries to map its elements into patterns that give it stability.
+The nudges to a space can also come from above or below, like a volume space trying to align 4 areas.
+The volume can communicate with the area or line space by collapsing volumes to those spaces, and appending those desires to the local computations.
+Collapsing and expanding always has 'rules', as information is going to be lost or invented, forcing choices.
+Rules to expand or collapse are more mechanical though, and have normalish defaults (collapse an area to its center point etc).
+There isn't necessarily a conversion that happens between layers. An area looks like a line to the layer below, and a line looks like a thin area to the area layer.
+A point layer will see a volume as a point, as that is all it can see. Like a city on a map is a point. There is a collapse, but it is mechanical.
+Layers can only interpret elements from their own perspective, but it doesn't mean other layers are invisible.
+Patterns however are varied, and dependent on the domain they represent. Symmetry is good in a balancing system, but bad in a escalation.
+These patterns ultimately are represented by equations of some sort, which are in reality just numbering systems of their own.
+Each layer can have its own patterns, and the directionaly is two way.
+The only rule is the layer can only have patterns and knowledges of its own layer, it can only broadcast its desires to others.
+
  */
