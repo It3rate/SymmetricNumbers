@@ -208,7 +208,74 @@ A point layer will see a volume as a point, as that is all it can see. Like a ci
 Layers can only interpret elements from their own perspective, but it doesn't mean other layers are invisible.
 Patterns however are varied, and dependent on the domain they represent. Symmetry is good in a balancing system, but bad in a escalation.
 These patterns ultimately are represented by equations of some sort, which are in reality just numbering systems of their own.
-Each layer can have its own patterns, and the directionaly is two way.
+Each layer can have its own patterns, and the directionaly is two way. The same pattern can be interpreted by each layer in its own way.
 The only rule is the layer can only have patterns and knowledges of its own layer, it can only broadcast its desires to others.
 
+
+if a space can encode place, size and direction, there needs to be multiple ways create those properties in the space. 
+Like if the position of an area is the center, there are a lot of ways to create that position 
+(with different sized/shaped areas can have the same center). 
+There is also lot of ways to represent a size (at any location, any shape). 
+You can't expect a layer to be 'smart' without giving them options on how to accommodate requests, 
+so this redundancy is actually a key feature. 
+Like using XYZ to create a 3D point gives no options, but if the location is the center of a box in 3D space, then there are choices.
+Layers have to be over-specified to have agency. 
+
+In geometric terms, each complexity layer (points->lines->area->volume) can only create and see elements of it's type, 
+but it sees them as weighted positions in its space (size and place) with direction (start and end). 
+Two points that are separable (impossible in the point space) create a line, 
+two identical lines of different length (also impossible) create an area space (rotating off the line changes the length),
+two identical areas of different size must be orthogonal to create a volume space etc.
+In volume, you now have 4 points to create volumes in this space (and 4 more to move the center point around), rather than 3. 
+This means you can create and encode positions in 3D space in many ways, and they not only have different behavior,
+but they affect the adjacent complexity spaces differently. 
+You can imagine using 'area points' in 2D to create area splines (e.g. smaller area means sharper corners)
+no matter what you do you will always have an area in this space because your 'points' are areas.
+Even an area of zero volume is an area, as it still has the concept of volume - 
+just it is more trivial to convert to a zero length line, or point. 
+1D spaces see area as a line (point and a length), and as they push around elements in the line space,
+it affects whatever 3D space the lines are related to.
+Volumes in the 3D layer have no idea if they were made of polylines, circles or rectangles, as they only have a place and volume. 
+This makes it easy to treat that complex layer as a simple point layer, and you can start from there. 
+So there is upward pressure, downward pressure, and any level can be considered the lowest 'point' 0D level.
+
+The trick is the position of something ultimately depends on all of these layers at once. 
+An area may want to be larger, and that puts pressure on the lines that made it, 
+and if a line wants to be longer it puts pressure on the points below and shape above. 
+The 'want' here is to satisfy a pattern. 
+E.g. 'evenly spaced' or 'ordered by size', or 'symmetrical around the center' etc.
+These patterns are able to be expressed in each layer in their own way 
+(maybe akin the the bioelectric signals being able to work across many layers of complexity). 
+And these patterns are independent of layers, they come from logic, order, memory, and ultimately experience in the environment. 
+Like, when things are evenly spaced, the element lasts longer, so evenly spaced things dominate that environment. 
+Or when contract and expand happens in a certain pattern based on light input, an organism moves toward food. 
+Or when bolt elements are distributed in a circular pattern, the stress on them decreases and their volume pressures subside,
+which in turn causes their cost to decrease. Across many layers of interest.
+
+
+In 3D, the two points that form the corner of the cube are center points of the areas. 
+The areas are constructed with two midpoints points of the line segments. The lines are centers of the two points (eg the points).
+The layer above only sees the layer below as points.
+Q. Does it make sense to use the zero points, and allow offset sizes? 
+The size would be created and moved in separate steps this way, and the moved location is the 'point' the above area sees.
+I guess the layer above could query size, location, center of mass etc?
+
+Motion is interpreted within a range. A fly on a train ignores the train, earth, sun motion, as well as the molecules, swatter kinetics etc.
+This allows a linear computable range to work in, and ignoring things that are too distant, complex (cancelling) or scaled to be relevant.
+
+Acceleration or area indicates one value affecting another. This is a product. You can have multiple products at once (eg volume)
+A branch is an additive combination. There are multiple values that combine, but they don't affect each other.
+Logic is boolean combination. These are non-linearities in equations, and can move up or down levels. (2 segments -> 0, 1 or 2 segment result)
+The last op is random/unknown/don't care, and most calcualtions have some portion of this. 
+
+Q. Does the line level or the area level determine the shape?
+- The line level does not have to be linear, just a path. So a polyline that eventually connects to itself has some say (eg number of sides)
+- Only the area level can see the overall size and shape.
+- To turn a rombus into a square, the line level needs to make the sides equal lengths, and the area level needs to make the angles the same?
+- The line level could add two ghost diagonals and try to equalize them, but that makes it higher dimension (in addition at least)
+- Think of making the letter 'A', there would be background energy around the top, bottom and crossbar areas, and every level would push toward those.
+- An N turns to an H by the endpoints emmiting a repel field into the background energy, causing the crossbar to drift.
+
+
+ 
  */
