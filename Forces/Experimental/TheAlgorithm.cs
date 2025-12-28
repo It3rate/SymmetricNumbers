@@ -6,34 +6,53 @@ using System.Threading.Tasks;
 
 namespace Forces.Experimental;
 
+public enum  Certainty
+{
+    Unknown,
+    Partial,
+    Certain,
+}
 public interface Measure
 {
-	Op Operation { get; } // project, decompose, invert
+    Certainty Certainty { get; set; }
+    long StartRange { get; }
+    long EndRange { get; }
+}
+public interface Num
+{
+    // A measure can be unknown, or partially known (as in an algebraic expression). An uknown measure is at least 1D, as a point has no size or position
+    Op Operation { get; } // project, decompose, invert
 	TypeInfo Type { get; }
-	int Unit { get; }
+    int Dimensions { get; } // calculate from type info
+    float Size { get; } // length, area, volume
+    float[] Positions { get; } // center point for length/area/volume etc
+    Measure[] Measures { get; }
 	//int Repeat;
 	//int Param; // the parameter is just a repeat count of the unit, a power is the repeat count of the op 
 }
 public interface Op
 {
-	// a segment can only add when projected as there is no unit. if it projects from the end of other it is added, from end of self it is diff.
-	// the result will always be zero based, as there is no unit to anchor to.
-	// a ratio (numerator/denominator) can only multiply when projected as there is a unit and things need to align.
-	// to add ratios, you still need to align, but then just use the numerator, which is a segment and thus has to add.
+    //Measure Input { get; }
+    //bool IsInverted { get; }
+    //bool IsNegated { get; }
+    Measure[] Eval(Measure[] inputs); // ops may cast to other dimensions
 
-	// a projection (~multiply) always lowers type counts and loses infomation (2x3=6 :: 6 can not recover 2 and 3)
-	// a decomposition always increases the type count and invents information an area of 16 can be split into 4x4 or 2x8, you 'invent' which.
-	//    - we prefer 4x4 because it is one Mearuse (4x with count 2, vs 2x and 8x)
+    // a segment can only add when projected as there is no unit. if it projects from the end of other it is added, from end of self it is diff.
+    // the result will always be zero based, as there is no unit to anchor to.
+    // a ratio (numerator/denominator) can only multiply when projected as there is a unit and things need to align.
+    // to add ratios, you still need to align, but then just use the numerator, which is a segment and thus has to add.
 
-	// perhaps the op is always 'project', the changes come in order of elements, and how they are lined up
-	//    - two segments lined up by start and end points project addition. Lined up start to start projects difference.
-	bool IsInverted { get; }
-	int Repeats { get; }
-	// compose is sticking multiple things together as a single thing with multiple combined types. LxW=Area m*m=m^2
-	// If you run the calculation (Area), the type becomes m^2 (or m*m, they are the same type, m^2 just means 'm* count 2' and has 2 parameters).
-	// if you don't run the calculation, they are still composed, the type is still m^2, just you retain the parameter information (6x*7m vs 42m^2)
-	// alternately, if you collect elements together without composing them
-	Measure Compose(params Measure[] measures);// if inverted decompose
+    // a projection (~multiply) always lowers type counts and loses infomation (2x3=6 :: 6 can not recover 2 and 3)
+    // a decomposition always increases the type count and invents information an area of 16 can be split into 4x4 or 2x8, you 'invent' which.
+    //    - we prefer 4x4 because it is one Mearuse (4x with count 2, vs 2x and 8x)
+
+    // perhaps the op is always 'project', the changes come in order of elements, and how they are lined up
+    //    - two segments lined up by start and end points project addition. Lined up start to start projects difference.
+    // compose is sticking multiple things together as a single thing with multiple combined types. LxW=Area m*m=m^2
+    // If you run the calculation (Area), the type becomes m^2 (or m*m, they are the same type, m^2 just means 'm* count 2' and has 2 parameters).
+    // if you don't run the calculation, they are still composed, the type is still m^2, just you retain the parameter information (6x*7m vs 42m^2)
+    // alternately, if you collect elements together without composing them
+    Measure Compose(params Measure[] measures);// if inverted decompose
 }
 public interface TypeInfo
 {
@@ -47,11 +66,22 @@ public interface TypeInfo
 
    	// Ops are always one or the other (LxW or m/s), never both (m*L/s)... *however*,
 	//    each of the units are units themselves, so e.g. density is mass/volume, but volume is LxLxL, so density is mass/(LxLxL)
-	Op Op { get; } 
+	//Op Op { get; } 
 	int[] Type { get; } // this is like speed/time
-	int[] Calibrations { get; } // this is like meters/seconds
-	int[] Counts { get; }
+    long[] Calibrations { get; } // this is like meters/seconds vs inches/minutes
+    Measure Range { get; } // min max of this type
 	// lookup table for meanings
+}
+public interface Expr
+{
+    //Measure[] Input { get; }
+    Op[] Operations { get; }
+    Measure[] Eval(Measure[] inputs);
+    Expr[] OutExpr { get; } // used for stops (empty), segmenting (one), as well as branches (multiple).
+}
+public interface Repeats
+{
+
 }
 
 /*
@@ -262,6 +292,7 @@ I guess the layer above could query size, location, center of mass etc?
 
 Motion is interpreted within a range. A fly on a train ignores the train, earth, sun motion, as well as the molecules, swatter kinetics etc.
 This allows a linear computable range to work in, and ignoring things that are too distant, complex (cancelling) or scaled to be relevant.
+We model many things at the levels we care about, speed, acceleration, predictive curves, timing, forces, the fly's mind etc.
 
 Acceleration or area indicates one value affecting another. This is a product. You can have multiple products at once (eg volume)
 A branch is an additive combination. There are multiple values that combine, but they don't affect each other.
@@ -271,11 +302,26 @@ The last op is random/unknown/don't care, and most calcualtions have some portio
 Q. Does the line level or the area level determine the shape?
 - The line level does not have to be linear, just a path. So a polyline that eventually connects to itself has some say (eg number of sides)
 - Only the area level can see the overall size and shape.
+- We ultimalely only model changes. An equation will continue to be calculated until there is some change, internal, external, or energy.
 - To turn a rombus into a square, the line level needs to make the sides equal lengths, and the area level needs to make the angles the same?
 - The line level could add two ghost diagonals and try to equalize them, but that makes it higher dimension (in addition at least)
 - Think of making the letter 'A', there would be background energy around the top, bottom and crossbar areas, and every level would push toward those.
 - An N turns to an H by the endpoints emmiting a repel field into the background energy, causing the crossbar to drift.
+- A layer can try to 'convince' layer siblings, and pressure layers above and below. If the pressure causes change, that too can be contagious.
 
 
+Types of computational objects:
+Grouped {...} Anything inside are considered focused,bt not merged, {3,3,3} is three separate elements in order, not 9. Can contain nulls. Can be reordered? Or at least reversed with expr. 
+        - Think of as 0D elements, points. They may have structure internally (like they may be expressions with many dimensions), but from the outside they are just points in a listed order.
+Merged  - elements in [] are always sequenced merges. [Numerator,denominator] is always a scalar, [n,n] is addition, [nd,n] is multiplication, [nd,nd] is *power, [d,nd] is +power. [dd]=[1]
+        - Sequence is always in order, so 3x^2 needs to be [x/1,2/1,3]
+        - Types affect merge. AdBd becomes area, AdAd is accel. AA is two lines into one, AB is tip to tail but stays separate lines.
+Bool    - bool ops are two inputs with one of 16 bool ops. Needs to also support lower dim ops, like >, <, ==, != etc. And higer dimension ops? A form of expr with an auto eval?
+        - Perhaps all ops are derived from their dimesnions, and bools are 2D. GT, LT, addition would be 1D, mult would be 3D [ndn] due to needing a unit to stretch, and powers 4D [ndnd]
+Eval    - an expression is always evaluated, but if it contains variables it can't be. feeding a group into an expression maps the input elements to variables.
+Cast    - moving to higher or lower dimensions. This can happen naturally on eval. Merging two types goes up a dimension, and a unit with a lower dim type goes down (mss/s = ms)
+
+
+Compared
  
  */

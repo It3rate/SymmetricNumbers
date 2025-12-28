@@ -36,7 +36,7 @@ public interface MergbleBlock : Element // these always merge
 	MergbleBlock Unmerge(Element? element); 
 }
 public record Parameter(int Quantity, MergbleBlock Block);
-public interface Expr
+public interface Exprx
 {
 	// these blocks will not be merged, they are algebraic expressions, and therefore number systems.
 	List<Parameter> Expression { get; }
