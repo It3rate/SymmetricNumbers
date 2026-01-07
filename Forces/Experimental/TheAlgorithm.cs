@@ -6,14 +6,28 @@ using System.Threading.Tasks;
 
 namespace Forces.Experimental;
 
-public enum  Certainty
+public enum Certainty
 {
     Unknown,
     Partial,
     Certain,
 }
+public enum Relation
+{
+    Unknown     = 0,
+    Duplicate   = 1,
+    Mirror      = 2,   // doubles size (1i+1)
+    Negation    = 4,   // doubles size, avg 0 (-1+1)
+    Center    = 8,   // internal downcast (2pts->1pt)
+    Repeated    = 16,  // internal upcast (1pt->2pts), like doubled at simplest
+    UnitDerived = 32,  // derived from scalar by unit
+    Sibling     = 64,  // an unrelated point in the shared dimension
+    External    = 128, // point from external dimension
+    Downcast    = 256, // point from a higher dimension downcast (eg center of volume)
+}
 public interface Measure
 {
+    Relation Relation { get; set; } // default Sibling
     Certainty Certainty { get; set; }
     long StartRange { get; }
     long EndRange { get; }
@@ -74,9 +88,13 @@ public interface TypeInfo
 }
 public interface Expr
 {
-    //Measure[] Input { get; }
-    Op[] Operations { get; }
-    Measure[] Eval(Measure[] inputs);
+    // a complex number [n, di, d, ni] needs to be [ni,di,n,d] [/+/] if ops are to be in order. Is this a stack?
+    // or segments are 2 points, numbers are 2 lines, complex numbers are 2 numbers, areas are 2 complex numbers, volumes are 2 areas... all pair ops.
+    // or numbers are numbers because they aren't evaluated? The operations only happen when combined, and that is peice wise?
+    // (a+ib)(c+id)=(ac−bd)+i(ad+bc) [na, dib, da, nib] [nc, did, dc, nid] = (),(nid/2+did/2), ()  ,(na/da*nc/dc)-(nib/dib*nid/did)  
+    Measure[] Inputs { get; }
+    Op[] Operations { get; } 
+    Measure[] Eval(int repeatCount);// run the ops by pulling inputs off the stack as needed, halt when complete. Output->input per repeat count
     Expr[] OutExpr { get; } // used for stops (empty), segmenting (one), as well as branches (multiple).
 }
 public interface Repeats
@@ -324,4 +342,40 @@ Cast    - moving to higher or lower dimensions. This can happen naturally on eva
 
 Compared
  
+
+
+
+The reason 'two areas make a volume' has redundant values is because it is very possible there is no overlap where the two areas are trying to intersect.
+ - Imagine two areas with rectangles in them. As they are brought orthogonal to each other, they project the rectangles into each other's spaces. There may not be intersection there.
+ - If one area is color and temperature, the other is melting point and density, it is very possible there is no intersection at all for certain combinations.
+ - This doesn't mean there is no coorlation and the values have no reason to be merged, just that intersection may be empty.
+ - With traditional xyz, that isn't possible unless one value is zero. But logically it is possible that no values are zero, and yet they don't correlate at those values.
+ - As you add more dimensions, that gets more likely in fact.
+
+
+Sequence of twos:
+2 pts -> line
+2 lines -> rational
+2 rationals -> complex (segment) (4 pt units, 4 pt measures)
+2 segments -> area
+2 areas -> volume (may be null)
+2 volumes - 4D (motion intersect, etc) (64 measures - 32 units, 32 values)
+
+a volume from 2 areas only guarentees an intersection if the two areas share an axis (as we traditionally imagine it ish)
+we think of XYZ as three axis, but really it is the XZ, and YZ planes intersecting (or any combination of two, as long as there is a shared axis)
+Q. Can the shared axis be thought of as the unit? A complex number has two mirrored (orthogonal) units, that are the same size. This seems 2D akin to two areas with a common Z?
+
+
+Q. When creating an expression, should the order of the inputs be the order in the expression, or should it pick and rearrange?
+- an expression stack always has a set order, are there examples where that makes certain desired expressions impossible?
+- Assume these expressions are nested, so an area is made of two complex numbers (A1 AND A2), which are made of two numbers (Ai+B), which are made of two segments (N/D)
+- Here you have the order choice when you construct the value, maybe this is enough.
+- Q. Are there cases in one expression where you want to reuse a value in a new way? Like A*B+A? Perhaps these are two expressions? 
+-    5A²+3A+4 is common, but it is multiple levels of a value interacting, so this is expected.
+
+Q. Perhaps moving a point is always an operation on 0D, but enacted from a higher dimension. Like moving it along a line is from 1D, moving in an area from 2D etc.
+you can also move a line in an area space, or an area (face) in a volume. All operations are acting on one higher space on a lower space.
+Q. Does this allow a lower space to also move an object in higher space? In a sense, in that if a line moves a point, and a point is part of an area, the area is affected.
+   but it is hard for a point in its own space to tell an area how to move, because it doesn't know about area mechanics.
+
  */
