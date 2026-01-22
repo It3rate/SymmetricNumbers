@@ -378,4 +378,22 @@ you can also move a line in an area space, or an area (face) in a volume. All op
 Q. Does this allow a lower space to also move an object in higher space? In a sense, in that if a line moves a point, and a point is part of an area, the area is affected.
    but it is hard for a point in its own space to tell an area how to move, because it doesn't know about area mechanics.
 
+
+Each level is based on points, paths, areas, volumes etc. This instance is the bounds that can take samples.
+The actual values are always from samples, not bounds points themselves. 
+So if you have an area, area to point is a long, perhaps in the center.
+Area to line is two points sampled from the area, making a line.
+Line to point is a point on the circumference path of the area (a long)
+Line to line is two points on the circumference of the area joined.
+* You can't get a value without a sample. The sample can be the end point etc, but it is still a sample.
+An op merges two spaces, which can increase dimensionality (*), decrease (/), or keep it the same (+,-).
+Two areas can increase size without knowing the shape. Two lines change length without knowing position.
+The shape or position can be negotiated with the other layers, even if the size/length is fixed.
+
+Q. can you treat + as adding a branch, and * as appending length to the same value?
+The length of 2+3 is still 5, but conceptually it would be two separate lines, joined at a point. 2+3+4 would be a fan out.
+A. Maybe they join like this, but not as branches? and only become one unit with a merge command (*1?)
+   Probably isn't correct always, but adding unlike types does give a total length without merging (2 apples + 3 oranges = 5 total)
+   The command for a branch requires a more explicit symmetry breaking.
+
  */
